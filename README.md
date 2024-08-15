@@ -272,6 +272,123 @@ To see different signals, you would need to adjust the price data, the lookback 
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
+### 1) Statistical Arbitrage - Visualization:
+__stock_a.csv__
+```
+Date,Close
+2024-08-01,100.5
+2024-08-02,101.0
+2024-08-03,102.2
+2024-08-04,101.8
+2024-08-05,103.5
+2024-08-06,104.1
+```
+__stock_b.csv__
+```
+Date,Close
+2024-08-01,99.5
+2024-08-02,100.2
+2024-08-03,101.7
+2024-08-04,102.3
+2024-08-05,102.9
+2024-08-06,103.8
+```
+```cpp
+#include <DataFrame/DataFrame.h>
+#include <xtensor/xarray.hpp>
+#include <xtensor/xview.hpp>
+#include <xtensor/xio.hpp>
+#include <sciplot/sciplot.hpp>
+#include <iostream>
+
+using namespace hmdf;
+using namespace xt;
+using namespace sciplot;
+
+int main() {
+    // Load stock_a.csv and stock_b.csv into DataFrames
+    StdDataFrame<int> df_a;
+    StdDataFrame<int> df_b;
+
+    df_a.read("stock_a.csv", io_format::csv2);
+    df_b.read("stock_b.csv", io_format::csv2);
+
+    // Extract the 'Close' column as a vector
+    auto close_a = df_a.get_column<double>("Close");
+    auto close_b = df_b.get_column<double>("Close");
+
+    // Calculate the spread using xtensor
+    xarray<double> spread = xt::adapt(close_a) - xt::adapt(close_b);
+
+    // Calculate rolling mean and standard deviation
+    int window = 2;  // Adjust window size as needed
+    xarray<double> rolling_mean = xt::rolling_mean(spread, window);
+    xarray<double> rolling_std = xt::rolling_std(spread, window);
+
+    // Calculate Z-Score
+    xarray<double> z_score = (spread - rolling_mean) / rolling_std;
+
+    // Visualization using sciplot
+    Plot plot;
+    plot.xlabel("Time");
+    plot.ylabel("Z-Score");
+    plot.drawCurve(z_score).label("Z-Score");
+    plot.drawHorizontalLine(1.0).label("Upper Threshold").lineWidth(2).lineColor("red");
+    plot.drawHorizontalLine(-1.0).label("Lower Threshold").lineWidth(2).lineColor("green");
+    plot.drawHorizontalLine(0.0).label("Mean").lineWidth(2).lineColor("black");
+    plot.legend().atOutsideBottom().displayHorizontal().displayExpandWidthBy(2);
+
+    Figure fig = { plot };
+    Canvas canvas = { fig };
+    canvas.size(1000, 600);
+    canvas.show();
+
+    return 0;
+}
+```
+```bash
+g++ -std=c++17 -O2 -I/path/to/DataFrame -I/path/to/xtensor -I/path/to/sciplot example.cpp -o example -larmadillo -lopenblas
+```
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load data from CSV files
+df_a = pd.read_csv('stock_a.csv')
+df_b = pd.read_csv('stock_b.csv')
+
+# Extract 'Close' prices
+close_a = df_a['Close'].values
+close_b = df_b['Close'].values
+
+# Calculate the spread
+spread = close_a - close_b
+
+# Calculate rolling mean and standard deviation
+window = 2
+rolling_mean = pd.Series(spread).rolling(window=window).mean().values
+rolling_std = pd.Series(spread).rolling(window=window).std(ddof=0).values
+
+# Calculate Z-Score
+z_score = (spread - rolling_mean) / rolling_std
+
+# Plot the Z-Score with thresholds
+plt.figure(figsize=(10, 6))
+plt.plot(z_score, label='Z-Score')
+plt.axhline(1.0, color='red', linestyle='--', linewidth=2, label='Upper Threshold')
+plt.axhline(-1.0, color='green', linestyle='--', linewidth=2, label='Lower Threshold')
+plt.axhline(0.0, color='black', linestyle='-', linewidth=2, label='Mean')
+plt.xlabel('Time')
+plt.ylabel('Z-Score')
+plt.legend()
+plt.title('Z-Score of Spread between Stock A and Stock B')
+plt.grid(True)
+plt.show()
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 ### 2) Triplets Trading:
 
 __Explanation:__
