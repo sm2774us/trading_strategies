@@ -794,6 +794,54 @@ int main() {
     return 0;
 }
 ```
+```bash
+g++ -std=c++17 -O2 -I/path/to/DataFrame -I/path/to/xtensor -I/path/to/sciplot example.cpp -o example -larmadillo -lopenblas
+```
+```python
+with open('stock_x.csv', 'wb') as csvFile:
+  csvFile.write((
+    b'Date,Close\n'
+    b'2024-01-01,100.5\n'
+    b'2024-01-02,101.0\n'
+    b'2024-01-03,99.8\n'
+    b'2024-01-04,100.2\n'
+    b'2024-01-05,100.9\n'
+    b'2024-01-06,101.1\n'
+    b'2024-01-07,100.6\n'
+    b'2024-01-08,101.3\n'
+    b'2024-01-09,101.0\n'
+    b'2024-01-10,101.5\n'))
+```
+```python
+with open('stock_y.csv', 'wb') as csvFile:
+  csvFile.write((
+    b'Date,Close\n'
+    b'2024-01-01,200.1\n'
+    b'2024-01-02,200.5\n'
+    b'2024-01-03,199.5\n'
+    b'2024-01-04,199.8\n'
+    b'2024-01-05,200.2\n'
+    b'2024-01-06,200.0\n'
+    b'2024-01-07,199.9\n'
+    b'2024-01-08,200.7\n'
+    b'2024-01-09,200.5\n'
+    b'2024-01-10,200.8\n'))
+```
+```python
+with open('stock_z.csv', 'wb') as csvFile:
+  csvFile.write((
+    b'Date,Close\n'
+    b'2024-01-01,150.4\n'
+    b'2024-01-02,150.7\n'
+    b'2024-01-03,149.9\n'
+    b'2024-01-04,150.0\n'
+    b'2024-01-05,150.2\n'
+    b'2024-01-06,150.5\n'
+    b'2024-01-07,150.1\n'
+    b'2024-01-08,150.8\n'
+    b'2024-01-09,150.6\n'
+    b'2024-01-10,150.9\n'))
+```
 ```python
 import pandas as pd
 import numpy as np
