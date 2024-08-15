@@ -350,6 +350,28 @@ int main() {
 g++ -std=c++17 -O2 -I/path/to/DataFrame -I/path/to/xtensor -I/path/to/sciplot example.cpp -o example -larmadillo -lopenblas
 ```
 ```python
+with open('stock_a.csv', 'wb') as csvFile:
+  csvFile.write((
+    b'Date,Close\n'
+    b'2024-08-01,100.5\n'
+    b'2024-08-02,101.0\n'
+    b'2024-08-03,102.2\n'
+    b'2024-08-04,101.8\n'
+    b'2024-08-05,103.5\n'
+    b'2024-08-06,104.1\n'))
+```
+```python
+with open('stock_b.csv', 'wb') as csvFile:
+  csvFile.write((
+    b'Date,Close\n'
+    b'2024-08-01,99.5\n'
+    b'2024-08-02,100.2\n'
+    b'2024-08-03,101.7\n'
+    b'2024-08-04,102.3\n'
+    b'2024-08-05,102.9\n'
+    b'2024-08-06,103.8\n'))
+```
+```python
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -386,6 +408,13 @@ plt.title('Z-Score of Spread between Stock A and Stock B')
 plt.grid(True)
 plt.show()
 ```
+![Statiscal Arbitrage - Visualization](./assets/statistical_arbitrage.png)
+
+### 1) Statistical Arbitrage - Visualization Explanation:
+- __Z-Score Plot:__ The plot shows the Z-Score of the spread between Stock A and Stock B.
+- __Threshold Lines:__ The red and green dashed lines represent the upper and lower thresholds (1.0 and -1.0), respectively.
+- __Mean Line:__ The black line at Z-Score 0 represents the mean.
+
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
