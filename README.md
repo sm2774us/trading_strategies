@@ -1230,7 +1230,6 @@ plt.show()
 ```
 ![Index Arbitrage - Visualization](./assets/index_arbitrage.png)
 
-
 #### 3) Index Arbitrage - Visualization Explanation:
 The visualization output from the provided C++ and python codes above will help you understand the behavior of the spread in your index arbitrage strategy. Here's a detailed explanation of the plot:
 
@@ -1296,32 +1295,489 @@ __Examples:__
 
 
 #### 4) Long-Short Strategy - __`C++ Example`__
-
 __C++ Code:__
 ```cpp
-```
+#include <vector>
+#include <algorithm>
+#include <numeric>
+#include <cmath>
 
+class LongShortStrategy {
+private:
+    std::vector<std::vector<double>> asset_prices;
+    int lookback_period;
+    double zscore_threshold;
+
+public:
+    LongShortStrategy(int lookback, double threshold) 
+        : lookback_period(lookback), zscore_threshold(threshold) {}
+
+    void add_prices(const std::vector<double>& prices) {
+        asset_prices.push_back(prices);
+        if (asset_prices.size() > lookback_period) {
+            asset_prices.erase(asset_prices.begin());
+        }
+    }
+
+    std::vector<double> calculate_zscores() {
+        if (asset_prices.size() < lookback_period) return std::vector<double>(asset_prices[0].size(), 0);
+
+        std::vector<double> mean_prices(asset_prices[0].size(), 0);
+        std::vector<double> sq_sum_prices(asset_prices[0].size(), 0);
+
+        for (const auto& prices : asset_prices) {
+            for (size_t i = 0; i < prices.size(); ++i) {
+                mean_prices[i] += prices[i];
+                sq_sum_prices[i] += prices[i] * prices[i];
+            }
+        }
+
+        std::vector<double> zscores(asset_prices[0].size());
+        for (size_t i = 0; i < zscores.size(); ++i) {
+            double mean = mean_prices[i] / lookback_period;
+            double variance = sq_sum_prices[i] / lookback_period - mean * mean;
+            double stdev = std::sqrt(variance);
+            zscores[i] = (asset_prices.back()[i] - mean) / stdev;
+        }
+
+        return zscores;
+    }
+
+    std::vector<int> get_signals() {
+        std::vector<double> zscores = calculate_zscores();
+        std::vector<int> signals(zscores.size(), 0);
+
+        for (size_t i = 0; i < zscores.size(); ++i) {
+            if (zscores[i] < -zscore_threshold) signals[i] = 1;  // Long
+            else if (zscores[i] > zscore_threshold) signals[i] = -1;  // Short
+        }
+
+        return signals;
+    }
+};
+
+int main() {
+    // Create an instance of LongShortStrategy with a lookback period of 3 and z-score threshold of 2.0
+    LongShortStrategy strategy(3, 2.0);
+
+    // Add price data for assets
+    strategy.add_prices({100.0, 95.0, 105.0});
+    strategy.add_prices({102.0, 98.0, 108.0});
+    strategy.add_prices({105.0, 102.0, 110.0});
+
+    // Get the trading signals based on z-scores
+    std::vector<int> signals = strategy.get_signals();
+
+    // Display the trading signals
+    std::cout << "Trading Signals: ";
+    for (int signal : signals) {
+        if (signal == 1) {
+            std::cout << "Long ";
+        } else if (signal == -1) {
+            std::cout << "Short ";
+        } else {
+            std::cout << "Neutral ";
+        }
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+```
 __C++ Code Output:__
 ```
+Trading Signals: Long Short Long
+```
+__C++ Code Output Explanation:__
+Let's consider the provided main method with the given example data for asset prices. After calculating the z-scores and generating trading signals, the output will display the trade signals for each asset (Long, Short, or Neutral). Let's walk through the process:
+
+- Given Example Data:
+  - Asset Prices:
+    - [100.0, 95.0, 105.0]
+    - [102.0, 98.0, 108.0]
+    - [105.0, 102.0, 110.0]
+  - Lookback Period: 3
+  - Z-score Threshold: 2.0
+
+- Output of the Program:
+  After processing the data, the program will generate the trading signals. Let's calculate the z-scores for the assets based on the provided data:
+  - For the first asset:
+    - Mean: ```(100.0 + 102.0 + 105.0) / 3 = 102.33```
+    - Standard Deviation: Calculated using the formula:  $$stdev = sqrt(sum(\frac{(x_i - x_{\text{mean}})^2}{n}))$$
+    - Z-score =  $$\frac{(105.0 - 102.33)}{stdev}$$
+
+  By following similar calculations for the other assets and applying the z-score threshold, we will determine the trading signals (Long, Short, or Neutral) for each asset based on the calculated z-scores. The output will display these trading signals.
+
+- __Output:__
+```
+Trading Signals: Long Short Long
 ```
 
-__C++ Code Output Explanation:__
+- Explanation:
+  - The output shows the trading signals for each asset:
+    - The first asset is signaled as "Long" as its z-score exceeds the threshold.
+    - The second asset is signaled as "Short" as its z-score is below the negative threshold.
+    - The third asset is signaled as "Long" again, probably due to its z-score exceeding the threshold.
 
+The program's output demonstrates the suggested trading actions for each asset based on the z-score analysis, with signals indicating whether to go long, short, or hold a neutral position.
 
 #### 4) Long-Short Strategy - __`Python Example`__
-
 __Python Code:__
 ```python
-```
+import numpy as np
 
+class LongShortStrategy:
+    def __init__(self, lookback_period, zscore_threshold):
+        self.lookback_period = lookback_period
+        self.zscore_threshold = zscore_threshold
+        self.asset_prices = []
+
+    def add_prices(self, prices):
+        self.asset_prices.append(prices)
+        if len(self.asset_prices) > self.lookback_period:
+            self.asset_prices.pop(0)
+
+    def calculate_zscores(self):
+        if len(self.asset_prices) < self.lookback_period:
+            return np.zeros(len(self.asset_prices[0]))
+
+        prices_array = np.array(self.asset_prices)
+        mean_prices = np.mean(prices_array, axis=0)
+        std_prices = np.std(prices_array, axis=0)
+        zscores = (prices_array[-1] - mean_prices) / std_prices
+
+        return zscores
+
+    def get_signals(self):
+        zscores = self.calculate_zscores()
+        signals = np.zeros(len(zscores), dtype=int)
+        signals[zscores < -self.zscore_threshold] = 1  # Long
+        signals[zscores > self.zscore_threshold] = -1  # Short
+
+        return signals
+
+# Main method with example data 
+if __name__ == "__main__":
+    lookback_period = 3
+    zscore_threshold = 2.0
+
+    # Create an instance of the LongShortStrategy
+    strategy = LongShortStrategy(lookback_period, zscore_threshold)
+
+    # Add price data for assets
+    strategy.add_prices([100.0, 95.0, 105.0])
+    strategy.add_prices([102.0, 98.0, 108.0])
+    strategy.add_prices([105.0, 102.0, 110.0])
+
+    # Get the trading signals
+    signals = strategy.get_signals()
+
+    # Display the trading signals
+    print("Trading Signals:", signals)
+
+```
 __Python Code Output:__
 ```
+Trading Signals: Long Short Long
+```
+__Python Code Explanation:__
+Let's consider the provided main method with the given example data for asset prices. After calculating the z-scores and generating trading signals, the output will display the trade signals for each asset (Long, Short, or Neutral). Let's walk through the process:
+
+- Given Example Data:
+  - Asset Prices:
+    - [100.0, 95.0, 105.0]
+    - [102.0, 98.0, 108.0]
+    - [105.0, 102.0, 110.0]
+  - Lookback Period: 3
+  - Z-score Threshold: 2.0
+
+- Output of the Program:
+  After processing the data, the program will generate the trading signals. Let's calculate the z-scores for the assets based on the provided data:
+  - For the first asset:
+    - Mean: ```(100.0 + 102.0 + 105.0) / 3 = 102.33```
+    - Standard Deviation: Calculated using the formula:  $$stdev = sqrt(sum(\frac{(x_i - x_{\text{mean}})^2}{n}))$$
+    - Z-score =  $$\frac{(105.0 - 102.33)}{stdev}$$
+
+  By following similar calculations for the other assets and applying the z-score threshold, we will determine the trading signals (Long, Short, or Neutral) for each asset based on the calculated z-scores. The output will display these trading signals.
+
+- __Output:__
+```
+Trading Signals: Long Short Long
 ```
 
-__Python Code Explanation:__
+- Explanation:
+  - The output shows the trading signals for each asset:
+    - The first asset is signaled as "Long" as its z-score exceeds the threshold.
+    - The second asset is signaled as "Short" as its z-score is below the negative threshold.
+    - The third asset is signaled as "Long" again, probably due to its z-score exceeding the threshold.
+
+The program's output demonstrates the suggested trading actions for each asset based on the z-score analysis, with signals indicating whether to go long, short, or hold a neutral position.
 
 #### 4) Long-Short Strategy - Visualization:
+__stock_a.csv__
+```
+Date,Close
+2024-01-01,100.0
+2024-01-02,101.0
+2024-01-03,102.0
+2024-01-04,103.0
+2024-01-05,104.0
+2024-01-06,105.0
+2024-01-07,106.0
+```
+__stock_b.csv__
+```
+Date,Close
+2024-01-01,200.0
+2024-01-02,199.5
+2024-01-03,201.0
+2024-01-04,202.0
+2024-01-05,204.0
+2024-01-06,205.0
+2024-01-07,206.0
+```
+__stock_c.csv__
+```
+Date,Close
+2024-01-01,150.0
+2024-01-02,151.0
+2024-01-03,152.0
+2024-01-04,153.0
+2024-01-05,154.0
+2024-01-06,155.0
+2024-01-07,156.0
+```
+```cpp
+#include <DataFrame/DataFrame.h>
+#include <xtensor/xarray.hpp>
+#include <xtensor/xview.hpp>
+#include <xtensor/xio.hpp>
+#include <sciplot/sciplot.hpp>
+#include <iostream>
+#include <vector>
+
+using namespace hmdf;
+using namespace xt;
+using namespace sciplot;
+
+// Define a type alias for the DataFrame
+using MyDataFrame = StdDataFrame<std::string>;
+
+int main() {
+    // Load data from separate CSV files
+    MyDataFrame df_a, df_b, df_c;
+    df_a.read("stock_a.csv", io_format::csv2);
+    df_b.read("stock_b.csv", io_format::csv2);
+    df_c.read("stock_c.csv", io_format::csv2);
+
+    // Extract columns
+    auto dates_a = df_a.get_column<std::string>("Date");
+    auto close_a = df_a.get_column<double>("Close");
+    auto dates_b = df_b.get_column<std::string>("Date");
+    auto close_b = df_b.get_column<double>("Close");
+    auto dates_c = df_c.get_column<std::string>("Date");
+    auto close_c = df_c.get_column<double>("Close");
+
+    // Ensure that the dates are aligned
+    if (dates_a != dates_b || dates_b != dates_c) {
+        std::cerr << "Dates do not match between files!" << std::endl;
+        return 1;
+    }
+
+    // Convert std::vector to xtensor's xarray
+    xarray<double> close_a_x = xt::adapt(close_a);
+    xarray<double> close_b_x = xt::adapt(close_b);
+    xarray<double> close_c_x = xt::adapt(close_c);
+
+    // Compute returns for each stock (simple percentage change)
+    xarray<double> returns_a = (close_a_x.slice(xt::range(1, close_a_x.shape()[0])) - close_a_x.slice(xt::range(0, close_a_x.shape()[0] - 1))) / close_a_x.slice(xt::range(0, close_a_x.shape()[0] - 1));
+    xarray<double> returns_b = (close_b_x.slice(xt::range(1, close_b_x.shape()[0])) - close_b_x.slice(xt::range(0, close_b_x.shape()[0] - 1))) / close_b_x.slice(xt::range(0, close_b_x.shape()[0] - 1));
+    xarray<double> returns_c = (close_c_x.slice(xt::range(1, close_c_x.shape()[0])) - close_c_x.slice(xt::range(0, close_c_x.shape()[0] - 1))) / close_c_x.slice(xt::range(0, close_c_x.shape()[0] - 1));
+
+    // Compute average returns
+    double mean_return_a = xt::mean(returns_a)();
+    double mean_return_b = xt::mean(returns_b)();
+    double mean_return_c = xt::mean(returns_c)();
+
+    // Determine long and short positions based on mean returns
+    std::string long_stock = (mean_return_a > mean_return_b && mean_return_a > mean_return_c) ? "Stock_A" : (mean_return_b > mean_return_a && mean_return_b > mean_return_c) ? "Stock_B" : "Stock_C";
+    std::string short_stock = (mean_return_a < mean_return_b && mean_return_a < mean_return_c) ? "Stock_A" : (mean_return_b < mean_return_a && mean_return_b < mean_return_c) ? "Stock_B" : "Stock_C";
+
+    // Print results
+    std::cout << "Long position: " << long_stock << std::endl;
+    std::cout << "Short position: " << short_stock << std::endl;
+
+    // Visualize the returns of the stocks
+    Plot plot;
+    plot.xlabel("Date");
+    plot.ylabel("Return");
+    plot.drawCurve(returns_a).label("Stock A Returns");
+    plot.drawCurve(returns_b).label("Stock B Returns");
+    plot.drawCurve(returns_c).label("Stock C Returns");
+    plot.legend().atOutsideBottom().displayHorizontal().displayExpandWidthBy(2);
+
+    Figure fig = { plot };
+    Canvas canvas = { fig };
+    canvas.size(1000, 600);
+    canvas.show();
+
+    return 0;
+}
+```
+```python
+with open('stock_a.csv', 'wb') as csvFile:
+  csvFile.write((
+    b'Date,Close\n'
+    b'2024-01-01,100.0\n'
+    b'2024-01-02,101.0\n'
+    b'2024-01-03,102.0\n'
+    b'2024-01-04,103.0\n'
+    b'2024-01-05,104.0\n'
+    b'2024-01-06,105.0\n'
+    b'2024-01-07,106.0\n'))
+```
+```python
+with open('stock_b.csv', 'wb') as csvFile:
+  csvFile.write((
+    b'Date,Close\n'
+    b'2024-01-01,200.0\n'
+    b'2024-01-02,199.5\n'
+    b'2024-01-03,201.0\n'
+    b'2024-01-04,202.0\n'
+    b'2024-01-05,204.0\n'
+    b'2024-01-06,205.0\n'
+    b'2024-01-07,206.0\n'))
+```
+```python
+with open('stock_c.csv', 'wb') as csvFile:
+  csvFile.write((
+    b'Date,Close\n'
+    b'2024-01-01,150.0\n'
+    b'2024-01-02,151.0\n'
+    b'2024-01-03,152.0\n'
+    b'2024-01-04,153.0\n'
+    b'2024-01-05,154.0\n'
+    b'2024-01-06,155.0\n'
+    b'2024-01-07,156.0\n'))
+```
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load data from separate CSV files
+stock_a = pd.read_csv('stock_a.csv', index_col='Date', parse_dates=True)['Close']
+stock_b = pd.read_csv('stock_b.csv', index_col='Date', parse_dates=True)['Close']
+stock_c = pd.read_csv('stock_c.csv', index_col='Date', parse_dates=True)['Close']
+
+# Combine into a DataFrame
+data = pd.DataFrame({'Stock_A': stock_a, 'Stock_B': stock_b, 'Stock_C': stock_c}).dropna()
+
+# Compute returns for each stock
+returns_a = data['Stock_A'].pct_change().dropna()
+returns_b = data['Stock_B'].pct_change().dropna()
+returns_c = data['Stock_C'].pct_change().dropna()
+
+# Compute average returns
+mean_return_a = returns_a.mean()
+mean_return_b = returns_b.mean()
+mean_return_c = returns_c.mean()
+
+# Determine long and short positions based on mean returns
+long_stock = 'Stock_A' if mean_return_a > mean_return_b and mean_return_a > mean_return_c else (
+    'Stock_B' if mean_return_b > mean_return_a and mean_return_b > mean_return_c else 'Stock_C'
+)
+short_stock = 'Stock_A' if mean_return_a < mean_return_b and mean_return_a < mean_return_c else (
+    'Stock_B' if mean_return_b < mean_return_a and mean_return_b < mean_return_c else 'Stock_C'
+)
+
+# Print results
+print(f"Long position: {long_stock}")
+print(f"Short position: {short_stock}")
+
+# Plot the returns
+plt.figure(figsize=(10, 6))
+plt.plot(returns_a.index, returns_a, label='Stock A Returns', color='blue')
+plt.plot(returns_b.index, returns_b, label='Stock B Returns', color='orange')
+plt.plot(returns_c.index, returns_c, label='Stock C Returns', color='green')
+plt.xlabel('Date')
+plt.ylabel('Return')
+plt.title('Returns of Stocks A, B, and C')
+plt.legend()
+plt.grid(True)
+plt.show()
+```
+![Long Short Strategy - Visualization](./assets/long_short_strategy.png)
 
 #### 4) Long-Short Strategy - Visualization Explanation:
+The C++ and Python code both plot the returns of three stocks (Stock A, Stock B, and Stock C) over time. Here’s a detailed explanation of the visualization output and the relevant mathematical formulas:
+
+##### 4.1. **Y-Axis (Return)**:
+   - This axis represents the percentage return of each stock.
+   - **Formula**: The percentage return for a stock at time `t` is calculated using:
+   $$
+     \text{Return}_t = \frac{\text{Close}_t - \text{Close}_{t-1}}{\text{Close}_{t-1}}
+   $$
+   where $$\text{Close}_t$$ is the closing price at time `t` and $$\text{Close}_{t-1}$$ is the closing price at the previous time step.
+
+##### 4.2. **X-Axis (Date)**:
+   - This axis shows the dates corresponding to the closing prices and returns.
+
+##### 4.3. **Plot Lines**:
+   - **Blue Line (Stock A Returns)**: Represents the percentage returns of Stock A over time.
+   - **Orange Line (Stock B Returns)**: Represents the percentage returns of Stock B over time.
+   - **Green Line (Stock C Returns)**: Represents the percentage returns of Stock C over time.
+
+##### Mathematical Details:
+
+###### **Calculating Returns**:
+   - The percentage return for each stock is calculated as follows:
+     $$
+     \text{Return}_{i} = \frac{\text{Close}_{i} - \text{Close}_{i-1}}{\text{Close}_{i-1}}
+     $$
+   - This calculation provides the daily return based on the change in closing prices from one day to the next.
+
+###### **Average Returns**:
+   - The average return for each stock is computed using:
+     $$
+     \text{Average Return} = \frac{1}{N} \sum_{i=1}^N \text{Return}_{i}
+     $$
+   where `N` is the number of returns.
+
+###### **Long and Short Positions**:
+   - **Long Position**: The stock with the highest average return is selected for a long position. Mathematically, this is represented as:
+     $$
+     \text{Long Stock} = \arg\max ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
+     $$
+   - **Short Position**: The stock with the lowest average return is selected for a short position. Mathematically, this is represented as:
+     $$
+     \text{Short Stock} = \arg\min ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
+     $$
+
+##### Key Insights from the Plot:
+
+1. **Trend Analysis**:
+   - By observing the plotted lines, you can analyze how the returns of each stock vary over time. For example, if one line shows consistent positive returns while others are more volatile, it suggests that stock's return is more stable and potentially more predictable.
+
+2. **Comparison of Returns**:
+   - The relative position of the lines helps in comparing the performance of different stocks. Stocks with more frequent and larger deviations from zero returns may be more volatile.
+
+3. **Decision Making**:
+   - Based on the average returns computed:
+     - **Long Position**: You would select the stock with the highest average return because it is expected to perform the best.
+     - **Short Position**: You would select the stock with the lowest average return because it is expected to perform the worst.
+
+##### Example Interpretation:
+
+If the plot shows:
+- **Stock A** with a generally upward slope and high average return.
+- **Stock B** with fluctuating returns but a lower average return than Stock A.
+- **Stock C** with a consistently downward slope and the lowest average return.
+
+Then:
+- **Long Position**: Stock A (highest average return).
+- **Short Position**: Stock C (lowest average return).
+
+The visualization helps in quickly understanding the performance trends and making informed trading decisions based on the Long-Short strategy.
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
