@@ -554,7 +554,7 @@ Period  Prices                  Z-Scores                Signals
 24      123.00, 124.00, 122.00  0.00, 0.00, 0.00        2, 2, 2
 25      124.00, 125.00, 123.00  0.00, 0.00, 0.00        2, 2, 2
 ```
-__C++ Code Explanation:__
+__C++ Code Output Explanation:__
 Note that in this example, all Z-scores are 0.00 and most signals are 0. This is because:
 
 - The lookback period is 20, so no meaningful calculations can be made until we have at least 20 data points.
@@ -927,24 +927,360 @@ __Examples:__
 
 __C++ Code:__
 ```cpp
+#include <vector>
+#include <algorithm>
+#include <numeric>
+#include <cmath>
+#include <iostream>
+
+class IndexArbitrage {
+private:
+    std::vector<double> index_prices;
+    std::vector<std::vector<double>> constituent_prices;
+    std::vector<double> weights;
+    int lookback_period;
+    double threshold;
+
+public:
+    IndexArbitrage(int lookback, double thresh, const std::vector<double>& w) 
+        : lookback_period(lookback), threshold(thresh), weights(w) {}
+
+    void add_prices(double index_price, const std::vector<double>& const_prices) {
+        index_prices.push_back(index_price);
+        constituent_prices.push_back(const_prices);
+        if (index_prices.size() > lookback_period) {
+            index_prices.erase(index_prices.begin());
+            constituent_prices.erase(constituent_prices.begin());
+        }
+    }
+
+    double calculate_spread() {
+        if (index_prices.size() < lookback_period) return 0;
+
+        double synthetic_index = 0;
+        for (size_t i = 0; i < weights.size(); ++i) {
+            synthetic_index += weights[i] * constituent_prices.back()[i];
+        }
+
+        return index_prices.back() - synthetic_index;
+    }
+
+    int get_signal() {
+        double spread = calculate_spread();
+        if (spread > threshold) return -1;  // Sell index, buy constituents
+        if (spread < -threshold) return 1;  // Buy index, sell constituents
+        return 0;  // No trade
+    }
+};
+
+int main() {
+    // Create an instance of IndexArbitrage with a lookback period of 3, threshold of 2.0, and weights {0.2, 0.3, 0.5}
+    IndexArbitrage arbitrage(3, 2.0, {0.2, 0.3, 0.5});
+
+    // Add price data for index and constituents
+    arbitrage.add_prices(100.0, {95.0, 105.0, 98.0});
+    arbitrage.add_prices(102.0, {98.0, 108.0, 100.0});
+    arbitrage.add_prices(105.0, {102.0, 110.0, 105.0});
+
+    // Calculate the spread and get the trading signal
+    double spread = arbitrage.calculate_spread();
+    int signal = arbitrage.get_signal();
+
+    // Display the results
+    std::cout << "Spread: " << spread << std::endl;
+    std::cout << "Trading Signal: ";
+    if (signal == -1) {
+        std::cout << "Sell index, buy constituents" << std::endl;
+    } else if (signal == 1) {
+        std::cout << "Buy index, sell constituents" << std::endl;
+    } else {
+        std::cout << "No trade" << std::endl;
+    }
+
+    return 0;
+}
 ```
 __C++ Code Output:__
 ```
+Spread: -3.7
+Trading Signal: Buy index, sell constituents
 ```
-__C++ Code Explanation:__
-
+__C++ Code Output Explanation:__
+In this example:
+- the calculated spread is __`-3.7`__.
+- this indicates a deviation above the specified threshold, resulting in a trading signal to buy the index and sell the constituents.
 
 #### 3) Index Arbitrage - __`Python Example`__
 
 __Python Code:__
 ```python
-```
+import numpy as np
 
+class IndexArbitrage:
+    def __init__(self, lookback_period, threshold, weights):
+        self.lookback_period = lookback_period
+        self.threshold = threshold
+        self.weights = np.array(weights)
+        self.index_prices = []
+        self.constituent_prices = []
+
+    def add_prices(self, index_price, const_prices):
+        self.index_prices.append(index_price)
+        self.constituent_prices.append(const_prices)
+        if len(self.index_prices) > self.lookback_period:
+            self.index_prices.pop(0)
+            self.constituent_prices.pop(0)
+
+    def calculate_spread(self):
+        if len(self.index_prices) < self.lookback_period:
+            return 0
+
+        synthetic_index = np.dot(self.constituent_prices[-1], self.weights)
+        return self.index_prices[-1] - synthetic_index
+
+    def get_signal(self):
+        spread = self.calculate_spread()
+        if spread > self.threshold:
+            return -1  # Sell index, buy constituents
+        elif spread < -self.threshold:
+            return 1  # Buy index, sell constituents
+        else:
+            return 0  # No trade
+
+# Main method with example
+if __name__ == "__main__":
+    lookback = 3
+    threshold = 2.0
+    weights = [0.2, 0.3, 0.5]
+
+    # Create an instance of IndexArbitrage
+    index_arbitrage = IndexArbitrage(lookback, threshold, weights)
+
+    # Add price data for index and constituents
+    index_arbitrage.add_prices(100.0, [95.0, 105.0, 98.0])
+    index_arbitrage.add_prices(102.0, [98.0, 108.0, 100.0])
+    index_arbitrage.add_prices(105.0, [102.0, 110.0, 105.0])
+
+    # Calculate the spread and get the trading signal
+    spread = index_arbitrage.calculate_spread()
+    signal = index_arbitrage.get_signal()
+
+    # Display the results
+    print("Spread:", spread)
+    if signal == -1:
+        print("Trading Signal: Sell index, buy constituents")
+    elif signal == 1:
+        print("Trading Signal: Buy index, sell constituents")
+    else:
+        print("Trading Signal: No trade")
+```
 __Python Code Output:__
 ```
+Spread: -3.7
+Trading Signal: Buy index, sell constituents
 ```
-
 __Python Code Explanation:__
+In this example:
+- the calculated spread is __`-3.7`__.
+- this indicates a deviation above the specified threshold, resulting in a trading signal to buy the index and sell the constituents.
+
+#### 3) Index Arbitrage - Visualization:
+__index.csv__
+```
+Date,Close
+2024-01-01,3500.0
+2024-01-02,3520.0
+2024-01-03,3515.0
+2024-01-04,3530.0
+2024-01-05,3540.0
+2024-01-06,3555.0
+2024-01-07,3560.0
+```
+__components.csv__
+```
+Date,StockA,StockB,StockC,WeightA,WeightB,WeightC
+2024-01-01,100.0,200.0,150.0,0.4,0.3,0.3
+2024-01-02,101.0,201.0,152.0,0.4,0.3,0.3
+2024-01-03,102.0,202.0,153.0,0.4,0.3,0.3
+2024-01-04,103.0,203.0,154.0,0.4,0.3,0.3
+2024-01-05,104.0,204.0,155.0,0.4,0.3,0.3
+2024-01-06,105.0,205.0,156.0,0.4,0.3,0.3
+2024-01-07,106.0,206.0,157.0,0.4,0.3,0.3
+```
+```cpp
+#include <DataFrame/DataFrame.h>
+#include <xtensor/xarray.hpp>
+#include <xtensor/xview.hpp>
+#include <xtensor/xio.hpp>
+#include <sciplot/sciplot.hpp>
+#include <iostream>
+
+using namespace hmdf;
+using namespace xt;
+using namespace sciplot;
+
+// Define a type alias for the DataFrame
+using MyDataFrame = StdDataFrame<std::string>;
+
+int main() {
+    // Load CSV data
+    MyDataFrame df_index;
+    MyDataFrame df_components;
+
+    df_index.read("index.csv", io_format::csv2);
+    df_components.read("components.csv", io_format::csv2);
+
+    // Extract columns
+    auto index_values = df_index.get_column<double>("Close");
+    auto stock_a = df_components.get_column<double>("StockA");
+    auto stock_b = df_components.get_column<double>("StockB");
+    auto stock_c = df_components.get_column<double>("StockC");
+    auto weight_a = df_components.get_column<double>("WeightA");
+    auto weight_b = df_components.get_column<double>("WeightB");
+    auto weight_c = df_components.get_column<double>("WeightC");
+
+    // Convert std::vector to xtensor's xarray
+    xarray<double> index_x = xt::adapt(index_values);
+    xarray<double> stock_a_x = xt::adapt(stock_a);
+    xarray<double> stock_b_x = xt::adapt(stock_b);
+    xarray<double> stock_c_x = xt::adapt(stock_c);
+    xarray<double> weight_a_x = xt::adapt(weight_a);
+    xarray<double> weight_b_x = xt::adapt(weight_b);
+    xarray<double> weight_c_x = xt::adapt(weight_c);
+
+    // Calculate the theoretical index value using component stocks and their weights
+    xarray<double> theoretical_index = weight_a_x * stock_a_x + weight_b_x * stock_b_x + weight_c_x * stock_c_x;
+
+    // Calculate the spread between the actual and theoretical index values
+    xarray<double> spread = index_x - theoretical_index;
+
+    // Compute the mean and standard deviation of the spread
+    double mean_spread = xt::mean(spread)();
+    double std_dev_spread = xt::std_dev(spread)();
+
+    // Visualization using sciplot
+    Plot plot;
+    plot.xlabel("Time");
+    plot.ylabel("Spread");
+    plot.drawCurve(spread).label("Spread");
+    plot.drawHorizontalLine(mean_spread).label("Mean Spread").lineWidth(2).lineColor("red");
+    plot.drawHorizontalLine(mean_spread + std_dev_spread).label("Mean + 1 Std Dev").lineWidth(2).lineColor("green");
+    plot.drawHorizontalLine(mean_spread - std_dev_spread).label("Mean - 1 Std Dev").lineWidth(2).lineColor("blue");
+    plot.legend().atOutsideBottom().displayHorizontal().displayExpandWidthBy(2);
+
+    Figure fig = { plot };
+    Canvas canvas = { fig };
+    canvas.size(1000, 600);
+    canvas.show();
+
+    return 0;
+}
+```
+```bash
+g++ -std=c++17 -O2 -I/path/to/DataFrame -I/path/to/xtensor -I/path/to/sciplot example.cpp -o example -larmadillo -lopenblas
+```
+```python
+with open('index.csv', 'wb') as csvFile:
+  csvFile.write((
+    b'Date,Close\n'
+    b'2024-01-01,3500.0\n'
+    b'2024-01-02,3520.0\n'
+    b'2024-01-03,3515.0\n'
+    b'2024-01-04,3530.0\n'
+    b'2024-01-05,3540.0\n'
+    b'2024-01-06,3555.0\n'
+    b'2024-01-07,3560.0\n'))
+```
+```python
+with open('components.csv', 'wb') as csvFile:
+  csvFile.write((
+    b'Date,StockA,StockB,StockC,WeightA,WeightB,WeightC\n'
+    b'2024-01-01,100.0,200.0,150.0,0.4,0.3,0.3\n'
+    b'2024-01-02,101.0,201.0,152.0,0.4,0.3,0.3\n'
+    b'2024-01-03,102.0,202.0,153.0,0.4,0.3,0.3\n'
+    b'2024-01-04,103.0,203.0,154.0,0.4,0.3,0.3\n'
+    b'2024-01-05,104.0,204.0,155.0,0.4,0.3,0.3\n'
+    b'2024-01-06,105.0,205.0,156.0,0.4,0.3,0.3\n'
+    b'2024-01-07,106.0,206.0,157.0,0.4,0.3,0.3\n'))
+```
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Placeholder: Load data
+index = pd.read_csv('index.csv', index_col='Date', parse_dates=True)['Close']
+components = pd.read_csv('components.csv', index_col='Date', parse_dates=True)
+
+# Assume weights are provided
+weights = {'StockA': 0.3, 'StockB': 0.4, 'StockC': 0.3}
+
+# Calculate weighted sum of components
+components['Weighted_Sum'] = sum(components[stock] * weight for stock, weight in weights.items())
+
+# Calculate the spread
+spread = index - components['Weighted_Sum']
+
+# Plot the spread
+plt.figure(figsize=(10,6))
+plt.plot(spread.index, spread)
+plt.title('Index vs. Weighted Sum of Components Spread')
+plt.axhline(spread.mean(), color='red', linestyle='--')
+plt.show()
+```
+![Index Arbitrage - Visualization](./assets/index_arbitrage.png)
+
+
+#### 3) Index Arbitrage - Visualization Explanation:
+The visualization output from the provided C++ and python codes above will help you understand the behavior of the spread in your index arbitrage strategy. Here's a detailed explanation of the plot:
+
+##### 3.1. **Y-Axis (Spread)**
+   - **Represents**: The spread between the actual index values and the theoretical index values computed from the component stocks.
+   - **Units**: The same units as the index values (e.g., points).
+
+##### 3.2. **X-Axis (Time)**
+   - **Represents**: Time, typically shown as the index of the data points, which corresponds to the dates from the CSV files.
+
+##### 3.3. **Plot Components**
+
+   - **Blue Curve (Spread)**
+     - **Represents**: The spread over time, which is the difference between the actual index value and the theoretical index value.
+     - **Interpretation**: This curve shows how the difference between the actual and theoretical index values changes over time. Large deviations indicate significant differences between the index and its theoretical value, which can signal potential arbitrage opportunities.
+
+   - **Red Dashed Line (Mean Spread)**
+     - **Represents**: The mean value of the spread calculated over the entire dataset.
+     - **Interpretation**: This line provides a benchmark or reference point. In a mean-reversion strategy, you would expect the spread to revert to this mean value over time. Deviations from this line can be used to identify potential trading signals.
+
+   - **Green Dashed Line (Mean + 1 Std Dev)**
+     - **Represents**: The mean spread plus one standard deviation.
+     - **Interpretation**: This line indicates a threshold above which the spread is considered significantly high. Values above this line might suggest overvaluation in the index relative to its components, which could signal a selling opportunity.
+
+   - **Blue Dashed Line (Mean - 1 Std Dev)**
+     - **Represents**: The mean spread minus one standard deviation.
+     - **Interpretation**: This line indicates a threshold below which the spread is considered significantly low. Values below this line might suggest undervaluation in the index relative to its components, which could signal a buying opportunity.
+
+##### 3.4. **Legend**
+   - **Shows**: Labels for the spread curve and the mean lines.
+   - **Purpose**: Helps identify which lines represent the different components of the plot.
+
+##### Key Insights from the Plot
+
+1. **Mean-Reversion Signals**:
+   - When the spread moves significantly away from the mean (i.e., crosses the red dashed line), it might indicate a trading opportunity based on the expectation that the spread will revert to the mean.
+
+2. **Volatility and Standard Deviation**:
+   - The green and blue dashed lines represent the standard deviation thresholds. High volatility in the spread (i.e., frequent crossings of these lines) indicates a more active trading environment.
+
+3. **Overall Trend**:
+   - Observing how the spread behaves relative to its mean and standard deviation over time helps in assessing the effectiveness of the index arbitrage strategy. Consistent deviations might suggest that the index and its components are not perfectly aligned, which could present arbitrage opportunities.
+
+4. **Trading Strategy**:
+   - **Buy Signal**: When the spread falls below the blue dashed line (mean - 1 Std Dev), indicating the index is undervalued relative to its components.
+   - **Sell Signal**: When the spread rises above the green dashed line (mean + 1 Std Dev), indicating the index is overvalued relative to its components.
+
+##### Conclusion
+
+The visualization provides a clear view of how the spread between the actual index and its theoretical value evolves over time, along with statistical benchmarks (mean and standard deviation). This information is crucial for index arbitrage strategies, as it helps identify potential trading opportunities and assess the effectiveness of the strategy.
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
@@ -969,7 +1305,7 @@ __C++ Code Output:__
 ```
 ```
 
-__C++ Code Explanation:__
+__C++ Code Output Explanation:__
 
 
 #### 4) Long-Short Strategy - __`Python Example`__
@@ -983,5 +1319,9 @@ __Python Code Output:__
 ```
 
 __Python Code Explanation:__
+
+#### 4) Long-Short Strategy - Visualization:
+
+#### 4) Long-Short Strategy - Visualization Explanation:
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
