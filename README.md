@@ -5,10 +5,41 @@ My Private Repository of Trading Strategies
 ## Table Of Contents <a name="top"></a>
 1. [__Mean Reversion Strategies__](#mean-reversion-strategies)
     - 1.1. [__1) Statistical Arbitrage:__](#1-statistical-arbitrage)
+        - Statistical Arbitrage (StatArb) involves trading pairs of securities that historically move together. When their price relationship diverges, traders expect them to revert to the mean, thus creating profit opportunities.    
+        - __Key Steps:__
+            - __Identify Pairs:__ Select two assets with a strong historical correlation.
+            - __Monitor Spread:__ Calculate the price difference (spread) between the two assets.
+            - __Trade Signals:__ When the spread deviates significantly from its mean, initiate trades expecting reversion.
+        - __Use Cases:__
+            - __Equities:__ Commonly used with stocks exhibiting high correlation.
+            - __FX:__ Currency pairs that move together due to economic ties.
+            - __Futures:__ Contracts on similar commodities or indices.    
     - 1.2. [__2) Triplets Trading:__](#2-triplets-trading)
+        - Triplets Trading extends pair trading to three assets. The idea is to find three securities whose combined weighted price exhibits mean-reverting behavior.
+        - __Key Steps:__
+            - __Select Triplets:__ Find three assets with a cointegrated relationship.
+            - __Determine Weights:__ Assign weights to each asset to balance the combined position.
+            - __Monitor Combined Spread:__ Track the combined weighted price for deviations.
+        - __Use Cases:__
+            - __Equities:__ Stocks from the same sector.
+            - __Commodities:__ Related commodities like oil, gas, and energy ETFs.    
     - 1.3. [__3) Index Arbitrage:__](#3-index-arbitrage)
+        - Index Arbitrage exploits price discrepancies between an index and its constituent components. When the sum of the components' prices diverges from the index's price, arbitrageurs can buy the undervalued and sell the overvalued.
+        - __Key Steps:__
+            - __Monitor Index vs. Components:__ Track the price of the index and the weighted sum of its components.
+            - __Identify Discrepancies:__ When significant deviations occur, execute trades expecting convergence.
+        - __Use Cases:__
+            - __Equities:__ Index ETFs vs. underlying stocks.
+            - __Futures:__ Index futures vs. spot indices.
     - 1.4. [__4) Long Short Strategy:__](#4-long-short-strategy)
-
+        - A Long-Short strategy involves taking long positions in undervalued assets and short positions in overvalued ones, based on their deviation from the mean.
+        - __Key Steps:__
+            - __Valuation Metrics:__ Use indicators like P/E ratios, moving averages, etc.
+            - __Identify Over/Undervalued Assets:__ Based on the metrics, classify assets.
+            - __Execute Trades:__ Go long on undervalued and short on overvalued assets.
+        - __Use Cases:__
+            - __Equities:__ Stocks with varying valuations.
+            - __FX:__ Currencies mispriced relative to economic indicators.
 
 ## Mean Reversion Strategies
 Mean reversion strategies in trading involve taking advantage of the tendency of asset prices to revert to their historical averages over time. These strategies assume that when an asset price deviates significantly from its average, it is likely to move back towards the average in the future. Mean reversion strategies are often implemented using statistical analysis, time series modeling, and quantitative methods.
