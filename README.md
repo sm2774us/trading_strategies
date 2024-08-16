@@ -1,7 +1,6 @@
 # __Trading Strategies__
 My Private Repository of Trading Strategies
 
-
 ## Table Of Contents <a name="top"></a>
 1. [__Mean Reversion Strategies__](#mean-reversion-strategies)
     - 1.0. [__0) Math Concepts:__](#0-math-concepts)
@@ -46,6 +45,8 @@ My Private Repository of Trading Strategies
         - __Use Cases:__
             - __Equities:__ Stocks with varying valuations.
             - __FX:__ Currencies mispriced relative to economic indicators.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ## Mean Reversion Strategies
 Mean reversion strategies in trading involve taking advantage of the tendency of asset prices to revert to their historical averages over time. These strategies assume that when an asset price deviates significantly from its average, it is likely to move back towards the average in the future. Mean reversion strategies are often implemented using statistical analysis, time series modeling, and quantitative methods.
@@ -205,6 +206,8 @@ int main() {
 }
 
 ```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 #### 0.B. **Stationarity**
 Stationarity refers to a time series whose statistical properties (mean, variance) do not change over time. A time series $X_t$ is stationary if:
@@ -408,6 +411,8 @@ int main() {
 
 ```
 
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 #### 0.C. **Linear Regression**
 Linear regression estimates the relationship between a dependent variable `y` and an independent variable `x`:
 
@@ -505,6 +510,8 @@ int main() {
     std::cout << "Beta (Slope): " << beta(1) << std::endl;    
 }
 ```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 #### 0.D. **ADF (Augmented Dickey-Fuller) and Johansen Test**
 
@@ -884,6 +891,8 @@ Critical Values (5%): [3.84, 1.28]
    - **C++**: Requires custom implementations and manual handling of statistical computations, which can introduce differences in precision and accuracy.
 
 In summary, while the C++ code can provide a general idea of the test results, it may lack the precision and accuracy of Python’s statistical libraries. Accurate p-value calculations and critical values require more comprehensive statistical methods or libraries.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 #### 0.E. **Half-Life**
 Half-life measures the time it takes for a mean-reverting process to revert halfway back to the mean. For an Ornstein-Uhlenbeck process:
