@@ -2,6 +2,15 @@
 My Private Repository of Trading Strategies
 
 ## Table Of Contents <a name="top"></a>
+0. [__News Sentiment Trading Strategies__](#news-sentiment-trading-strategies)
+    - 0.0. [__0) Concepts and Trading:__](#0-concepts-and-trading)
+        - 0.0.1. [__0.A) Retrieving News Data:__](#0a-retrieving-news-data)
+        - 1.0.2. [__0.B) Identifying Sentiment from News Headline:__](#0b-identifying-sentiment-from-news-headline)
+        - 1.0.3. [__0.C) Sentiment Score:__](#0c-sentiment-score)
+        - 1.0.4. [__0.D) LLM Models:__](#0d-llm-models)
+    - 0.1. [__1) Buy the Rumor Sell the Event:__](#1-buy-the-rumor-sell-the-event)
+    - 0.2. [__2) VADER-based Sentiment Analysis:__](#2-vader-based-sentiment-analysis)
+    - 0.3. [__3) Optimize Strategy Using Technical Indicators:__](#3-optimize-strategy-using-technical-indicators)
 1. [__Mean Reversion Strategies__](#mean-reversion-strategies)
     - 1.0. [__0) Math Concepts:__](#0-math-concepts)
         - 1.0.1. [__0.A) Correlation and Co-Integration:__](#0a-correlation-and-co-integration)
@@ -45,10 +54,45 @@ My Private Repository of Trading Strategies
         - __Use Cases:__
             - __Equities:__ Stocks with varying valuations.
             - __FX:__ Currencies mispriced relative to economic indicators.
+2. [__Momentum Trading Strategies__](#momentum-trading-strategies)
+    - 2.0. [__2.0) Finance and Math Skills:__](#20-finance-and-math-skills)
+        - 2.0.1. [__2.A) Contango and Backwardation:__](#2a-contango-and-backwardation)
+        - 2.0.2. [__2.B) Hurst Exponent:__](#2b-hurst-exponent)
+        - 2.0.3. [__2.C) Sharpe Ratio, Maximum Drawdowns:__](#2c-sharpe-ratio-maximum-drawdowns)
+        - 2.0.4. [__2.D) Correlation Analysis:__](#2d-correlation-analysis)
+    - 2.1. [__2.1) Roll Returns:__](#21-roll-returns)
+    - 2.2. [__2.2) Time Series Momentum:__](#22-time-series-momentum)
+    - 2.3. [__2.3) Cross Sectional Momentum:__](#23-cross-sectional-momentum)
+    - 2.4. [__2.4) Crossover & Breakout:__](#24-crossover-breakout)
+    - 2.5. [__2.5) Event Driven Momentum:__](#25-event-driven-momentum)
+3. [__Trading Alphas: Mining, Optimization, and System Design__](#trading-alphas-mining-optimization-and-system-design)
+    - 3.0. [__3.0) Math Concepts and Trading:__](#30-math-concepts-and-trading)
+        - 3.0.1. [__3.A) Cointegration:__](#3a-cointegration)
+        - 3.0.2. [__3.B) Correlation:__](#3b-correlation)
+        - 3.0.3. [__3.C) Execution:__](#3c-execution)
+        - 3.0.4. [__3.D) Building a trading platform:__](#3d-building-a-trading-platform)
+        - 3.0.5. [__3.E) System Parameter Permutation:__](#3e-system-parameter-permutation)
+    - 3.1. [__3.1) Mean Reversion:__](#31-mean-reversion)
+    - 3.2. [__3.2) K-Nearest Neighbors:__](#32-k-nearest-neighbors)
+    - 3.3. [__3.3) Time series & cross sectional alphas:__](#33-time-series-cross-sectional-alphas)
+    - 3.4. [__3.4) Candlestick Patterns:__](#34-candlestick-patterns)
+    - 3.5. [__3.5) Vectorized SL & TP:__](#35-vectorized-sl-and-tp)
+4. [__Trading in Milliseconds: MFT Straegies and Setup__](#trading-in-milliseconds-mft-straegies-and-setup)
+    - 4.0. [__4.0) Concepts and Trading:__](#40-concepts-and-trading)
+        - 4.0.1. [__4.A) Time and Volume Bars:__](#4a-time-and-volume-bars)
+        - 4.0.2. [__4.B) Spoofing, Front-running:__](#4b-spoofing-front-running)
+        - 4.0.3. [__4.C) IOC and ISO orders:__](#4c-ioc-and-iso-orders)
+        - 4.0.4. [__4.D) Lee-Ready Algorithm, BVC Rule:__](#4d-lee-ready-algorithm-bvc-rule)
+        - 4.0.5. [__4.E) Tick Data:__](#4e-tick-data)
+    - 4.1. [__4.1) Order flow trading using tick data:__](#41-order-flow-trading-using-tick-data)
+    - 4.2. [__4.2) Hide and light:__](#42-hide-and-light)
+    - 4.3. [__4.3) Stop hunting:__](#43-stop-hunting)
+    - 4.4. [__4.4) Ticking:__](#4-ticking)
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
-## Mean Reversion Strategies
+## __News Sentiment Trading Strategies__
+## __Mean Reversion Strategies__
 Mean reversion strategies in trading involve taking advantage of the tendency of asset prices to revert to their historical averages over time. These strategies assume that when an asset price deviates significantly from its average, it is likely to move back towards the average in the future. Mean reversion strategies are often implemented using statistical analysis, time series modeling, and quantitative methods.
 
 __Use Cases for Mean Reversion Strategies:__
