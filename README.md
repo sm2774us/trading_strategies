@@ -99,17 +99,7 @@ My Private Repository of Trading Strategies
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ## __News Sentiment Trading Strategies__
-## __Mean Reversion Strategies__
-Mean reversion strategies in trading involve taking advantage of the tendency of asset prices to revert to their historical averages over time. These strategies assume that when an asset price deviates significantly from its average, it is likely to move back towards the average in the future. Mean reversion strategies are often implemented using statistical analysis, time series modeling, and quantitative methods.
-
-__Use Cases for Mean Reversion Strategies:__
-Mean reversion strategies can be applied across various asset categories including:
-- __Equities:__ Mean reversion strategies are commonly used in stock markets to exploit price disparities between related stocks.
-- __Fixed Income:__ Traders can implement mean reversion strategies in bond markets to benefit from yield spreads reverting to their historical averages.
-- __Futures:__ Mean reversion strategies in futures markets involve exploiting price differentials between futures contracts and their underlying assets.
-- __FX:__ Traders in the foreign exchange market can use mean reversion strategies to capitalize on currency pairs' price deviations from their historical averages.
-
-These strategies can be programmed in both C++ and Python to automate trading decisions based on statistical analysis and quantitative models. C++ offers high performance, while Python provides ease of implementation and extensive libraries for quantitative analysis.
+__News Sentiment Trading Strategies__ leverage the analysis of news data to make informed trading decisions. These strategies are based on the idea that news events can influence market sentiment, which in turn affects asset prices. Here’s a detailed explanation of the key concepts and how they apply to trading.
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
@@ -183,6 +173,8 @@ int main() {
 }
 ```
 
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 #### 0.B. **Identifying Sentiment from News Headline**
 **Concept**: Once the news data is retrieved, the next step is to identify the sentiment conveyed by the news headlines or articles. This process involves analyzing the text to determine whether the sentiment is positive, negative, or neutral. Various techniques can be used, including keyword-based analysis, machine learning models, and natural language processing (NLP) methods.
 
@@ -250,6 +242,8 @@ int main() {
 }
 ```
 
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 #### 0.C. **Sentiment Score**
 
 **Concept**: The sentiment score is a numerical representation of the sentiment extracted from text. This score typically ranges from -1 to 1, where -1 represents very negative sentiment, 1 represents very positive sentiment, and 0 represents neutral sentiment. The sentiment score is crucial for quantifying the sentiment in a way that can be used in trading algorithms.
@@ -266,6 +260,8 @@ print("Sentiment Score:", sentiment_score)
 ```cpp
 std::cout << "Sentiment Score: " << json["compound"] << std::endl; 
 ```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 #### 0.D. **LLM (Large Language Models) Models**
 
@@ -345,6 +341,8 @@ int main() {
 }
 ```
 
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 #### 0.E. **Use Cases in Trading**
 
 **Asset Categories**: News sentiment trading strategies can be applied across various asset categories:
@@ -362,6 +360,8 @@ int main() {
 6. **Options**: Options trading can benefit from sentiment analysis by predicting the underlying asset's price direction, helping traders decide on calls and puts.
 
 7. **Derivatives**: Complex derivatives that rely on underlying asset prices can benefit from sentiment analysis to anticipate market movements.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 #### 0.F. **Visualization Examples**
 
@@ -402,6 +402,8 @@ int main() {
 ```
 
 By combining these concepts, traders can build powerful strategies that leverage real-time news data, sentiment analysis, and predictive models to make informed trading decisions across various asset classes
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ### 1) Buy the Rumor, Sell the Event:
 
@@ -493,6 +495,8 @@ int main() {
     return 0;
 }
 ```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ### 2) VADER-based Sentiment Analysis:
 **Concept**:
@@ -651,6 +655,8 @@ int main() {
 
 Each approach has its benefits: using Python provides direct access to VADER's implementation, while using an API simplifies integration at the cost of dependency on external services.
 
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 ### 3) Optimize Strategy Using Technical Indicators:
 **Concept**:
 - Combine sentiment analysis with technical indicators (e.g., moving averages, RSI) to optimize trading strategies.
@@ -741,6 +747,7 @@ int main() {
     return 0;
 }
 ```
+
 3. **Explanation**:
 3.1. **`calculateSMA` and `calculateRSI`**:
    - These functions calculate the Simple Moving Average (SMA) and Relative Strength Index (RSI) respectively, using the TA-Lib library in C++.
@@ -835,6 +842,8 @@ The output will be the Moving Average and RSI values for the given `price_data` 
 
 This approach is more aligned with modern C++ practices, providing both performance and readability improvements over manually managing loops and arithmetic operations.
 
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 ### **Use Cases for News Sentiment Trading Strategies**
 
 1. **FX (Foreign Exchange)**:
@@ -851,6 +860,8 @@ This approach is more aligned with modern C++ practices, providing both performa
    
 5. **Futures and Options**:
    - Anticipated changes in commodity prices, weather events, and economic indicators.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ### **News Sentiment Trading Strategies - Visualization Examples**
 
@@ -906,12 +917,30 @@ int main() {
 ```
 ![News Sentiment Trading Strategies Visualization](./assets/price_trend_sentiment_analysis.png)
 
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 ### **News Sentiment Trading Strategies - Summary**
 
 - **Python** provides a rich ecosystem with libraries like `VADER`, `TA-Lib`, and `matplotlib` for sentiment analysis and technical indicators, making it easy to integrate and visualize data.
 - **C++** can also handle these tasks but may require more effort to integrate third-party libraries for sentiment analysis and visualization.
 
 The choice of language and tools often depends on the specific needs of the project, including performance requirements and ease of integration with other systems.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+## __Mean Reversion Strategies__
+Mean reversion strategies in trading involve taking advantage of the tendency of asset prices to revert to their historical averages over time. These strategies assume that when an asset price deviates significantly from its average, it is likely to move back towards the average in the future. Mean reversion strategies are often implemented using statistical analysis, time series modeling, and quantitative methods.
+
+__Use Cases for Mean Reversion Strategies:__
+Mean reversion strategies can be applied across various asset categories including:
+- __Equities:__ Mean reversion strategies are commonly used in stock markets to exploit price disparities between related stocks.
+- __Fixed Income:__ Traders can implement mean reversion strategies in bond markets to benefit from yield spreads reverting to their historical averages.
+- __Futures:__ Mean reversion strategies in futures markets involve exploiting price differentials between futures contracts and their underlying assets.
+- __FX:__ Traders in the foreign exchange market can use mean reversion strategies to capitalize on currency pairs' price deviations from their historical averages.
+
+These strategies can be programmed in both C++ and Python to automate trading decisions based on statistical analysis and quantitative models. C++ offers high performance, while Python provides ease of implementation and extensive libraries for quantitative analysis.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ### 1) Math Concepts:
 
