@@ -62,7 +62,7 @@ My Private Repository of Trading Strategies
             - __Equities:__ Stocks with varying valuations.
             - __FX:__ Currencies mispriced relative to economic indicators.
 2. [__Momentum Trading Strategies__](#momentum-trading-strategies)
-    - 2.0. [__2.0) Finance and Math Skills:__](#20-finance-and-math-skills)
+    - 2.0. [__2.0) Finance and Math Skills:__](#2-finance-and-math-skills)
         - 2.0.1. [__2.A) Contango and Backwardation:__](#2a-contango-and-backwardation)
         - 2.0.2. [__2.B) Hurst Exponent:__](#2b-hurst-exponent)
         - 2.0.3. [__2.C) Sharpe Ratio, Maximum Drawdowns:__](#2c-sharpe-ratio-maximum-drawdowns)
@@ -4693,23 +4693,1273 @@ Momentum strategies can be applied across a variety of asset categories:
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ## __Trading Alphas: Mining, Optimization, and System Design__
+**Trading Alphas** refers to strategies or factors that provide traders with an edge in the market, allowing them to achieve returns beyond the benchmark or market index. These strategies are mined from historical data, optimized, and then implemented in a trading system. The entire process includes the identification of potential alpha strategies, rigorous backtesting, optimization, and system design for execution in real-time trading environments.
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ### 3) Math Concepts and Trading:
 
-#### __3.A) Cointegration:__
+#### 3.A. **Cointegration:**
+**Concept:**
+Cointegration is a statistical property of a collection of time series variables. If two or more time series are cointegrated, it means that there is a long-term equilibrium relationship between them, despite short-term deviations. This is often used in pairs trading where the prices of two stocks are expected to revert to their mean spread.
 
-#### __3.B) Correlation:__
+**Mathematical Formula:**
 
-#### __3.C) Execution:__
+Given two time series $X_t$ and $Y_t$, we can express their cointegration relationship as:
+$$Y_t = \alpha + \beta X_t + \epsilon_t$$
 
-#### __3.D) Building a trading platform:__
+Where:
+- $\alpha$ is the intercept.
+- $\beta$ is the cointegration coefficient.
+- $\epsilon_t$ is the error term, which should be stationary.
 
-#### __3.E) System Parameter Permutation:__
+**Test for Cointegration:**
 
-- 3.1. [__3.1) Mean Reversion:__](#31-mean-reversion)
-    - 3.2. [__3.2) K-Nearest Neighbors:__](#32-k-nearest-neighbors)
-    - 3.3. [__3.3) Time series & cross sectional alphas:__](#33-time-series-cross-sectional-alphas)
-    - 3.4. [__3.4) Candlestick Patterns:__](#34-candlestick-patterns)
-    - 3.5. [__3.5) Vectorized SL & TP:__](#35-vectorized-sl-and-tp)
+1. **Engle-Granger Two-Step Test:**
+   - **Step 1:** Regress $Y_t$ on $X_t$ to obtain residuals $\hat{\epsilon}_t$.
+   - **Step 2:** Test whether the residuals $\hat{\epsilon}_t$ are stationary using an ADF test.
+
+2. **Johansen Test:** 
+   - Used for testing multiple cointegrating relationships among multiple time series.
+
+**Application in Trading:**
+Cointegration can be used to identify pairs of stocks that are likely to move together in the long run. In pairs trading, a trader would go long on one stock and short on the other when the spread between them deviates from the historical norm.
+
+**Python3 Implementation:**
+
+We'll use `statsmodels` for cointegration testing. The Engle-Granger two-step test will be used to test for cointegration between two time series.
+
+```python
+import numpy as np
+import pandas as pd
+from statsmodels.tsa.stattools import coint
+
+# Example data
+np.random.seed(0)
+x = np.cumsum(np.random.randn(100))  # Random walk
+y = x + np.random.normal(0, 1, 100)  # y is a noisy version of x
+
+# Cointegration test
+score, p_value, _ = coint(x, y)
+print(f"Cointegration score: {score}")
+print(f"P-value: {p_value}")
+```
+
+**C++17 Implementation:**
+
+We'll use the Eigen library for matrix operations. For statistical tests like cointegration, it's often easier to use Python due to the lack of direct support in C++ libraries. However, here's a simplified version assuming basic regression:
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <Eigen/Dense>
+
+// Function to calculate OLS regression
+Eigen::VectorXd ols(const Eigen::MatrixXd& X, const Eigen::VectorXd& y) {
+    return (X.transpose() * X).ldlt().solve(X.transpose() * y);
+}
+
+// Simple cointegration test example
+void cointegration_test(const std::vector<double>& x, const std::vector<double>& y) {
+    int n = x.size();
+    Eigen::MatrixXd X(n, 2);
+    Eigen::VectorXd Y(n);
+
+    for (int i = 0; i < n; ++i) {
+        X(i, 0) = x[i];
+        X(i, 1) = 1.0;  // Constant term
+        Y(i) = y[i];
+    }
+
+    Eigen::VectorXd params = ols(X, Y);
+    Eigen::VectorXd residuals = Y - X * params;
+    double sigma2 = residuals.squaredNorm() / (n - 2);
+    Eigen::MatrixXd cov = sigma2 * (X.transpose() * X).inverse();
+
+    std::cout << "Cointegration coefficient: " << params(0) << std::endl;
+    std::cout << "Residual variance: " << sigma2 << std::endl;
+}
+
+int main() {
+    std::vector<double> x = { /* your data */ };
+    std::vector<double> y = { /* your data */ };
+    cointegration_test(x, y);
+    return 0;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+#### 3.B. **Correlation:**
+**Concept:**
+Correlation measures the strength and direction of the linear relationship between two variables. It is a key concept in quantitative finance for understanding how different assets or financial instruments move in relation to each other.
+
+**Mathematical Formula:**
+
+The Pearson correlation coefficient $\rho$ between two time series $X_t$ and $Y_t$ is given by:
+$$\rho_{XY} = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}$$
+
+Where:
+- $\text{Cov}(X, Y)$ is the covariance between $X$ and $Y$.
+- $\sigma_X$ and $\sigma_Y$ are the standard deviations of $X$ and $Y$, respectively.
+
+**Application in Trading:**
+Correlation is used to diversify portfolios. For example, if two assets have a low or negative correlation, holding both can reduce portfolio risk. It is also used in strategy development, such as identifying hedging opportunities.
+
+**Python3 Implementation:**
+
+We'll use `numpy` to calculate Pearson correlation.
+
+```python
+import numpy as np
+
+# Example data
+x = np.random.randn(100)
+y = np.random.randn(100)
+
+# Compute Pearson correlation coefficient
+correlation = np.corrcoef(x, y)[0, 1]
+print(f"Pearson correlation coefficient: {correlation}")
+```
+
+**C++17 Implementation:**
+
+We use Eigen for matrix operations and basic correlation calculations.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <numeric>
+#include <Eigen/Dense>
+
+double calculate_correlation(const std::vector<double>& x, const std::vector<double>& y) {
+    Eigen::VectorXd X = Eigen::VectorXd::Map(x.data(), x.size());
+    Eigen::VectorXd Y = Eigen::VectorXd::Map(y.data(), y.size());
+
+    double mean_x = X.mean();
+    double mean_y = Y.mean();
+
+    double cov = ((X.array() - mean_x) * (Y.array() - mean_y)).mean();
+    double std_x = std::sqrt(((X.array() - mean_x).square()).mean());
+    double std_y = std::sqrt(((Y.array() - mean_y).square()).mean());
+
+    return cov / (std_x * std_y);
+}
+
+int main() {
+    std::vector<double> x = { /* your data */ };
+    std::vector<double> y = { /* your data */ };
+
+    double correlation = calculate_correlation(x, y);
+    std::cout << "Pearson correlation coefficient: " << correlation << std::endl;
+
+    return 0;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+#### 3.C. **Execution:**
+**Concept:**
+Execution refers to the process of placing trades in the market to implement a trading strategy. It involves deciding how to execute orders to achieve the best possible price and minimize market impact.
+
+**Key Considerations:**
+- **Order Types:** Market orders, limit orders, stop-loss orders, etc.
+- **Execution Strategies:** Algorithms like VWAP (Volume Weighted Average Price), TWAP (Time Weighted Average Price), and implementation shortfall.
+- **Latency:** The time it takes to execute an order, which can affect trading performance, especially in high-frequency trading.
+
+**Application in Trading:**
+Efficient execution strategies ensure that trades are executed at optimal prices with minimal slippage and market impact, which is crucial for maintaining profitability and adhering to trading algorithms.
+
+**Python3 Implementation:**
+
+For order execution and handling, `alpaca-trade-api` can be used.
+
+```python
+from alpaca_trade_api.rest import REST, TimeFrame
+
+api = REST('your_api_key', 'your_secret_key', base_url='https://paper-api.alpaca.markets')
+
+# Example: Submit a market order
+api.submit_order(
+    symbol='AAPL',
+    qty=1,
+    side='buy',
+    type='market',
+    time_in_force='gtc'
+)
+```
+
+**C++17 Implementation:**
+
+Direct trading API access from C++ can be complex. Instead, you might interact with a trading system or API through HTTP requests using libraries like `libcurl`.
+
+```cpp
+#include <iostream>
+#include <curl/curl.h>
+
+// Example function to submit an order
+void submit_order(const std::string& symbol, int qty, const std::string& side) {
+    CURL *curl;
+    CURLcode res;
+
+    curl_global_init(CURL_GLOBAL_ALL);
+    curl = curl_easy_init();
+
+    if(curl) {
+        std::string url = "https://api.tradingplatform.com/orders";
+        std::string data = "symbol=" + symbol + "&qty=" + std::to_string(qty) + "&side=" + side;
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+
+        res = curl_easy_perform(curl);
+
+        if(res != CURLE_OK) {
+            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+        }
+
+        curl_easy_cleanup(curl);
+    }
+
+    curl_global_cleanup();
+}
+
+int main() {
+    submit_order("AAPL", 1, "buy");
+    return 0;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+#### 3.D. **Building a trading platform:**
+**Concept:**
+Building a trading platform involves creating a system that can handle data retrieval, strategy execution, risk management, and order placement. It requires integrating various components such as data feeds, trading algorithms, execution systems, and interfaces.
+
+**Key Components:**
+- **Data Feed:** To retrieve real-time and historical market data.
+- **Strategy Engine:** To process data and generate trading signals based on predefined algorithms.
+- **Execution System:** To place orders and manage trades.
+- **Risk Management:** To monitor and manage exposure, volatility, and other risk factors.
+- **User Interface:** For monitoring and manual intervention if necessary.
+
+**Application in Trading:**
+A robust trading platform enables traders to automate their strategies, handle large volumes of trades, and make informed decisions based on comprehensive market data.
+
+**Python3 Implementation:**
+
+Using `backtrader` for strategy development and testing.
+
+```python
+import backtrader as bt
+
+class MyStrategy(bt.SignalStrategy):
+    def __init__(self):
+        self.signal_add(bt.SIGNAL_LONG, self.data.close)
+
+cerebro = bt.Cerebro()
+cerebro.addstrategy(MyStrategy)
+
+# Load data and run strategy
+data = bt.feeds.YahooFinanceData(dataname='AAPL', fromdate=datetime(2021, 1, 1), todate=datetime(2021, 12, 31))
+cerebro.adddata(data)
+cerebro.run()
+```
+
+**C++17 Implementation:**
+
+Building a trading platform in C++ is more complex and often involves integrating multiple components. Here’s a simplified outline:
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <Eigen/Dense>
+
+class TradingStrategy {
+public:
+    virtual void apply(const std::vector<double>& data) = 0;
+};
+
+class MovingAverageStrategy : public TradingStrategy {
+public:
+    void apply(const std::vector<double>& data) override {
+        // Apply moving average strategy
+        Eigen::VectorXd prices = Eigen::VectorXd::Map(data.data(), data.size());
+        Eigen::VectorXd moving_avg = prices.segment(0, prices.size() - 1).mean();  // Simplified example
+        std::cout << "Moving Average: " << moving_avg << std::endl;
+    }
+};
+
+int main() {
+    std::vector<double> price_data = { /* your data */ };
+    MovingAverageStrategy strategy;
+    strategy.apply(price_data);
+    return 0;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+#### 3.E. **System Parameter Permutation:**
+**Concept:**
+System parameter permutation involves systematically varying the parameters of a trading system to find the optimal configuration. This process is essential for tuning trading strategies and improving performance.
+
+**Key Techniques:**
+- **Grid Search:** Exhaustively searching over a specified parameter grid.
+- **Random Search:** Randomly sampling parameter values within specified ranges.
+- **Bayesian Optimization:** Using probabilistic models to find the optimal set of parameters.
+
+**Mathematical Formulation:**
+Given a trading strategy with parameters $\theta$, we aim to optimize the performance metric $f(\theta)$. This can be formulated as:
+$$\theta^* = \text{argmax}_\theta f(\theta)$$
+
+Where $\theta^*$ is the optimal parameter set that maximizes the performance metric $f(\theta)$.
+
+**Application in Trading:**
+Parameter optimization ensures that trading strategies are fine-tuned to adapt to changing market conditions and maximize profitability. It is used in backtesting and forward-testing phases to validate strategy robustness.
+
+**Python3 Implementation:**
+
+Using `scikit-learn` for parameter optimization.
+
+```python
+from sklearn.model_selection import GridSearchCV
+from sklearn.svm import SVR
+
+# Example model and parameter grid
+model = SVR()
+param_grid = {'C': [1, 10], 'epsilon': [0.1, 0.2]}
+grid_search = GridSearchCV(model, param_grid, cv=5)
+grid_search.fit(X_train, y_train)
+
+print(f"Best parameters: {grid_search.best_params_}")
+```
+
+**C++17 Implementation:**
+
+Parameter optimization can be manually implemented, or use a library like `nlopt` for optimization.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <nlopt.hpp>
+
+double objective_function(const std::vector<double>& x) {
+    // Example objective function
+    return x[0] * x[0] + x[1] * x[1];
+}
+
+int main() {
+    nlopt::opt opt(nlopt::LD_LBFGS, 2);  // Choosing optimization algorithm
+
+    std::vector<double> lb = {-1.0, -1.0};  // Lower bounds
+    std::vector<double> ub = {1.0, 1.0};   // Upper bounds
+    opt.set_lower_bounds(lb);
+    opt.set_upper_bounds(ub);
+
+    std::vector<double> x = {0.0, 0.0};  // Initial guess
+    double minf;
+
+    opt.set_min_objective([](const std::vector<double>& x, std::vector<double>& grad, void* data) {
+        return objective_function(x);
+    }, nullptr);
+
+    nlopt::result result = opt.optimize(x, minf);
+    std::cout << "Minimum value: "
+
+ << minf << std::endl;
+    std::cout << "Optimal parameters: ";
+    for (const auto& xi : x) std::cout << xi << " ";
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+### Summary
+- **Cointegration:**
+  - Helps in identifying long-term relationships between assets for pairs trading.
+  - Identifies long-term equilibrium relationships between time series.
+    - __`Python`__ uses __`statsmodels`__, while,
+    - __`C++`__ relies on __`Eigen`__ for basic regression.
+- **Correlation:**
+  - Assists in portfolio diversification and understanding asset relationships.
+  - Measures the strength of linear relationships between variables.
+  - Both __`Python`__ and __`C++`__ use __basic statistical operations__.
+- **Execution:**
+  - Strategies ensure optimal trade placements with minimal impact.
+  - Involves placing trades efficiently.
+    - __`Python`__ uses __`alpaca-trade-api`__ ( or any other trading API of your choosing), while,
+    - __`C++`__ uses __`libcurl`__ for HTTP requests.
+- **Building a Trading Platform:**
+  - Involves integrating data, strategy, execution, and risk management systems.
+  - Integrates various components for trading.
+    - __`Python`__ uses __`backtrader`__, and,
+    - __`C++`__ focuses on implementing strategies and components.
+- **System Parameter Permutation:**
+  - Optimizes trading strategy parameters for better performance.
+    - __`Python`__ uses __`scikit-learn`__, while,
+    - __`C++`__ uses __`nlopt`__ for optimization.
+
+These concepts are crucial for developing and optimizing trading strategies, improving execution, and designing robust trading systems.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __3.1) Mean Reversion:__
+- **Mathematical Formula:**
+__Mean reversion__ is the financial theory that asset prices and historical returns eventually return to their long-term mean or average level. The concept is widely used in trading strategies, particularly in pairs trading and statistical arbitrage.
+The mathematical expression for mean reversion can be understood using the __Ornstein-Uhlenbeck__ (__OU__) process, which is a mean-reverting stochastic process:
+
+$$
+dX_t = \theta (\mu - X_t) dt + \sigma dW_t
+$$
+
+Where:
+- $X_t$ is the price of the asset at time $t$.
+- $\theta$ is the speed of mean reversion, indicating how quickly the price reverts to the mean.
+- $\mu$ is the long-term mean level of the price.
+- $\sigma$ is the volatility of the asset's price.
+- $dW_t$ is a Wiener process or Brownian motion, representing random market shocks.
+
+The discrete version of this process can be approximated as:
+
+$$
+X_{t+1} = X_t + \theta (\mu - X_t) + \sigma \epsilon_t
+$$
+
+Where $\epsilon_t$ is a random shock at time $t$ with a mean of 0 and variance of 1.
+
+- **Explanation:**
+In trading, the __mean reversion strategy__ assumes that the price of an asset will tend to revert to its historical average over time. When the price deviates significantly from this mean, the strategy suggests that the asset is either overbought or oversold:
+- **Overbought Condition:** When the price is significantly above the mean, it is expected to decrease, reverting to the mean.
+- **Oversold Condition:** When the price is significantly below the mean, it is expected to increase, reverting to the mean.
+
+- **Mean Reversion Strategy in Trading:**
+1. **Identify the Mean:** Calculate the moving average of the asset’s price over a specified period.
+
+2. **Determine Deviation:** Measure the deviation of the current price from the mean. A common method is to use standard deviations as a threshold.
+
+3. **Entry Signal:**
+   - **Buy Signal:** When the price falls below the mean by a certain threshold (e.g., 2 standard deviations), a buy signal is triggered, anticipating a price increase back to the mean.
+   - **Sell Signal:** When the price rises above the mean by a certain threshold, a sell signal is triggered, anticipating a price decrease back to the mean.
+
+4. **Exit Signal:** Close the position when the price reverts to the mean or crosses it.
+
+- **Python Implementation:**
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def mean_reversion_strategy(prices, window=20, threshold=2):
+    mean = prices.rolling(window=window).mean()
+    std = prices.rolling(window=window).std()
+    
+    z_score = (prices - mean) / std
+
+    buy_signals = z_score < -threshold
+    sell_signals = z_score > threshold
+
+    return buy_signals, sell_signals
+
+# Example usage
+prices = pd.Series(np.random.normal(100, 1, 100).cumsum())  # Simulated price data
+buy_signals, sell_signals = mean_reversion_strategy(prices)
+
+plt.plot(prices, label='Price')
+plt.plot(prices[buy_signals], '^', markersize=10, color='g', label='Buy Signal')
+plt.plot(prices[sell_signals], 'v', markersize=10, color='r', label='Sell Signal')
+plt.legend()
+plt.show()
+```
+- **C++ Implementation Using Eigen:**
+```cpp
+#include <iostream>
+#include <vector>
+#include <Eigen/Dense>
+#include <matplotlibcpp.h>
+
+namespace plt = matplotlibcpp;
+
+std::pair<std::vector<bool>, std::vector<bool>> mean_reversion_strategy(const Eigen::VectorXd& prices, int window = 20, double threshold = 2.0) {
+    Eigen::VectorXd mean = prices.head(window).mean() * Eigen::VectorXd::Ones(prices.size());
+    Eigen::VectorXd std = (prices - mean).array().square().matrix().head(window).mean() * Eigen::VectorXd::Ones(prices.size());
+    std = std.array().sqrt();
+    
+    Eigen::VectorXd z_score = (prices - mean).array() / std.array();
+    
+    std::vector<bool> buy_signals(prices.size(), false);
+    std::vector<bool> sell_signals(prices.size(), false);
+    
+    for (int i = 0; i < z_score.size(); ++i) {
+        buy_signals[i] = z_score[i] < -threshold;
+        sell_signals[i] = z_score[i] > threshold;
+    }
+    
+    return {buy_signals, sell_signals};
+}
+
+int main() {
+    Eigen::VectorXd prices = Eigen::VectorXd::LinSpaced(100, 100, 200) + Eigen::VectorXd::Random(100).array() * 10;
+
+    auto [buy_signals, sell_signals] = mean_reversion_strategy(prices);
+
+    plt::plot(prices.data(), prices.data() + prices.size(), {{"label", "Price"}});
+    for (int i = 0; i < prices.size(); ++i) {
+        if (buy_signals[i]) {
+            plt::plot(std::vector<int>{i}, std::vector<double>{prices[i]}, "g^");
+        }
+        if (sell_signals[i]) {
+            plt::plot(std::vector<int>{i}, std::vector<double>{prices[i]}, "rv");
+        }
+    }
+    plt::legend();
+    plt::show();
+    
+    return 0;
+}
+```
+- **Explanation of the Code:**
+  - **Python Code:** 
+    - We calculate the rolling mean and standard deviation over a specified window to determine the z-score, which indicates how many standard deviations the current price is away from the mean.
+    - We then generate buy and sell signals based on whether the z-score crosses the positive or negative threshold.
+    - The plot visually displays the price series along with buy and sell signals.
+
+  - **C++ Code:** 
+    - Eigen is used to handle vector and matrix operations for calculating the mean, standard deviation, and z-score.
+    - The logic for generating buy and sell signals is similar to the Python version.
+    - The matplotlibcpp library is used to visualize the price data and the corresponding signals, providing a C++ equivalent to the Python plotting.
+
+This strategy works under the assumption that prices will revert to their historical mean, allowing traders to buy low and sell high in a systematic manner.
+
+- **Python Visualization**
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def mean_reversion_strategy(prices):
+    rolling_mean = prices.rolling(window=20).mean()
+    rolling_std = prices.rolling(window=20).std()
+    z_score = (prices - rolling_mean) / rolling_std
+    return z_score
+
+prices = pd.Series(np.random.normal(0, 1, 100).cumsum())
+z_score = mean_reversion_strategy(prices)
+
+plt.figure(figsize=(12, 6))
+plt.plot(prices, label='Price')
+plt.plot(z_score, label='Z-Score', linestyle='--')
+plt.axhline(0, color='black', linewidth=0.5)
+plt.title("Mean Reversion Strategy: Price vs. Z-Score")
+plt.legend()
+plt.show()
+```
+
+- **C++ Visualization**
+```cpp
+#include <matplot/matplot.h>
+#include <Eigen/Dense>
+
+Eigen::VectorXd mean_reversion_strategy(const Eigen::VectorXd& prices) {
+    Eigen::VectorXd rolling_mean = prices.unaryExpr([](double x) { return x; }).mean();
+    Eigen::VectorXd rolling_std = (prices.array() - rolling_mean.array()).square().sqrt().mean();
+    return (prices.array() - rolling_mean.array()) / rolling_std.array();
+}
+
+int main() {
+    Eigen::VectorXd prices = Eigen::VectorXd::Random(100).cumsum();
+    Eigen::VectorXd z_score = mean_reversion_strategy(prices);
+
+    matplot::figure();
+    matplot::plot(prices, "-b")->line_width(2).display_name("Price");
+    matplot::plot(z_score, "--r")->line_width(2).display_name("Z-Score");
+    matplot::axhline(0, "k--")->line_width(0.5);
+    matplot::title("Mean Reversion Strategy: Price vs. Z-Score");
+    matplot::legend();
+    matplot::show();
+
+    return 0;
+}
+```
+![Trading Alphas: Mining, Optimization, and System Design - Mean Reversion](./assets/mean_reversion_strategy.png)
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __3.2) K-Nearest Neighbors:__
+- **Explanation:**
+  - __`K-NN`__ classifies a data point based on the majority class among its k-nearest neighbors. The algorithm finds the k points in the training set that are closest to the input point, based on a chosen distance metric (usually Euclidean distance). The class with the most representatives among these neighbors is assigned to the new point.
+  - __`K-NN`__ is a machine learning algorithm used for classification and regression. In trading, it can be used to predict the direction of asset prices by finding the most similar historical patterns and analyzing the outcomes.
+
+- **Mathematical Formula**:
+$$\text{Signal} = \frac{P_t - \mu}{\sigma}$$
+
+Where:
+- $ P_t$ is the current price
+- $\mu$ is the historical mean
+- \sigma$ is the standard deviation
+
+
+- **Mathematical Formula:**
+__`K-NN`__ is a non-parametric classification algorithm that works as follows:
+
+1. **Distance Calculation:**
+   $$
+   d(x_i, x_j) = \sqrt{\sum_{k=1}^{n} (x_{ik} - x_{jk})^2}
+   $$
+   Where:
+   - $x_i and $x_j$ are two points in the feature space.
+   - $n$ is the number of features.
+   - $d(x_i, x_j)$ is the Euclidean distance between the points $x_i$ and $x_j$.
+
+2. **Classification:**
+   $$
+   \hat{y} = \text{mode}(y_{k1}, y_{k2}, \ldots, y_{kk})
+   $$
+   Where:
+   - $\hat{y}$ is the predicted class.
+   - $y_{k1}, y_{k2}, \ldots, y_{kk}$ are the classes of the k-nearest neighbors.
+
+- **Explanation:**
+__`K-NN`__ classifies a data point based on the majority class among its k-nearest neighbors. The algorithm finds the k points in the training set that are closest to the input point, based on a chosen distance metric (usually Euclidean distance). The class with the most representatives among these neighbors is assigned to the new point.
+
+
+- **Python Implementation**
+```python
+import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
+
+def knn_strategy(features, labels):
+    model = KNeighborsClassifier(n_neighbors=5)
+    model.fit(features, labels)
+    predictions = model.predict(features)
+    return predictions
+
+features = np.random.rand(100, 5)
+labels = np.random.randint(0, 2, 100)
+predictions = knn_strategy(features, labels)
+print(predictions)
+```
+- **Python Visualization**
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.neighbors import KNeighborsClassifier
+
+def knn_strategy(features, labels):
+    model = KNeighborsClassifier(n_neighbors=5)
+    model.fit(features, labels)
+    predictions = model.predict(features)
+    return predictions
+
+features = np.random.rand(100, 2)
+labels = np.random.randint(0, 2, 100)
+predictions = knn_strategy(features, labels)
+
+plt.figure(figsize=(8, 6))
+plt.scatter(features[:, 0], features[:, 1], c=predictions, cmap='viridis', label='Predictions')
+plt.title("K-Nearest Neighbors Strategy")
+plt.legend()
+plt.show()
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <Eigen/Dense>
+#include <mlpack/methods/knn/knn.hpp>
+
+using namespace mlpack::knn;
+
+Eigen::VectorXi knn_strategy(const Eigen::MatrixXd& features, const Eigen::VectorXi& labels) {
+    KNN knn(features);
+    Eigen::VectorXi predictions(features.rows());
+    knn.Classify(features, 5, predictions);
+    return predictions;
+}
+
+int main() {
+    Eigen::MatrixXd features = Eigen::MatrixXd::Random(100, 5);
+    Eigen::VectorXi labels = Eigen::VectorXi::Random(100).cwiseAbs();
+    Eigen::VectorXi predictions = knn_strategy(features, labels);
+    std::cout << "Predictions:\n" << predictions << std::endl;
+    return 0;
+}
+```
+- **C++ Visualization**
+```cpp
+#include <matplot/matplot.h>
+#include <Eigen/Dense>
+#include <mlpack/methods/knn/knn.hpp>
+
+using namespace mlpack::knn;
+
+Eigen::VectorXi knn_strategy(const Eigen::MatrixXd& features, const Eigen::VectorXi& labels) {
+    KNN knn(features);
+    Eigen::VectorXi predictions(features.rows());
+    knn.Classify(features, 5, predictions);
+    return predictions;
+}
+
+int main() {
+    Eigen::MatrixXd features = Eigen::MatrixXd::Random(100, 2);
+    Eigen::VectorXi labels = Eigen::VectorXi::Random(100).cwiseAbs();
+    Eigen::VectorXi predictions = knn_strategy(features, labels);
+
+    std::vector<double> x(features.rows()), y(features.rows());
+    for (int i = 0; i < features.rows(); ++i) {
+        x[i] = features(i, 0);
+        y[i] = features(i, 1);
+    }
+
+    matplot::scatter(x, y, 40.0, predictions.cast<double>().eval());
+    matplot::title("K-Nearest Neighbors Strategy");
+    matplot::show();
+
+    return 0;
+}
+```
+![Trading Alphas: Mining, Optimization, and System Design - K-Nearest Neighbors](./assets/k_nearest_neighbors.png)
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __3.3) Time series & cross sectional alphas:__
+- **Explanation**:
+  - **Time Series Alpha**: Measures the abnormal return of an asset over time, compared to a market benchmark. It represents the asset’s performance that is not explained by the overall market movement.  
+  - **Cross-Sectional Alpha**: Measures the performance of an asset relative to its peers at a specific point in time. It is often used in portfolio construction to identify assets that are expected to outperform their peers.
+
+- **Mathematical Formula**:
+1. **Time Series Alpha:**
+   $$
+   \alpha_t = R_t - \beta \cdot \text{Market}_t
+   $$
+   Where:
+   - $R_t$ is the return of the asset at time $t$.
+   - $\beta$ is the sensitivity of the asset’s return to the market return.
+   - $\text{Market}_t$ is the market return at time $t$.
+
+2. **Cross-Sectional Alpha:**
+   $$
+   \alpha_{i,t} = R_{i,t} - \frac{1}{N} \sum_{j=1}^{N} R_{j,t}
+   $$
+   Where:
+   - $R_{i,t}$ is the return of asset $i$ at time $t$.
+   - $N$ is the number of assets.
+   - $\sum_{j=1}^{N} R_{j,t}$ is the average return of all assets at time $t$.
+
+- **Python Implementation**
+```python
+import numpy as np
+
+def time_series_alpha(price_data):
+    return np.diff(price_data)
+
+def cross_sectional_alpha(price_matrix):
+    return np.mean(price_matrix, axis=1)
+
+price_data = np.random.normal(0, 1, 100)
+price_matrix = np.random.normal(0, 1, (10, 100))
+ts_alpha = time_series_alpha(price_data)
+cs_alpha = cross_sectional_alpha(price_matrix)
+print(f"Time Series Alpha: {ts_alpha}")
+print(f"Cross-Sectional Alpha: {cs_alpha}")
+```
+- **Python Visualization**
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def time_series_alpha(price_data):
+    return np.diff(price_data)
+
+price_data = np.random.normal(0, 1, 100).cumsum()
+ts_alpha = time_series_alpha(price_data)
+
+plt.figure(figsize=(12, 6))
+plt.plot(price_data[:-1], label='Price')
+plt.plot(ts_alpha, label='Time Series Alpha', linestyle='--')
+plt.title("Time Series Alpha Visualization")
+plt.legend()
+plt.show()
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <Eigen/Dense>
+
+Eigen::VectorXd time_series_alpha(const Eigen::VectorXd& price_data) {
+    return price_data.tail(price_data.size() - 1) - price_data.head(price_data.size() - 1);
+}
+
+Eigen::VectorXd cross_sectional_alpha(const Eigen::MatrixXd& price_matrix) {
+    return price_matrix.rowwise().mean();
+}
+
+int main() {
+    Eigen::VectorXd price_data = Eigen::VectorXd::Random(100);
+    Eigen::MatrixXd price_matrix = Eigen::MatrixXd::Random(10, 100);
+    Eigen::VectorXd ts_alpha = time_series_alpha(price_data);
+    Eigen::VectorXd cs_alpha = cross_sectional_alpha(price_matrix);
+    std::cout << "Time Series Alpha:\n" << ts_alpha << std::endl;
+    std::cout << "Cross-Sectional Alpha:\n" << cs_alpha << std::endl;
+    return 0;
+}
+```
+- **C++ Visualization**
+```cpp
+#include <matplot/matplot.h>
+#include <Eigen/Dense>
+
+Eigen::VectorXd time_series_alpha(const Eigen::VectorXd& price_data) {
+    return price_data.tail(price_data.size() - 1) - price_data.head(price_data.size() - 1);
+}
+
+int main() {
+    Eigen::VectorXd price_data = Eigen::VectorXd::Random(100).cumsum();
+    Eigen::VectorXd ts_alpha = time_series_alpha(price_data);
+
+    matplot::figure();
+    matplot::plot(price_data.head(price_data.size() - 1), "-b")->line_width(2).display_name("Price");
+    matplot::plot(ts_alpha, "--r")->line_width(2).display_name("Time Series Alpha");
+    matplot::title("Time Series Alpha Visualization");
+    matplot::legend();
+    matplot::show();
+
+    return 0;
+}
+```
+![Trading Alphas: Mining, Optimization, and System Design - Time series & cross sectional alphas](./assets/time_series_and_cross_sectional_alphas.png)
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __3.4) Candlestick Patterns:__
+
+#### **Understanding candlesticks basics — Beginners guide**
+Curious about how traders make those buy and sell decisions? It’s not random decisions; it’s about understanding market dynamics and having the right information in hand to make those decisions. In the market, a stock price dances to the tunes of demand, supply, and a few other factors. For this, understanding candlestick chart patterns is key, as it allows for more informed trading decisions.Let’s dive into the world of candlestick charts.
+
+- **The Basics of Candlestick Charts:**
+-----------------------------------------
+
+Candlestick charts consist of “candles” that provide visual cues about market activity. Each candlestick represents a specific time frame, such as a day, week, or hour. Here’s what you need to know:
+
+*   **Green Candlesticks:** Indicate bullish trends, meaning the market is moving up. The larger the body of the candlestick, the more significant the momentum gain.
+*   **Red Candlesticks:** Signal bearish trends, indicating the market is moving down. Similarly, the size of the candlestick body shows the momentum loss.
+
+![The Basics of Candlestick Charts](./assets/candlestick_chart_basics.png)
+
+- **Components of a Candlestick:**
+-----------------------------------------
+
+Picture a candlestick chart as a colourful mosaic of candles, each telling a story of market sentiment within a specific timeframe. Originating from Japan over centuries ago, these charts have become a universal language for traders, offering insights into the open, close, high, and low prices during a set period.
+
+![Components of a Candlestick](./assets/candlestick_chart_components.png)
+
+Every candlestick is a snapshot of market action, with four main components painting a complete picture of price movements:
+
+**Candlestick Body:** This solid area connects the opening and closing prices, serving as the heart of the candle. The body’s colour reveals the direction of market movement — green or blue for bullish trends and red for bearish trends.
+
+**Wicks (Shadows or Tails):** These thin lines stretching above and below the body highlight the highest and lowest prices reached. Long wicks signal high volatility, while short wicks suggest stability.
+
+*   **Upper Wick:** The upper wick, situated above the body of the candle, reflects the highest price the asset reached during the given period. It indicates the maximum value buyers were willing to pay but couldn’t sustain, and the market eventually pushed the price down.
+*   **Lower Wick:** Conversely, the lower wick, located below the candle body, represents the lowest price the asset touched in that timeframe. It signifies the lowest point sellers were willing to accept before the market pushed the price back up.
+*   **Long Wicks:** A candle with long wicks implies high volatility. It suggests significant price fluctuations during the period, showing that the market experienced intense highs and lows.
+*   **Short Wicks:** On the other hand, short or non-existent wicks indicate lower volatility. The absence of extended lines suggests that the price remained relatively stable, with minimal fluctuations between the opening and closing values.
+
+![Candlestick - Short and Long Wicks](./assets/candlestick_chart_short_and_long_wicks.png)
+
+Candlestick charts consist of “candles” that provide visual cues about market activity. Each candlestick represents a specific time frame, such as a day, week, or hour. Here’s what you need to know:
+
+*   **Green Body:** Indicates a bullish (upward) movement. The opening price is at the bottom, and the closing price is at the top of the body, showcasing that the asset’s value increased during the time-frame.
+*   **Red Body:** Represents a bearish (downward) movement. The opening price is at the top, and the closing price is at the bottom of the body, signalling a decline in the asset’s value.
+
+**Beyond Colors and Wicks**
+
+Understanding candlestick patterns goes beyond recognizing green or red bodies. Here’s how to interpret these visual cues:
+
+*   **Open and Close:** The starting and ending points of price action within the candle’s formation. A candle turning green indicates a price increase, while red signifies a decrease.
+*   **High and Low Prices:** The extremities of the wicks represent the highest and lowest prices traded. A candle without an upper wick signals that the opening or closing price was the session’s peak.
+*   **The Wick’s Tale:** The wick, or shadow, outlines the price extremes. Its length offers clues about market momentum — short wicks imply limited price movement, while long wicks indicate significant fluctuations.
+
+![Candlestick - Body](./assets/candlestick_chart_body.png)
+
+- **Candlestick Size and Momentum:**
+-----------------------------------------
+
+*   Large Body: When you see a candle with a large body, it’s like the market is shouting, “Let’s go!” It means prices have made a big move, showing strong momentum.
+*   Small Body or Doji: These are the market’s way of saying, “Hmm, I’m not sure.” It’s when buyers and sellers can’t decide who’s in charge, leading to a standstill with no clear direction.
+
+![Candlestick Size and Momentum](./assets/candlestick_chart_size_and_momentum.png)
+
+- **Analyzing Candlestick Charts:**
+-----------------------------------------
+
+Candlestick charts are like a mood ring for the market, showing us the vibes through their colours and sizes. When you see big, bold candles, it means the market’s moving with confidence, covering a lot of ground. But when candles are tiny or look like a doji — that little line with almost no body — it means the market’s having a moment of indecision, unsure of which way to go.
+
+Let’s talk trends:
+
+*   **Uptrend:** It’s a green wave! Lots of green candles popping up means prices are climbing, creating a pattern of climbing peaks and higher valleys.
+*   **Downtrend:** Red alert! A series of red candles indicates prices are on a downhill slide, making lower peaks and even lower valleys.
+*   **Sideways Movement:** A mix of green and red candles dancing together shows the market’s chilling out, not really moving up or down but just hanging out.
+
+![Analysing Candlestick Charts](./assets/candlestick_chart_analysis.png)
+
+- **Recognizing Momentum Gain and Loss:**
+-----------------------------------------
+
+*   **Momentum Gain:** When candles start bulking up or you notice the price moving tightly upwards, the market’s catching momentum, ready to push higher.
+*   **Momentum Loss:** If things start to spread out with big price jumps or candles start to slim down, it might be time for a change. It’s like the market’s taking a deep breath, possibly ready to switch directions.
+
+> **_“Candlesticks light the path to market trends, offering a beacon for traders navigating the seas of volatility.”_**
+
+#### **Mathematical Explanation:**
+
+Candlestick patterns are formed by the open, high, low, and close prices of an asset over a specific period. The patterns can signal potential market reversals or continuations. Below are some common patterns:
+
+1. **Bullish Engulfing:**
+   - Occurs when a small bearish candlestick is followed by a large bullish candlestick that completely engulfs the previous candle.
+   - Signals a potential upward reversal.
+
+The bullish engulfing candlestick is a reversal pattern comprising two candlesticks, a small red bearish one and a big green bullish one. The bullish candlestick completely overlaps the bearish candlestick, and the pattern comes after a downtrend.
+
+When the price is declining, it shows that bears are in the lead. However, when this trend reaches a point, and there is a shift in sentiment, bulls suddenly become stronger. As a result, the price makes a large green candle that engulfs one or more previous red candles.
+
+This is a sign that the trend might reverse. The bigger the trend before the bullish engulfing candlestick, the higher the chances of a reversal.
+
+This candlestick pattern signals a looming reversal on its own. However, experienced traders know that such patterns occur frequently in the market. Therefore, to filter out false signals, use the bullish engulfing candlestick pattern with other analysis tools, like trendlines or support and resistance levels, for better results.
+
+##### IDENTIFYING THE BULLISH ENGULFING CANDLESTICK PATTERN
+
+![Bullish engulfing pattern](https://www.dominionmarkets.com/trading-the-bullish-and-bearish-engulfing-and-doji-candlestick-patterns-on-dominion-markets/images/BU%20engulf.png)
+
+_Bullish engulfing pattern_
+
+To identify the pattern,
+
+*   Look for a [downtrend in the market.](https://www.dominionmarkets.com/marketanalysis/)
+*   Look for weak, bearish momentum. After finding a good downtrend, wait for it to show signs of exhaustion. This can be seen in the size of candles, which get smaller or in a sideways move.
+*   Look for a sudden surge in bullish momentum. After bears weaken, wait for a big bullish candle that overlaps the previous small bearish candle. This indicates that sentiment has shifted to bullish, which could lead to a reversal. The body of the second candle should overlap the previous candle.
+
+##### TRADING THE BULLISH ENGULFING CANDLESTICK PATTERN
+
+![Trading the bullish engulfing pattern](https://www.dominionmarkets.com/trading-the-bullish-and-bearish-engulfing-and-doji-candlestick-patterns-on-dominion-markets/images/BU%20trade.png)
+
+_Trading the bullish engulfing pattern_
+
+After identifying the pattern, you can [choose to trade it](https://www.dominionmarkets.com/) aggressively or cautiously. Aggressive traders will enter a buy position on the first candlestick after the bullish engulfing pattern.
+
+Meanwhile, cautious traders will wait for confirmation. This means waiting for a bullish candle to close after the pattern before entering on the next one. You can place your stop loss below the previous low with appropriate take-profit targets in both cases. In the chart above, we took a cautious trade.
+
+2. **Bearish Engulfing:**
+   - Occurs when a small bullish candlestick is followed by a large bearish candlestick that completely engulfs the previous candle.
+   - Signals a potential downward reversal.
+
+The bearish engulfing candlestick pattern is the opposite of the bullish engulfing candlestick pattern. It is a reversal pattern that comes after a bullish trend. The pattern comprises two candlesticks: a small green bullish candle and a big bearish candle.
+
+The small bullish candle shows weak momentum during a bullish trend, while the big bearish candle shows a surge in bearish momentum that could lead to a reversal.
+
+The bigger the previous trend, the higher the chance that the bearish engulfing candlestick pattern will lead to a reversal. The pattern can be used alone; however, traders often combine it with other technical tools to improve results.
+
+##### IDENTIFYING THE BEARISH ENGULFING CANDLESTICK PATTERN
+
+![Bearish engulfing pattern](https://www.dominionmarkets.com/trading-the-bullish-and-bearish-engulfing-and-doji-candlestick-patterns-on-dominion-markets/images/BE%20engulf.png)
+
+_Bearish engulfing pattern_
+
+To identify the pattern,
+
+*   Look for a bullish trend. Since it is a reversal pattern, you should look for a long-running trend.
+*   Wait for bulls to show weakness with smaller candles. As a [trend peaks, momentum](https://www.dominionmarkets.com/marketanalysis/) slowly fades, and the price starts making smaller candles. This is a sign of exhaustion and precedes a reversal.
+*   Look for a sudden surge in bearish momentum. After identifying weakness in the uptrend, wait for bears to make a strong candle whose body completely overlaps the previous bullish candle.
+
+##### TRADING THE BEARISH ENGULFING CANDLESTICK PATTERN
+
+![Trading the bearish engulfing pattern](https://www.dominionmarkets.com/trading-the-bullish-and-bearish-engulfing-and-doji-candlestick-patterns-on-dominion-markets/images/BE%20trade.png)
+
+_Trading the bearish engulfing pattern_
+
+After identifying the bearish engulfing candlestick pattern, you can use an aggressive or cautious approach to trade the reversal. The aggressive trader will enter a sell position on the next candle after the pattern.
+
+On the other hand, a careful trader will wait for a confirmation bearish candle before entering on the next candle. Place your stop loss above the previous high with appropriate targets.
+
+3. **Doji:**
+   - Formed when the open and close prices are almost equal, creating a small or nonexistent body.
+   - Indicates market indecision and potential reversal.
+
+The doji is a single candlestick pattern where the open and close are near or equal. Therefore, the candlestick has a tiny body or none at all. Moreover, the doji has wicks or shadows that can vary in length, showing the trading range.
+
+The doji candlestick pattern indicates indecision and a battle for control between bears and bulls. Therefore, indecision after a strong trend could signal a looming reversal. The pattern can come in different forms depending on the size of the wicks and the position of the middle line/body.
+
+Furthermore, the pattern can appear in a bullish or bearish trend. It signals a possible reversal to the downside if it occurs after a bullish trend. On the other hand, if it appears in a bearish trend, it indicates a looming reversal to the upside.
+
+##### IDENTIFYING THE DOJI CANDLESTICK PATTERN
+
+![Doji candlestick pattern](https://www.dominionmarkets.com/trading-the-bullish-and-bearish-engulfing-and-doji-candlestick-patterns-on-dominion-markets/images/Doji.png)
+
+_Doji candlestick pattern_
+
+To identify the doji pattern,
+
+*   Look for a strong, bullish, or bearish trend.
+*   Look for a candle with a very small or no body at all. This means the candle's open and close should be equal or near.
+*   Look for shadows/wicks showing that both bears and bulls have shown strength in the trading period.
+
+##### TRADING THE DOJI CANDLESTICK PATTERN
+
+![Trading the doji candlestick pattern](https://www.dominionmarkets.com/trading-the-bullish-and-bearish-engulfing-and-doji-candlestick-patterns-on-dominion-markets/images/Doji%20trade.png)
+
+_Trading the doji candlestick pattern_
+
+After identifying it, the best way to trade the doji pattern is to wait for a confirmation candle. If the doji comes after a bullish trend, wait for a big red candle after the doji to confirm a reversal. Place your sell entry on the next candle with stops above the previous high and appropriate targets.
+
+On the other hand, if the doji comes after a bearish trend, wait for a big green candle to confirm a bullish reversal. Place your buy entry after this candle with stops below the previous low and appropriate targets.
+
+4. **Hammer:**
+   - Has a small body at the upper end of the trading range with a long lower shadow.
+   - Indicates a potential reversal from a downtrend to an uptrend.
+
+##### What is a Hammer Candlestick Chart Pattern?
+This section will focus on the famous Hammer candlestick pattern. In Japanese, it is called "takuri" meaning "feeling the bottom with your foot" or "trying to measure the depth." The Hammer is a classic bottom reversal pattern that warns traders that prices have reached the bottom and are going to move up.
+
+The information below will help you identify this pattern on the charts and predict further price dynamics. You will improve your candlestick analysis skills and be able to apply them in trading.
+
+The article covers the following subjects:
+
+*   [Major takeaways](#major-takeaways)
+*   [What is a Hammer Candlestick?](#what-is-a-hammer-candlestick)
+*   [Description of a Hammer Candlestick](#description-of-a-hammer-candlestick)
+*   [Hammer Candles in Technical Analysis](#hammer-candles-in-technical-analysis)
+*   [How to Trade on a Hammer Candlestick?](#how-to-trade-on-a-hammer-candlestick)
+*   [Bullish Hammer](#bullish-hammer)
+*   [Bearish Hammer](#bearish-hammer)
+*   [Inverted Hammer Candles](#inverted-hammer-candles)
+*   [Bullish Inverted Hammer](#bullish-inverted-hammer)
+*   [Bearish Inverted Hammer](#bearish-inverted-hammer)
+*   [Examples of Using a Hammer](#examples-of-using-a-hammer)
+*   [Limitations of a Hammer Candlestick](#limitations-of-a-hammer-candlestick)
+*   [Hammer Candlestick and a Doji](#hammer-candlestick-and-a-doji)
+*   [Conclusion](#hammer-candlestick---conclusion)
+
+##### Major takeaways
+---------------
+
+* Main Thesis: Definition:
+  * Insights and Key Points: The Hammer Candlestick, known as "takuri" in Japanese, is a bottom reversal pattern indicating prices might start to rise.
+* Main Thesis: Importance in Technical Analysis:
+  * Insights and Key Points: Hammer Candlestick patterns are pivotal in technical analysis, signaling that the market has entered a bullish phase.
+* Main Thesis: How to Trade:
+  * Insights and Key Points: When a Hammer Candlestick appears, it's a strong signal for a potential trend reversal, making it a cue to open long trades.
+* Main Thesis: Bullish Hammer
+  * Insights and Key Points: A Bullish Hammer Candlestick indicates an uptrend in the market, highlighting an increase in purchases.
+* Main Thesis: Bearish Hammer
+  * Insights and Key Points: The Bearish Hammer, also known as the "hanging man", signals the end of an uptrend and the onset of a downtrend.
+* Main Thesis: Benefits:
+  * Insights and Key Points: Hammer Candlesticks are classic reversal patterns, aiding traders in identifying potential market turnarounds.
+* Main Thesis: Limitations:
+  * Insights and Key Points: Despite its strengths, the Hammer Candlestick requires confirmation from other indicators to validate its predictive accuracy.
+
+
+##### What is a Hammer Candlestick?
+The hammer is candlestick with a small body and a long lower wick. The pattern is formed at the bottom after a downtrend. A candle signals the start of a new bullish rally for a particular instrument. This is a classic pattern that appears in the Forex, stock, cryptocurrency, commodity markets.
+
+![LiteFinance: What is a Hammer Candlestick?](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-1en.jpg?q=75&s=d6ea4c56d7002284edc05b09658bc527)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-1en.jpg?q=75&s=d6ea4c56d7002284edc05b09658bc527)
+
+##### Description of a Hammer Candlestick
+-----------------------------------
+
+The hammer pattern appears on the chart during a price decline. It is a stop pattern that signals that the quotes have entered the buyers’ zone and the market has become bullish.
+
+It is very easy to identify this pattern in the market. It should meet the following criteria:
+
+*   a small body at the top of the price range;
+    
+*   green or red candle color. However, the green color signals a distinctive bullish trend in the market;
+    
+*   the longer the lower shadow, the stronger the bulls in the market.
+    
+
+In the classic pattern, the lower shadow should be at least twice as long as the body of the candle:
+
+*   the upper shadow should be absent or very short.
+    
+
+##### Hammer Candles in Technical Analysis
+------------------------------------
+
+Using hammer candles in technical analysis, traders can identify potential points of a bullish price reversal at various time intervals. To do this, it is necessary to use a candlestick chart.
+
+A Hammer candlestick is a strong signal, and when it appears, it is highly possible that the trend will reverse. Therefore, the hammer formation is a good reason to open long trades.
+
+##### How to Trade on a Hammer Candlestick?
+-------------------------------------
+
+The higher timeframe the hammer pattern is situated at, the more important the reversal signal is.
+
+Identifying such patterns on a chart is like winning the lottery, especially if the pattern appears on a daily or weekly chart.
+
+This pattern is most often used in conservative strategies due to its importance on price charts.
+
+Check out the article ["How to Read Candlestick Charts?"](https://www.litefinance.org/blog/for-beginners/how-to-read-candlestick-chart/) to learn more about candlestick patterns and how to identify them.
+
+##### Bullish Hammer
+--------------
+
+The green bullish hammer highlights the increase in the number of purchases and the appearance of the uptrend in the market.
+
+Let's look at a couple of examples of this signal on different timeframes.
+
+The hourly [EURUSD](https://www.litefinance.org/trading/trading-instruments/currency/eurusd/) chart shows that before the start of the uptrend, several bullish hammers formed in a row at the bottom, which warned traders about a potential reversal.
+
+The price movement up was equivalent to a downtrend.
+
+[![LiteFinance: Bullish Hammer](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-2en.jpg?q=75&s=f2e826558369ec3647cf6b687e71ca99)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-2en.jpg?q=75&s=f2e826558369ec3647cf6b687e71ca99)
+
+After analyzing the EURUSD H4 chart at the same interval, it is clear that the asset has formed an H4 hammer. After that, the euro began to actively strengthen against the dollar.
+
+Interestingly, the EUR rose even more than during the hourly chart analysis.
+
+The larger timeframe a pattern appears at, the stronger the signal. Therefore, the potential profit becomes greater.
+
+[![LiteFinance: Bullish Hammer](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-3en.jpg?q=75&s=67ead0a0b50cf6ee117d6f0c334397c2)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-3en.jpg?q=75&s=67ead0a0b50cf6ee117d6f0c334397c2)
+
+Summing up, smaller timeframes make it possible to determine a favorable entry point, while the larger ones show the approximate target for opening trades.
+
+##### Bearish Hammer
+--------------
+
+The Bearish Hammer is a similar hammer reversal pattern but situated at the top. It is also called "the hanging man". This is the same pattern as the Bullish hammer. However, when it appears at the top, an uptrend ends, and a downtrend begins.
+
+The Bearish Hammer has a small candle body and an extended lower wick at least 2-3 times larger than the body itself. The candle's color does not matter; it can be green or red.
+
+Below is an analysis of the hanging man pattern on the [BTCUSD](https://www.litefinance.org/trading/trading-instruments/crypto/btcusd/) H4 chart. The picture shows that after the pattern appeared at each of the local tops, BTCUSD was very actively declining at some points. Each pattern that appeared on the chart warned traders that the trend was ending and bearish resistance was hindering growth. Therefore, in these cases, it is important to exit the purchase and wait for confirmation of the reversal.
+
+After the forecast about the start of a downtrend has been confirmed by additional instruments and patterns, it is possible to enter sales.
+
+[![LiteFinance: Bearish Hammer](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-4en.jpg?q=75&s=2a59bf59e417bb27cad52bc71b8e6b11)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-4en.jpg?q=75&s=2a59bf59e417bb27cad52bc71b8e6b11)
+
+##### Inverted Hammer Candles
+-----------------------
+
+Inverted hammers are Japanese candlestick patterns that consist of a single candle. Inverted bullish or bearish hammers have a small real body with a long upper shadow.
+
+Unlike the hammer, the candle's body is at the bottom of the price range.
+
+Color does not matter. The body can be green or red.
+
+[![LiteFinance: Inverted Hammer Candles](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-5en.jpg?q=75&s=59d777ebb1b8a3ced3573be0b1d108b5)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-5en.jpg?q=75&s=59d777ebb1b8a3ced3573be0b1d108b5)
+
+##### Bullish Inverted Hammer
+-----------------------
+
+The bullish Inverted Hammer candlestick  is a price reversal pattern at the bottom.
+
+When such a candle appears on the chart, wait for confirmation that the “inverted hammer” is bullish. For example, the appearance of a “green full-bodied bullish candle”. In addition, a small up gap between the “inverted hammer” and the candle following it can serve as confirmation.
+
+The hourly [XAUUSD](https://www.litefinance.org/trading/trading-instruments/commodities/xauusd/) chart below shows that after the formation of the hammer and the inverted hammer, the price rose higher and fell again to the level where the patterns were formed. Next, successive “inverted hammer” patterns can be seen. After that, a gap up was formed, and the price began to grow actively.
+
+Thus, the bullish sentiment was confirmed in advance, which would allow opening a buy trade.
+
+[![LiteFinance: Bullish Inverted Hammer](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-6en.jpg?q=75&s=ef961651e18749857a72089fabec4b7c)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-6en.jpg?q=75&s=ef961651e18749857a72089fabec4b7c)
+
+##### Bearish Inverted Hammer
+-----------------------
+
+The Bearish Inverted Hammer is a pattern that forms at the top. It signals a bearish trend reversal.
+
+This pattern is also called a "shooting star" because it resembles a falling star with a bright trail. The formation of this pattern indicates that the bulls were trying to rise. However, this was unsuccessful, and the bears lowered the price to the candle's opening price zone.
+
+The picture below shows that the bulls tried to push the price higher, but then the bears stepped in and lowered the price back into the candle's opening range.
+
+Following the formation of this pattern, the price declined, reaching a local bottom, where bullish hammer patterns had already been formed.
+
+[![LiteFinance: Bearish Inverted Hammer](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-7en.jpg?q=75&s=449e5ff297be6bf0abf584e1588519f4)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-7en.jpg?q=75&s=449e5ff297be6bf0abf584e1588519f4)
+
+##### Examples of Using a Hammer
+--------------------------
+
+Below are examples of short-term trading using different instruments according to the above patterns.
+
+###### Example 1 – <<Hammer>>
+
+In this case, I used a 30-minute [AUDJPY](https://www.litefinance.org/trading/trading-instruments/currency/audjpy/) chart.
+
+The picture below shows that a bullish hammer pattern has been formed at the level of 93.791. After that, I opened a minimum buy trade with a 0.01 lot. The bullish mood in the market served as an additional signal. This can be seen from the formation of previous green candles.
+
+I set a stop loss below the hammer candlestick formation and a take profit near the level of 94.410. In such cases, it is desirable to set take profits at the nearest resistance levels since, during [intraday trading](https://www.litefinance.org/blog/for-professionals/100-most-efficient-forex-chart-patterns/day-trading-patterns/), market sentiment can change dramatically due to fundamental factors.
+
+[![LiteFinance: Example 1 – <<Hammer>>](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-8en.jpg?q=75&s=ec4ec55d0148fd02a1d11bf6fd83dc46)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-8en.jpg?q=75&s=ec4ec55d0148fd02a1d11bf6fd83dc46)
+
+The signal quickly appeared, and after an hour and a half, the trade ended with a closing price of 94.36 with a profit of $4.14.
+
+[![LiteFinance: Example 1 – <<Hammer>>](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-9en.jpg?q=75&s=8e36cd2cb109d2c8aec4da8ce9aa2cc8)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-9en.jpg?q=75&s=8e36cd2cb109d2c8aec4da8ce9aa2cc8)
+
+###### Example 2 – <<The Hanging Man>>
+
+In the second case, I used a [USCrude](https://www.litefinance.org/trading/trading-instruments/commodities/uscrude/) trade. On the 15-minute chart, a hanging man pattern formed after an uptrend. This served as a signal to open a short trade with a 0.01 lot.
+
+I set a stop loss above the candle where I opened the position. Potential take profit is at the level of 109.254.
+
+[![LiteFinance: Example 2 – <<The Hanging Man>>](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-10en.jpg?q=75&s=b46face2d69fc28b12c29c996d597e40)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-10en.jpg?q=75&s=b46face2d69fc28b12c29c996d597e40)
+
+However, this trade was less successful as I opened it late, but there was a downside potential.
+
+Thus, the trade was closed with a profit of 30% or $3.35.
+
+[![LiteFinance: Example 2 – <<The Hanging Man>>](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-11en.jpg?q=75&s=8e39659fe1c9537e5c2b3da51a555e19)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-11en.jpg?q=75&s=8e39659fe1c9537e5c2b3da51a555e19)
+
+###### Example 3 – <<The Shooting Star>>
+
+The [EURUSD](https://www.litefinance.org/trading/trading-instruments/currency/eurusd/) hourly chart shows the formation of a “shooting star” pattern, which warned traders of an impending price decline.
+
+In addition, it was clear that the sellers put pressure on the price. This is evidenced by four red candles formed in a row.
+
+I also opened a 0.01 lot short position and placed a stop loss above 1.0600. Take profit is set at the nearest support level of 1.0499.
+
+[![LiteFinance: Example 3 – <<The Shooting Star>>](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-12en.jpg?q=75&s=38358e01b834bb023ecb78847d21e647)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-12en.jpg?q=75&s=38358e01b834bb023ecb78847d21e647)
+
+The trade was successfully closed manually with a profit of $3.80. The price did not reach the target by about 20 points.
+
+[![LiteFinance: Example 3 – <<The Shooting Star>>](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-13en.jpg?q=75&s=6182d2b85d00246c1847bfafc3980fda)](https://cdn.litemarkets.com/cache/uploads/blog_post/blog_posts/hammer-candlestick-pattern/en/what-is-a-hammer-candlestick-chart-pattern-13en.jpg?q=75&s=6182d2b85d00246c1847bfafc3980fda)
+
+##### Limitations of a Hammer Candlestick
+-----------------------------------
+
+Before entering a trade using the Hammer and Inverted Hammer patterns, it is important to:
+
+*   check whether there is a support level at the place of formation of the “bullish hammer” and “inverted hammer”, as well as the level of resistance at the place of formation of the “shooting star” and “hanging man”;
+    
+*   make sure there is a small gap between the pattern itself and the nearby candles during the formation of the abovementioned patterns (not a mandatory parameter);
+    
+*   wait for confirmation of a trend reversal not only with the help of these patterns, but also with technical indicators or other candlestick patterns;
+    
+*   monitor trading volumes to determine the trend strength.
+    
+
+If you do not follow these rules, you may fall into a market trap from which there can be no way out.
+
+##### Hammer Candlestick and a Doji
+-----------------------------
+
+The similarities between the Japanese candles hammer and doji are listed below:
+
+*   both are signal patterns for a trend reversal;
+    
+*   both candles have a long lower or upper wick;
+    
+*   the dynamics of price movement after their formation does not depend on the candle’s color.
+    
+
+The only difference is that the Doji does not have a candle body.
+
+##### Hammer Candlestick - Conclusion
+----------
+
+Hammers are classic reversal and rather strong patterns in technical analysis. The article provides a detailed analysis of how to identify these candles on the charts, as well as an example of live trading according to the abovementioned patterns. 
+
+You can test your abilities and copy my trades for free using a demo account with a trusted broker [LiteFinance](https://my.litefinance.org/trading).
+
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __3.5) Vectorized SL & TP:__
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
