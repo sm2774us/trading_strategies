@@ -19,7 +19,7 @@ Prefer (2) and (3) in low-latency settings.
 3. [__`Numba`__](#numba)
     - 3.1. [__`Numba` Python Altered Code - `time_series_analysis_py/time_series_analysis.py`__](#numba-python-altered-code---time_series_analysis_pytime_series_analysispy)
     - 3.2. [__`Numba` - `time_series_analysis_py/requirements.txt`__](#numba---time_series_analysis_pyrequirementstxt)
-    - 3.3. [__`Numba` C++ Code Explanation__](#numba-c-code-explanation
+    - 3.3. [__`Numba` C++ Code Explanation__](#numba-c-code-explanation)
     - 3.4. [__`Numba` - `CMakeLists.txt`__](#numba---cmakeliststxt)
     - 3.5. [__`Numba` - `Dockerfile`__](#numba---dockerfile)
     - 3.6. [__`Numba` - Solution Directory Structure__](#numba---solution-directory-structure)
