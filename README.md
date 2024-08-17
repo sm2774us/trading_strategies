@@ -72,6 +72,7 @@ My Private Repository of Trading Strategies
     - 2.3. [__2.3) Cross Sectional Momentum:__](#23-cross-sectional-momentum)
     - 2.4. [__2.4) Crossover & Breakout:__](#24-crossover-breakout)
     - 2.5. [__2.5) Event Driven Momentum:__](#25-event-driven-momentum)
+    - 2.6. [__Momentum Trading Strategies - Use Cases:__](#momentum-trading-strategies---use-cases)
 3. [__Trading Alphas: Mining, Optimization, and System Design__](#trading-alphas-mining-optimization-and-system-design)
     - 3.0. [__3.0) Math Concepts and Trading:__](#30-math-concepts-and-trading)
         - 3.0.1. [__3.A) Cointegration:__](#3a-cointegration)
@@ -3653,3 +3654,1062 @@ Then:
 The visualization helps in quickly understanding the performance trends and making informed trading decisions based on the Long-Short strategy.
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+## __Momentum Trading Strategies__
+Momentum trading strategies rely on identifying and capitalizing on trends in asset prices. Understanding key finance and math concepts helps traders evaluate and implement these strategies effectively. Below are explanations of several important concepts, along with their mathematical formulas.
+
+Momentum trading strategies aim to capitalize on the continuance of existing trends in the market. These strategies operate on the belief that assets that have performed well in the past will continue to perform well, and vice versa for poorly performing assets. Let's explore different types of momentum trading strategies, their applications, and provide code examples in both Python and C++ (using Eigen where applicable).
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### 2) Finance and Math Skills:
+
+#### 2.A. **Contango and Backwardation**
+
+#### Contango
+**Contango** is a market condition where the futures price of a commodity is higher than the expected spot price. This often occurs in markets where traders expect the price of the commodity to rise in the future, leading them to pay a premium for the futures contract.
+
+**Mathematical Formula:**
+The difference between the futures price $F_t$ and the spot price $S_t$ can be expressed as:
+
+$$
+F_t > S_t
+$$
+
+This relationship holds for a market in contango. The premium paid reflects the cost of carrying the commodity (storage, insurance, etc.) and the expected price increase.
+
+#### Backwardation
+**Backwardation** is the opposite of contango, where the futures price is lower than the expected spot price. This often happens when there is a shortage of the commodity, and traders are willing to pay more for immediate delivery.
+
+**Mathematical Formula:**
+
+$$
+F_t < S_t
+$$
+
+In backwardation, the discount reflects the market's expectation of lower future prices or the benefit of holding the commodity immediately rather than in the future.
+
+**Python Example:**
+```python
+import numpy as np
+
+def check_contango_backwardation(spot_price, futures_price):
+    if futures_price > spot_price:
+        return "Contango"
+    elif futures_price < spot_price:
+        return "Backwardation"
+    else:
+        return "Neither"
+
+# Example usage
+spot_price = 100
+futures_price = 105
+result = check_contango_backwardation(spot_price, futures_price)
+print(f"The market is in {result}.")
+```
+
+**C++ Example (using STL):**
+```cpp
+#include <iostream>
+#include <string>
+
+std::string check_contango_backwardation(double spot_price, double futures_price) {
+    if (futures_price > spot_price) {
+        return "Contango";
+    } else if (futures_price < spot_price) {
+        return "Backwardation";
+    } else {
+        return "Neither";
+    }
+}
+
+int main() {
+    double spot_price = 100.0;
+    double futures_price = 105.0;
+    std::string result = check_contango_backwardation(spot_price, futures_price);
+    std::cout << "The market is in " << result << "." << std::endl;
+    return 0;
+}
+```
+
+**C++ Example (using Eigen):**
+```cpp
+#include <iostream>
+#include <Eigen/Dense>
+
+std::string contango_backwardation(const Eigen::VectorXd& futures_prices) {
+    double spot_price = futures_prices(0);
+    if (futures_prices(futures_prices.size() - 1) > spot_price) {
+        return "Contango";
+    } else {
+        return "Backwardation";
+    }
+}
+
+int main() {
+    Eigen::VectorXd futures_prices(4);
+    futures_prices << 100, 102, 104, 105;
+    std::string result = contango_backwardation(futures_prices);
+    std::cout << "The market is in " << result << "." << std::endl;
+    return 0;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __2.B) Hurst Exponent:__
+
+The **Hurst Exponent** `H` is a measure used to assess the long-term memory of time series data. It helps determine whether a series is trending, mean-reverting, or a random walk.
+
+- $H = 0.5$: The series is a random walk (no memory, purely stochastic).
+- $H > 0.5$: The series has a persistent, trending behavior.
+- $H < 0.5$: The series is mean-reverting.
+
+**Mathematical Formula:**
+The Hurst Exponent is calculated based on the rescaled range $R/S$ of the time series:
+
+$$
+E\left(\frac{R(t)}{S(t)}\right) \sim ct^H
+$$
+
+Where:
+- $R(t)$ is the range of cumulative deviations from the mean.
+- $S(t)$ is the standard deviation of the time series over the period \(t\).
+- $c$ is a constant.
+- $H$ is the Hurst Exponent.
+
+**Python Example:**
+```python
+import numpy as np
+
+def calculate_hurst_exponent(time_series):
+    n = len(time_series)
+    t = np.arange(1, n + 1)
+    mean_adj_series = time_series - np.mean(time_series)
+    cumulative_dev = np.cumsum(mean_adj_series)
+    r = np.max(cumulative_dev) - np.min(cumulative_dev)
+    s = np.std(time_series)
+    
+    hurst_exponent = np.log(r/s) / np.log(n)
+    return hurst_exponent
+
+# Example usage
+time_series = np.random.randn(100)
+hurst_exp = calculate_hurst_exponent(time_series)
+print(f"Hurst Exponent: {hurst_exp}")
+```
+
+**C++ Example (using STL):**
+```cpp
+#include <vector>
+#include <cmath>
+#include <iostream>
+#include <numeric>
+#include <algorithm>
+
+double calculate_hurst_exponent(const std::vector<double>& time_series) {
+    int n = time_series.size();
+    std::vector<double> t(n), mean_adj_series(n), cumulative_dev(n);
+    double mean = std::accumulate(time_series.begin(), time_series.end(), 0.0) / n;
+
+    for (int i = 0; i < n; ++i) {
+        t[i] = i + 1;
+        mean_adj_series[i] = time_series[i] - mean;
+    }
+
+    std::partial_sum(mean_adj_series.begin(), mean_adj_series.end(), cumulative_dev.begin());
+    double r = *std::max_element(cumulative_dev.begin(), cumulative_dev.end()) - 
+               *std::min_element(cumulative_dev.begin(), cumulative_dev.end());
+    double s = std::sqrt(std::inner_product(time_series.begin(), time_series.end(), time_series.begin(), 0.0) / n - mean * mean);
+    
+    double hurst_exponent = std::log(r / s) / std::log(n);
+    return hurst_exponent;
+}
+
+int main() {
+    std::vector<double> time_series = {1.0, 2.0, 3.0, 2.0, 3.5, 2.5, 3.0, 2.7, 2.8, 3.0};
+    double hurst_exp = calculate_hurst_exponent(time_series);
+    std::cout << "Hurst Exponent: " << hurst_exp << std::endl;
+    return 0;
+}
+```
+
+**C++ Example (using Eigen):**
+```cpp
+#include <iostream>
+#include <Eigen/Dense>
+#include <cmath>
+
+double hurst_exponent(const Eigen::VectorXd& ts) {
+    int N = ts.size();
+    Eigen::VectorXd T = Eigen::VectorXd::LinSpaced(N, 1, N);
+    Eigen::VectorXd Y = ts.array() - ts.mean();
+    Y = Y.cumsum();
+    double R = Y.maxCoeff() - Y.minCoeff();
+    double S = std::sqrt((ts.array() - ts.mean()).square().mean());
+    return std::log(R / S) / std::log(N);
+}
+
+int main() {
+    Eigen::VectorXd price_series(7);
+    price_series << 100, 101, 102, 103, 105, 107, 110;
+    double hurst_exp = hurst_exponent(price_series);
+    std::cout << "Hurst Exponent: " << hurst_exp << std::endl;
+    return 0;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __2.C) Sharpe Ratio and Maximum Drawdowns:__
+
+#### Sharpe Ratio
+The **Sharpe Ratio** is a measure of risk-adjusted return, indicating how much excess return is received for the extra volatility endured by holding a riskier asset.
+
+**Mathematical Formula:**
+
+$$
+\text{Sharpe Ratio} = \frac{E[R_p] - R_f}{\sigma_p}
+$$
+
+Where:
+- $E[R_p]$ is the expected return of the portfolio.
+- $R_f$ is the risk-free rate of return.
+- $sigma_p$ is the standard deviation of the portfolio’s excess return.
+
+A higher Sharpe Ratio indicates better risk-adjusted performance.
+
+#### Maximum Drawdown
+**Maximum Drawdown** is the maximum observed loss from a peak to a trough of a portfolio, before a new peak is attained. It measures the largest drop in the value of a portfolio.
+
+**Mathematical Formula:**
+
+$$
+\text{Max Drawdown} = \frac{\text{Trough Value} - \text{Peak Value}}{\text{Peak Value}}
+$$
+
+The Maximum Drawdown is usually expressed as a percentage and indicates the downside risk over a specific period.
+
+**Python Example:**
+```python
+import numpy as np
+
+def calculate_sharpe_ratio(returns, risk_free_rate):
+    excess_returns = returns - risk_free_rate
+    return np.mean(excess_returns) / np.std(excess_returns)
+
+def calculate_max_drawdown(returns):
+    cumulative_returns = np.cumprod(1 + returns) - 1
+    drawdowns = cumulative_returns - np.maximum.accumulate(cumulative_returns)
+    max_drawdown = np.min(drawdowns)
+    return max_drawdown
+
+# Example usage
+returns = np.random.normal(0.001, 0.02, 100)
+risk_free_rate = 0.0001
+sharpe_ratio = calculate_sharpe_ratio(returns, risk_free_rate)
+max_drawdown = calculate_max_drawdown(returns)
+print(f"Sharpe Ratio: {sharpe_ratio}")
+print(f"Maximum Drawdown: {max_drawdown}")
+```
+
+**C++ Example (using STL):**
+```cpp
+#include <vector>
+#include <cmath>
+#include <iostream>
+#include <algorithm>
+#include <numeric>
+
+double calculate_sharpe_ratio(const std::vector<double>& returns, double risk_free_rate) {
+    std::vector<double> excess_returns(returns.size());
+    std::transform(returns.begin(), returns.end(), excess_returns.begin(),
+                   [risk_free_rate](double r) { return r - risk_free_rate; });
+    double mean_excess_return = std::accumulate(excess_returns.begin(), excess_returns.end(), 0.0) / excess_returns.size();
+    double std_excess_return = std::sqrt(std::inner_product(excess_returns.begin(), excess_returns.end(), excess_returns.begin(), 0.0) / excess_returns.size());
+    return mean_excess_return / std_excess_return;
+}
+
+double calculate_max_drawdown(const std::vector<double>& returns) {
+    std::vector<double> cumulative_returns(returns.size());
+    std::partial_sum(returns.begin(), returns.end(), cumulative_returns.begin(), [](double a, double b) { return a * (1 + b) - 1; });
+    std::vector<double> drawdowns(cumulative_returns.size());
+    std::transform(cumulative_returns.begin(), cumulative_returns.end(), drawdowns.begin(),
+                   [&cumulative_returns](double r) { return r - *std::max_element(cumulative_returns.begin(), cumulative_returns.end()); });
+    return *std::min_element(drawdowns.begin(), drawdowns.end());
+}
+
+int main() {
+    std::vector<double> returns = {0.001, -0.002, 0.003, 0.004, -0.001};
+    double risk_free_rate = 0.0001;
+    double sharpe_ratio = calculate_sharpe_ratio(returns, risk_free_rate);
+    double max_drawdown = calculate_max_drawdown(returns);
+    std::cout << "Sharpe Ratio: " << sharpe_ratio << std::endl;
+    std::cout << "Maximum Drawdown: " << max_drawdown << std::endl;
+    return 0;
+}
+```
+
+**C++ Example (using Eigen):**
+```cpp
+#include <iostream>
+#include <Eigen/Dense>
+#include <cmath>
+
+double sharpe_ratio(const Eigen::VectorXd& returns, double risk_free_rate = 0) {
+    Eigen::VectorXd excess_returns = returns.array() - risk_free_rate;
+    return excess_returns.mean() / std::sqrt((excess_returns.array() - excess_returns.mean()).square().mean());
+}
+
+double max_drawdown(const Eigen::VectorXd& returns) {
+    Eigen::VectorXd cumulative_returns = (1 + returns.array()).cumprod();
+    Eigen::VectorXd peak = cumulative_returns.head(1);
+    for (int i = 1; i < cumulative_returns.size(); ++i) {
+        peak.conservativeResize(i+1);
+        peak(i) = std::max(peak(i-1), cumulative_returns(i));
+    }
+    Eigen::VectorXd drawdown = (cumulative_returns - peak).array() / peak.array();
+    return drawdown.minCoeff();
+}
+
+int main() {
+    Eigen::VectorXd returns(5);
+    returns << 0.01, 0.02, -0.02, 0.03, -0.01;
+    double sharpe = sharpe_ratio(returns);
+    double drawdown = max_drawdown(returns);
+    std::cout << "Sharpe Ratio: " << sharpe << std::endl;
+    std::cout << "Maximum Drawdown: " << drawdown << std::endl;
+    return 0;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __2.D) Correlation Analysis:__
+
+**Correlation Analysis** measures the degree to which two variables move in relation to each other. In finance, it's used to understand the relationship between the returns of two assets.
+
+**Mathematical Formula:**
+
+The Pearson correlation coefficient $\rho$ between two variables $X$ and $Y$ is given by:
+
+$$
+\rho_{X,Y} = \frac{\text{Cov}(X,Y)}{\sigma_X \sigma_Y}
+$$
+
+Where:
+- $\text{Cov}(X,Y)$ is the covariance between $X$ and $Y$.
+- $\sigma_X$ and $\sigma_Y$ are the standard deviations of $X$ and $Y$, respectively.
+
+The value of $\rho$ ranges from $-1$ (perfect negative correlation) to $+1$ (perfect positive correlation):
+- $\rho = 1$: The variables move perfectly together.
+- $\rho = 0$: No linear relationship between the variables.
+- $\rho = -1$: The variables move perfectly inversely.
+
+
+**Python Example:**
+```python
+import numpy as np
+
+def calculate_correlation(x, y):
+    return np.corrcoef(x, y)[0, 1]
+
+# Example usage
+x = np.array([1, 2, 3, 4, 5])
+y = np.array([2, 4, 6, 8, 10])
+correlation = calculate_correlation(x, y)
+print(f"Correlation: {correlation}")
+```
+
+**C++ Example (using STL):**
+```cpp
+#include <vector>
+#include <iostream>
+#include <numeric>
+#include <cmath>
+
+double calculate_correlation(const std::vector<double>& x, const std::vector<double>& y) {
+    double mean_x = std::accumulate(x.begin(), x.end(), 0.0) / x.size();
+    double mean_y = std::accumulate(y.begin(), y.end(), 0.0) / y.size();
+
+    double numerator = std::inner_product(x.begin(), x.end(), y.begin(), 0.0,
+                                          std::plus<>(), [mean_x, mean_y](double xi, double yi) {
+                                              return (xi - mean_x) * (yi - mean_y);
+                                          });
+
+    double denominator_x = std::sqrt(std::inner_product(x.begin(), x.end(), x.begin(), 0.0,
+                                                        std::plus<>(), [mean_x](double xi) {
+                                                            return (xi - mean_x) * (xi - mean_x);
+                                                        }));
+    double denominator_y = std::sqrt(std::inner_product(y.begin(), y.end(), y.begin(), 0.0,
+                                                        std::plus<>(), [mean_y](double yi) {
+                                                            return (yi - mean_y) * (yi - mean_y);
+                                                        }));
+    return numerator / (denominator_x * denominator_y);
+}
+
+int main() {
+    std::vector<double> x = {1, 2, 3, 4, 5};
+    std::vector<double> y = {2, 4, 6, 8, 10};
+    double correlation = calculate_correlation(x, y);
+    std::cout << "Correlation: " << correlation << std::endl;
+    return 0;
+}
+```
+
+**C++ Example (using Eigen):**
+```cpp
+#include <iostream>
+#include <Eigen/Dense>
+
+double correlation(const Eigen::VectorXd& x, const Eigen::VectorXd& y) {
+    double mean_x = x.mean();
+    double mean_y = y.mean();
+    double cov_xy = ((x.array() - mean_x) * (y.array() - mean_y)).mean();
+    double std_x = std::sqrt((x.array() - mean_x).square().mean());
+    double std_y = std::sqrt((y.array() - mean_y).square().mean());
+    return cov_xy / (std_x * std_y);
+}
+
+int main() {
+    Eigen::VectorXd x(5), y(5);
+    x << 1, 2, 3, 4, 5;
+    y << 2, 4, 6, 8, 10;
+    double corr = correlation(x, y);
+    std::cout << "Correlation: " << corr << std::endl;
+    return 0;
+}
+```
+
+### Application in Momentum Trading Strategies
+- **Contango and Backwardation**: Traders may exploit futures price movements relative to the spot price.
+- **Hurst Exponent**: Helps identify trends or mean-reverting behaviors in asset prices, crucial for momentum strategies.
+- **Sharpe Ratio**: Assesses the risk-adjusted return of momentum strategies, ensuring that excess returns justify the risk.
+- **Maximum Drawdown**: Evaluates the worst-case scenario for losses in a momentum strategy, aiding in risk management.
+- **Correlation Analysis**: Helps diversify a momentum portfolio by selecting assets with low or negative correlations.
+
+For each momentum trading strategy (__Roll Returns, Time Series Momentum, Cross Sectional Momentum, Crossover & Breakout, and Event Driven Momentum__), we'll provide __Python code__ using __`matplotlib`__ and __C++ code__ using __`matplotlibcpp`__, __a C++ interface to `matplotlib`__.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __2.1) Roll Returns:__
+- **Explanation**: Roll returns focus on the returns earned from holding futures contracts as they near their expiration. The strategy assumes that the price of the futures contract converges toward the spot price as the expiration date approaches.
+- **Use Cases**: Commonly applied in Futures, Commodities, and Derivatives markets.
+- **Python Implementation**
+```python
+import numpy as np
+import pandas as pd
+
+def roll_returns(futures_prices):
+    roll_returns = np.log(futures_prices[1:] / futures_prices[:-1])
+    return roll_returns
+
+# Example usage
+futures_prices = np.array([100, 101, 102, 103, 105])
+roll_ret = roll_returns(futures_prices)
+print(f"Roll Returns: {roll_ret}")
+```
+- **Python Visualization**
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def roll_returns(futures_prices):
+    return np.log(futures_prices[1:] / futures_prices[:-1])
+
+def visualize_roll_returns(futures_prices, roll_returns):
+    plt.figure(figsize=(10, 6))
+    plt.plot(futures_prices, label='Futures Prices', marker='o')
+    plt.plot(range(1, len(futures_prices)), roll_returns, label='Roll Returns', marker='x')
+    plt.xlabel('Time')
+    plt.ylabel('Price / Returns')
+    plt.legend()
+    plt.title('Roll Returns Visualization')
+    plt.grid(True)
+    plt.show()
+
+# Example usage
+futures_prices = np.array([100, 101, 102, 103, 105])
+roll_ret = roll_returns(futures_prices)
+visualize_roll_returns(futures_prices, roll_ret)
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <Eigen/Dense>
+
+Eigen::VectorXd roll_returns(const Eigen::VectorXd& futures_prices) {
+    return (futures_prices.tail(futures_prices.size() - 1).array() /
+            futures_prices.head(futures_prices.size() - 1).array()).log();
+}
+
+int main() {
+    Eigen::VectorXd futures_prices(5);
+    futures_prices << 100, 101, 102, 103, 105;
+    Eigen::VectorXd roll_ret = roll_returns(futures_prices);
+    std::cout << "Roll Returns: " << roll_ret.transpose() << std::endl;
+    return 0;
+}
+```
+- **C++ Visualization**
+```cpp
+#include <iostream>
+#include <vector>
+#include <Eigen/Dense>
+#include "matplotlibcpp.h"
+
+namespace plt = matplotlibcpp;
+
+Eigen::VectorXd roll_returns(const Eigen::VectorXd& futures_prices) {
+    return (futures_prices.tail(futures_prices.size() - 1).array() /
+            futures_prices.head(futures_prices.size() - 1).array()).log();
+}
+
+void visualize_roll_returns(const Eigen::VectorXd& futures_prices, const Eigen::VectorXd& roll_returns) {
+    std::vector<double> prices(futures_prices.data(), futures_prices.data() + futures_prices.size());
+    std::vector<double> returns(roll_returns.data(), roll_returns.data() + roll_returns.size());
+    
+    plt::figure();
+    plt::plot(prices, "o-", {{"label", "Futures Prices"}});
+    plt::plot(std::vector<double>(1, 0), std::vector<double>(0), "r-", {{"label", "Roll Returns"}});
+    plt::plot(std::vector<double>(returns.size(), 0), std::vector<double>(returns.begin(), returns.end()), "r-", {{"label", "Roll Returns"}});
+    
+    plt::xlabel("Time");
+    plt::ylabel("Price / Returns");
+    plt::legend();
+    plt::title("Roll Returns Visualization");
+    plt::grid(true);
+    plt::show();
+}
+
+int main() {
+    Eigen::VectorXd futures_prices(5);
+    futures_prices << 100, 101, 102, 103, 105;
+    Eigen::VectorXd roll_ret = roll_returns(futures_prices);
+    visualize_roll_returns(futures_prices, roll_ret);
+    return 0;
+}
+```
+![Momentum Trading Strategies - Roll Returns](./assets/roll_returns.png)
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __2.2) Time Series Momentum:__
+- **Explanation**: Time Series Momentum (TSMOM) refers to the strategy where an asset's past returns over a certain period predict its future returns. 
+- **Use Cases**: Applied in almost all asset categories including FX, Equities, Futures, and Commodities.
+- **Python Implementation**
+```python
+import numpy as np
+import pandas as pd
+
+def time_series_momentum(price_series, lookback):
+    returns = np.log(price_series[1:] / price_series[:-1])
+    return np.sign(returns[-lookback:].mean())
+
+# Example usage
+price_series = np.array([100, 101, 102, 103, 105])
+momentum_signal = time_series_momentum(price_series, lookback=3)
+print(f"Momentum Signal: {momentum_signal}")
+```
+- **Python Visualization**
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def time_series_momentum(price_series, lookback):
+    returns = np.log(price_series[1:] / price_series[:-1])
+    return np.sign(returns[-lookback:].mean())
+
+def visualize_time_series_momentum(price_series, momentum_signal):
+    plt.figure(figsize=(10, 6))
+    plt.plot(price_series, label='Price Series', marker='o')
+    plt.axhline(y=momentum_signal, color='r', linestyle='--', label='Momentum Signal')
+    plt.xlabel('Time')
+    plt.ylabel('Price / Signal')
+    plt.legend()
+    plt.title('Time Series Momentum Visualization')
+    plt.grid(True)
+    plt.show()
+
+# Example usage
+price_series = np.array([100, 101, 102, 103, 105])
+momentum_signal = time_series_momentum(price_series, lookback=3)
+visualize_time_series_momentum(price_series, momentum_signal)
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <Eigen/Dense>
+
+double time_series_momentum(const Eigen::VectorXd& price_series, int lookback) {
+    Eigen::VectorXd returns = (price_series.tail(price_series.size() - 1).array() /
+                               price_series.head(price_series.size() - 1).array()).log();
+    return std::signbit(returns.tail(lookback).mean()) ? -1.0 : 1.0;
+}
+
+int main() {
+    Eigen::VectorXd price_series(5);
+    price_series << 100, 101, 102, 103, 105;
+    double momentum_signal = time_series_momentum(price_series, 3);
+    std::cout << "Momentum Signal: " << momentum_signal << std::endl;
+    return 0;
+}
+```
+- **C++ Visualization**
+```cpp
+#include <iostream>
+#include <vector>
+#include <Eigen/Dense>
+#include "matplotlibcpp.h"
+
+namespace plt = matplotlibcpp;
+
+double time_series_momentum(const Eigen::VectorXd& price_series, int lookback) {
+    Eigen::VectorXd returns = (price_series.tail(price_series.size() - 1).array() /
+                               price_series.head(price_series.size() - 1).array()).log();
+    return std::signbit(returns.tail(lookback).mean()) ? -1.0 : 1.0;
+}
+
+void visualize_time_series_momentum(const Eigen::VectorXd& price_series, double momentum_signal) {
+    std::vector<double> prices(price_series.data(), price_series.data() + price_series.size());
+    
+    plt::figure();
+    plt::plot(prices, "o-", {{"label", "Price Series"}});
+    plt::axhline(momentum_signal, "r--", {{"label", "Momentum Signal"}});
+    
+    plt::xlabel("Time");
+    plt::ylabel("Price / Signal");
+    plt::legend();
+    plt::title("Time Series Momentum Visualization");
+    plt::grid(true);
+    plt::show();
+}
+
+int main() {
+    Eigen::VectorXd price_series(5);
+    price_series << 100, 101, 102, 103, 105;
+    double momentum_signal = time_series_momentum(price_series, 3);
+    visualize_time_series_momentum(price_series, momentum_signal);
+    return 0;
+}
+```
+![Momentum Trading Strategies - Time Series Momentum](./assets/time_series_momentum.png)
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __2.3) Cross Sectional Momentum:__
+- **Explanation**: Cross Sectional Momentum (CSMOM) involves ranking assets by their past returns and going long on the top performers while shorting the underperformers.
+- **Use Cases**: Popular in Equities, Fixed Income, and Derivatives.
+- **Python Implementation**
+```python
+import numpy as np
+import pandas as pd
+
+def cross_sectional_momentum(returns_matrix):
+    ranks = np.argsort(np.argsort(returns_matrix, axis=0), axis=0)
+    return np.sign(ranks - np.median(ranks, axis=0))
+
+# Example usage
+returns_matrix = np.array([[0.01, 0.02, -0.01], [0.03, -0.02, 0.02], [-0.01, 0.01, 0.03]])
+momentum_signal = cross_sectional_momentum(returns_matrix)
+print(f"Cross Sectional Momentum Signal: \n{momentum_signal}")
+```
+- **Python Visualization**
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def cross_sectional_momentum(returns_matrix):
+    ranks = np.argsort(np.argsort(returns_matrix, axis=0), axis=0)
+    return np.sign(ranks - np.median(ranks, axis=0))
+
+def visualize_cross_sectional_momentum(returns_matrix, momentum_signal):
+    plt.figure(figsize=(10, 6))
+    for i in range(returns_matrix.shape[1]):
+        plt.plot(returns_matrix[:, i], label=f'Asset {i+1}', marker='o')
+    plt.plot(np.mean(momentum_signal, axis=1), 'r--', label='Momentum Signal')
+    plt.xlabel('Assets')
+    plt.ylabel('Returns / Signal')
+    plt.legend()
+    plt.title('Cross Sectional Momentum Visualization')
+    plt.grid(True)
+    plt.show()
+
+# Example usage
+returns_matrix = np.array([[0.01, 0.02, -0.01], [0.03, -0.02, 0.02], [-0.01, 0.01, 0.03]])
+momentum_signal = cross_sectional_momentum(returns_matrix)
+visualize_cross_sectional_momentum(returns_matrix, momentum_signal)
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <Eigen/Dense>
+#include <algorithm>
+
+Eigen::MatrixXd cross_sectional_momentum(const Eigen::MatrixXd& returns_matrix) {
+    Eigen::MatrixXd ranks = Eigen::MatrixXd::Zero(returns_matrix.rows(), returns_matrix.cols());
+    
+    for (int col = 0; col < returns_matrix.cols(); ++col) {
+        std::vector<std::pair<double, int>> paired_returns;
+        for (int row = 0; row < returns_matrix.rows(); ++row) {
+            paired_returns.emplace_back(returns_matrix(row, col), row);
+        }
+        std::sort(paired_returns.begin(), paired_returns.end());
+        for (int rank = 0; rank < paired_returns.size(); ++rank) {
+            ranks(paired_returns[rank].second, col) = rank;
+        }
+    }
+    Eigen::MatrixXd median_rank = ranks.rowwise().median();
+    return (ranks.array() > median_rank.array()).cast<double>() * 2 - 1;
+}
+
+int main() {
+    Eigen::MatrixXd returns_matrix(3, 3);
+    returns_matrix << 0.01, 0.02, -0.01, 0.03, -0.02, 0.02, -0.01, 0.01, 0.03;
+    Eigen::MatrixXd momentum_signal = cross_sectional_momentum(returns_matrix);
+    std::cout << "Cross Sectional Momentum Signal: \n" << momentum_signal << std::endl;
+    return 0;
+}
+```
+- **C++ Visualization**
+```cpp
+#include <iostream>
+#include <vector>
+#include <Eigen/Dense>
+#include "matplotlibcpp.h"
+
+namespace plt = matplotlibcpp;
+
+Eigen::MatrixXd cross_sectional_momentum(const Eigen::MatrixXd& returns_matrix) {
+    Eigen::MatrixXd ranks = Eigen::MatrixXd::Zero(returns_matrix.rows(), returns_matrix.cols());
+    
+    for (int col = 0; col < returns_matrix.cols(); ++col) {
+        std::vector<std::pair<double, int>> paired_returns;
+        for (int row = 0; row < returns_matrix.rows(); ++row) {
+            paired_returns.emplace_back(returns_matrix(row, col), row);
+        }
+        std::sort(paired_returns.begin(), paired_returns.end());
+        for (int rank = 0; rank < paired_returns.size(); ++rank) {
+            ranks(paired_returns[rank].second, col) = rank;
+        }
+    }
+    Eigen::MatrixXd median_rank = ranks.rowwise().median();
+    return (ranks.array() > median_rank.array()).cast<double>() * 2 - 1;
+}
+
+void visualize_cross_sectional_momentum(const Eigen::MatrixXd& returns_matrix, const Eigen::MatrixXd& momentum_signal) {
+    std::vector<std::vector<double>> return_data(returns_matrix.rows(), std::vector<double>(returns_matrix.cols()));
+    for (int i = 0; i < returns_matrix.rows(); ++i) {
+        for (int j = 0; j < returns_matrix.cols(); ++j) {
+            return_data[i][j] = returns_matrix(i, j);
+        }
+    }
+    
+    std::vector<double> momentum_vec(momentum_signal.size());
+    for (int i = 0; i < momentum_signal.size(); ++i) {
+        momentum_vec[i] = momentum_signal(i);
+    }
+    
+    plt::figure();
+    for (int i = 0; i < return_data[0].size(); ++i) {
+        plt::plot(return_data[i], {{"label", "Asset " + std::to_string(i+1)}});
+    }
+    plt::plot(momentum_vec, "r--", {{"label", "Momentum Signal"}});
+    
+    plt::xlabel("Time");
+    plt::ylabel("Returns / Signal");
+    plt::legend();
+    plt::title("Cross Sectional Momentum Visualization");
+    plt::grid(true);
+    plt::show();
+}
+
+int main() {
+    Eigen::MatrixXd returns_matrix(3, 3);
+    returns_matrix << 0.01, 0.02, -0.01, 0.03, -0.02, 0.02, -0.01, 0.01, 0.03;
+    Eigen::MatrixXd momentum_signal = cross_sectional_momentum(returns_matrix);
+    visualize_cross_sectional_momentum(returns_matrix, momentum_signal);
+    return 0;
+}
+```
+![Momentum Trading Strategies - Cross Sectional Momentum](./assets/cross_sectional_momentum.png)
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __2.4) Crossover & Breakout:__
+- **Explanation**: This strategy involves using moving averages or price levels to detect breakouts, which indicate momentum. When a shorter moving average crosses above a longer one, or when the price breaks above a certain level, it signals a buying opportunity.
+- **Use Cases**: Widely used in FX, Crypto, and Equities.
+- **Python Implementation**
+```python
+import numpy as np
+import pandas as pd
+import talib
+
+def crossover_breakout(price_series):
+    short_ma = talib.SMA(price_series, timeperiod=20)
+    long_ma = talib.SMA(price_series, timeperiod=50)
+    crossover_signal = np.sign(short_ma - long_ma)
+    return crossover_signal
+
+# Example usage
+price_series = np.array([100, 101, 102, 103, 105, 106, 107, 108, 110])
+signal = crossover_breakout(price_series)
+print(f"Crossover Signal: {signal}")
+```
+- **Python Visualization**
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def crossover_breakout(price_series, short_window=10, long_window=30):
+    short_mavg = np.convolve(price_series, np.ones(short_window)/short_window, mode='valid')
+    long_mavg = np.convolve(price_series, np.ones(long_window)/long_window, mode='valid')
+    return short_mavg, long_mavg
+
+def visualize_crossover_breakout(price_series, short_mavg, long_mavg):
+    plt.figure(figsize=(10, 6))
+    plt.plot(price_series, label='Price Series', marker='o')
+    plt.plot(range(len(short_mavg)), short_mavg, label='Short Moving Average', color='r')
+    plt.plot(range(len(long_mavg)), long_mavg, label='Long Moving Average', color='g')
+    plt.xlabel('Time')
+    plt.ylabel('Price / Moving Average')
+    plt.legend()
+    plt.title('Crossover & Breakout Visualization')
+    plt.grid(True)
+    plt.show()
+
+# Example usage
+price_series = np.array([100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110])
+short_mavg, long_mavg = crossover_breakout(price_series)
+visualize_crossover_breakout(price_series, short_mavg, long_mavg)
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <Eigen/Dense>
+
+Eigen::VectorXd sma(const Eigen::VectorXd& price_series, int timeperiod) {
+    Eigen::VectorXd ma(price_series.size());
+    for (int i = timeperiod - 1; i < price_series.size(); ++i) {
+        ma(i) = price_series.segment(i - timeperiod + 1, timeperiod).mean();
+    }
+    return ma;
+}
+
+Eigen::VectorXd crossover_breakout(const Eigen::VectorXd& price_series) {
+    Eigen::VectorXd short_ma = sma(price_series, 20);
+    Eigen::VectorXd long_ma = sma(price_series, 50);
+    return (short_ma - long_ma).unaryExpr([](double x) { return std::signbit(x) ? -1.0 : 1.0; });
+}
+
+int main() {
+    Eigen::VectorXd price_series(9);
+    price_series << 100, 101, 102, 103, 105, 106, 107, 108, 110;
+    Eigen::VectorXd signal = crossover_breakout(price_series);
+    std::cout << "Crossover Signal: " << signal.transpose() << std::endl;
+    return 0;
+}
+```
+- **C++ Visualization**
+```cpp
+#include <iostream>
+#include <vector>
+#include <Eigen/Dense>
+#include "matplotlibcpp.h"
+
+namespace plt = matplotlibcpp;
+
+Eigen::VectorXd moving_average(const Eigen::VectorXd& price_series, int window) {
+    Eigen::VectorXd mavg(price_series.size() - window + 1);
+    double sum = 0.0;
+    for (int i = 0; i < window; ++i) {
+        sum += price_series(i);
+    }
+    mavg(0) = sum / window;
+    for (int i = 1; i < mavg.size(); ++i) {
+        sum = sum - price_series(i - 1) + price_series(i + window - 1);
+        mavg(i) = sum / window;
+    }
+    return mavg;
+}
+
+void visualize_crossover_breakout(const Eigen::VectorXd& price_series, const Eigen::VectorXd& short_mavg, const Eigen::VectorXd& long_mavg) {
+    std::vector<double> prices(price_series.data(), price_series.data() + price_series.size());
+    std::vector<double> short_mavg_vec(short_mavg.data(), short_mavg.data() + short_mavg.size());
+    std::vector<double> long_mavg_vec(long_mavg.data(), long_mavg.data() + long_mavg.size());
+    
+    plt::figure();
+    plt::plot(prices, "o-", {{"label", "Price Series"}});
+    plt::plot(short_mavg_vec, "r-", {{"label", "Short Moving Average"}});
+    plt::plot(long_mavg_vec, "g-", {{"label", "Long Moving Average"}});
+    
+    plt::xlabel("Time");
+    plt::ylabel("Price / Moving Average");
+    plt::legend();
+    plt::title("Crossover & Breakout Visualization");
+    plt::grid(true);
+    plt::show();
+}
+
+int main() {
+    Eigen::VectorXd price_series(11);
+    price_series << 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110;
+    Eigen::VectorXd short_mavg = moving_average(price_series, 10);
+    Eigen::VectorXd long_mavg = moving_average(price_series, 30);
+    visualize_crossover_breakout(price_series, short_mavg, long_mavg);
+    return 0;
+}
+```
+![Momentum Trading Strategies - Crossover & Breakout](./assets/crossover_and_breakout.png)
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __2.5) Event Driven Momentum:__
+- **Explanation**: This strategy seeks to exploit price movements triggered by specific events such as earnings reports, M&A activities, or macroeconomic announcements.
+- **Use Cases**: Applied in Equities, Fixed Income, and Treasuries.
+- **Python Implementation**
+```python
+import numpy as np
+import pandas as pd
+
+def event_driven_momentum(price_series, event_dates):
+    post_event_returns = price_series[event_dates + 1] - price_series[event_dates]
+    return np.sign(post_event_returns.mean())
+
+# Example usage
+price_series = np.array([100, 101, 102, 103, 105])
+event_dates = np.array([2])
+momentum_signal = event_driven_momentum(price_series, event_dates)
+print(f"Event Driven Momentum Signal: {momentum_signal}")
+```
+- **Python Visualization**
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def event_driven_momentum(price_series, event_dates):
+    post_event_returns = [price_series[i+1] - price_series[i] for i in event_dates]
+    return np.mean(post_event_returns)
+
+def visualize_event_driven_momentum(price_series, event_dates):
+    post_event_returns = [price_series[i+1] - price_series[i] for i in event_dates]
+    plt.figure(figsize=(10, 6))
+    plt.plot(price_series, label='Price Series', marker='o')
+    plt.scatter(event_dates, [price_series[i] for i in event_dates], color='r', label='Event Dates')
+    plt.xlabel('Time')
+    plt.ylabel('Price')
+    plt.legend()
+    plt.title('Event Driven Momentum Visualization')
+    plt.grid(True)
+    plt.show()
+
+# Example usage
+price_series = np.array([100, 101, 102, 103, 105])
+event_dates = [2]
+visualize_event_driven_momentum(price_series, event_dates)
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <Eigen/Dense>
+
+double event_driven_momentum(const Eigen::VectorXd& price_series, const Eigen::VectorXi& event_dates) {
+    Eigen::VectorXd post_event_returns(event_dates.size());
+    for (int i = 0; i < event_dates.size(); ++i) {
+        post_event_returns(i) = price_series(event_dates(i) + 1) - price_series(event_dates(i));
+    }
+    return std::signbit(post_event_returns.mean()) ? -1.0 : 1.0;
+}
+
+int main() {
+    Eigen::VectorXd price_series(5);
+    price_series << 100, 101, 102, 103, 105;
+    Eigen::VectorXi event_dates(1);
+    event_dates << 2;
+    double momentum_signal = event_driven_momentum(price_series, event_dates);
+    std::cout << "Event Driven Momentum Signal: " << momentum_signal << std::endl;
+    return 0;
+}
+```
+- **C++ Visualization**
+```cpp
+#include <iostream>
+#include <vector>
+#include <Eigen/Dense>
+#include "matplotlibcpp.h"
+
+namespace plt = matplotlibcpp;
+
+Eigen::VectorXd event_driven_momentum(const Eigen::VectorXd& price_series, const Eigen::VectorXi& event_dates) {
+    Eigen::VectorXd post_event_returns(event_dates.size());
+    for (int i = 0; i < event_dates.size(); ++i) {
+        post_event_returns(i) = price_series(event_dates(i) + 1) - price_series(event_dates(i));
+    }
+    return post_event_returns;
+}
+
+void visualize_event_driven_momentum(const Eigen::VectorXd& price_series, const Eigen::VectorXi& event_dates) {
+    std::vector<double> prices(price_series.data(), price_series.data() + price_series.size());
+    std::vector<double> event_dates_vec(event_dates.data(), event_dates.data() + event_dates.size());
+    std::vector<double> event_prices(event_dates.size());
+    for (int i = 0; i < event_dates.size(); ++i) {
+        event_prices[i] = price_series(event_dates(i));
+    }
+    
+    plt::figure();
+    plt::plot(prices, "o-", {{"label", "Price Series"}});
+    plt::scatter(event_dates_vec, event_prices, 50, {{"label", "Event Dates"}, {"color", "r"}});
+    
+    plt::xlabel("Time");
+    plt::ylabel("Price");
+    plt::legend();
+    plt::title("Event Driven Momentum Visualization");
+    plt::grid(true);
+    plt::show();
+}
+
+int main() {
+    Eigen::VectorXd price_series(5);
+    price_series << 100, 101, 102, 103, 105;
+    Eigen::VectorXi event_dates(1);
+    event_dates << 2;
+    Eigen::VectorXd post_event_returns = event_driven_momentum(price_series, event_dates);
+    visualize_event_driven_momentum(price_series, event_dates);
+    return 0;
+}
+```
+![Momentum Trading Strategies - Event Driven Momentum](./assets/event_driven_momentum.png)
+
+### __Momentum Trading Strategies - Use Cases__
+Momentum strategies can be applied across a variety of asset categories:
+
+- **FX**: Time Series Momentum and Crossover & Breakout strategies are popular due to the trending nature of currency pairs.
+- **Crypto**: Highly volatile, making it ideal for Crossover & Breakout and Cross Sectional Momentum.
+- **Equities**: All strategies can be employed, particularly Cross Sectional Momentum and Event Driven Momentum.
+- **Fixed Income**: Event Driven Momentum strategies are suitable due to reactions to macroeconomic events.
+- **Futures & Commodities**: Roll Returns and Time Series Momentum are often used to capture trends in these markets.
+- **Options & Derivatives**: Time Series Momentum and Event Driven Momentum can be useful for these complex instruments.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+## __Trading Alphas: Mining, Optimization, and System Design__
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### 3) Math Concepts and Trading:
+
+#### __3.A) Cointegration:__
+
+#### __3.B) Correlation:__
+
+#### __3.C) Execution:__
+
+#### __3.D) Building a trading platform:__
+
+#### __3.E) System Parameter Permutation:__
+
+- 3.1. [__3.1) Mean Reversion:__](#31-mean-reversion)
+    - 3.2. [__3.2) K-Nearest Neighbors:__](#32-k-nearest-neighbors)
+    - 3.3. [__3.3) Time series & cross sectional alphas:__](#33-time-series-cross-sectional-alphas)
+    - 3.4. [__3.4) Candlestick Patterns:__](#34-candlestick-patterns)
+    - 3.5. [__3.5) Vectorized SL & TP:__](#35-vectorized-sl-and-tp)
