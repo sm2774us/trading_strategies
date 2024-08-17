@@ -5533,6 +5533,7 @@ int main() {
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ### __3.4) Candlestick Patterns:__
+Candlestick patterns are used in technical analysis to predict future price movements based on historical price patterns. They provide insights into market psychology and are commonly used in conjunction with other technical indicators.
 
 #### **Understanding candlesticks basics — Beginners guide**
 Curious about how traders make those buy and sell decisions? It’s not random decisions; it’s about understanding market dynamics and having the right information in hand to make those decisions. In the market, a stock price dances to the tunes of demand, supply, and a few other factors. For this, understanding candlestick chart patterns is key, as it allows for more informed trading decisions.Let’s dive into the world of candlestick charts.
@@ -5957,9 +5958,256 @@ Hammers are classic reversal and rather strong patterns in technical analysis. T
 
 You can test your abilities and copy my trades for free using a demo account with a trusted broker [LiteFinance](https://my.litefinance.org/trading).
 
+- **Python Visualization**
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def plot_candlestick(prices):
+    prices.plot(kind='line', figsize=(12, 6))
+    plt.title('Candlestick Patterns')
+    plt.show()
+
+prices = pd.Series(np.random.normal(0, 1, 100).cumsum())
+plot_candlestick(prices)
+```
+
+- **C++ Visualization**
+```cpp
+#include <matplot/matplot.h>
+#include <Eigen/Dense>
+
+void plot_candlestick(const Eigen::VectorXd& prices) {
+    matplot::plot(prices);
+    matplot::title("Candlestick Patterns");
+    matplot::show();
+}
+
+int main() {
+    Eigen::VectorXd prices = Eigen::VectorXd::Random(100).cumsum();
+    plot_candlestick(prices);
+    return 0;
+}
+```
+![Trading Alphas: Mining, Optimization, and System Design - Candlestick Patterns](./assets/candlestick_patterns.png)
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ### __3.5) Vectorized SL & TP:__
+__Vectorized SL & TP__ allows traders to set stop-loss and take-profit levels for multiple positions simultaneously, ensuring risk management.
+
+- **Explanation**:
+  - **Stop-Loss (SL)**: This is a risk management tool that automatically closes a position when the price reaches a predefined level, limiting the trader's loss.
+
+  - **Take-Profit (TP)**: This is a profit-targeting tool that automatically closes a position when the price reaches a predefined level, securing the trader’s profit.
+
+Both SL and TP are essential tools in trading strategies to manage risk and lock in profits. The vectorized approach allows these calculations to be performed efficiently on an entire series of prices, enabling real-time decision-making in trading systems.
+
+- **Mathematical Formula**:
+1. **Stop-Loss (SL):**
+   $$
+   \text{SL}_t = \min(P_1, P_2, \ldots, P_t) - \text{Threshold}
+   $$
+   Where:
+   - $\text{SL}_t$ is the stop-loss level at time $t$.
+   - $P_t$ is the price at time $t$.
+   - $\text{Threshold}$ is a predefined loss level.
+
+2. **Take-Profit (TP):**
+   $$
+   \text{TP}_t = \max(P_1, P_2, \ldots, P_t) + \text{Threshold}
+   $$
+   Where:
+   - $\text{TP}_t$ is the take-profit level at time $t$.
+   - $P_t$ is the price at time $t$.
+   - $\text{Threshold}$ is a predefined profit level.
+
+- **Python Implementation**
+```python
+import numpy as np
+
+def vectorized_sl_tp(prices, sl, tp):
+    stop_loss = np.minimum.accumulate(prices) - sl
+    take_profit = np.maximum.accumulate(prices) + tp
+    return stop_loss, take_profit
+
+prices = np.random.normal(0, 1, 100).cumsum()
+sl, tp = 0.1, 0.2
+stop_loss, take_profit = vectorized_sl_tp(prices, sl, tp)
+print(f"Stop Loss: {stop_loss}")
+print(f"Take Profit: {take_profit}")
+```
+- **Python Visualization**
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def vectorized_sl_tp(prices, sl, tp):
+    stop_loss = np.minimum.accumulate(prices) - sl
+    take_profit = np.maximum.accumulate(prices) + tp
+    return stop_loss, take_profit
+
+prices = np.random.normal(0, 1, 100).cumsum()
+sl, tp = 0.1, 0.2
+stop_loss, take_profit = vectorized_sl_tp(prices, sl, tp)
+
+plt.figure(figsize=(12, 6))
+plt.plot(prices, label='Price')
+plt.plot(stop_loss, label='Stop Loss', linestyle='--', color='red')
+plt.plot(take_profit, label='Take Profit', linestyle='--', color='green')
+plt.title("Vectorized Stop-Loss & Take-Profit")
+plt.legend()
+plt.show()
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <vector>
+#include <Eigen/Dense>
+
+std::tuple<Eigen::VectorXd, Eigen::VectorXd> vectorized_sl_tp(const Eigen::VectorXd& prices, double sl, double tp) {
+    Eigen::VectorXd stop_loss = prices.array().min(prices.array().cummin()) - sl;
+    Eigen::VectorXd take_profit = prices.array().max(prices.array().cummax()) + tp;
+    return std::make_tuple(stop_loss, take_profit);
+}
+
+int main() {
+    Eigen::VectorXd prices = Eigen::VectorXd::Random(100).cumsum();
+    double sl = 0.1, tp = 0.2;
+    auto [stop_loss, take_profit] = vectorized_sl_tp(prices, sl, tp);
+    std::cout << "Stop Loss:\n" << stop_loss << std::endl;
+    std::cout << "Take Profit:\n" << take_profit << std::endl;
+    return 0;
+}
+```
+- **C++ Visualization**
+```cpp
+#include <matplot/matplot.h>
+#include <Eigen/Dense>
+
+std::tuple<Eigen::VectorXd, Eigen::VectorXd> vectorized_sl_tp(const Eigen::VectorXd& prices, double sl, double tp) {
+    Eigen::VectorXd stop_loss = prices.array().min(prices.array().cummin()) - sl;
+    Eigen::VectorXd take_profit = prices.array().max(prices.array().cummax()) + tp;
+    return std::make_tuple(stop_loss, take_profit);
+}
+
+int main() {
+    Eigen::VectorXd prices = Eigen::VectorXd::Random(100).cumsum();
+    double sl = 0.1, tp = 0.2;
+    auto [stop_loss, take_profit] = vectorized_sl_tp(prices, sl, tp);
+
+    matplot::plot(prices, "-b")->line_width(2).display_name("Price");
+    matplot::plot(stop_loss, "--r")->line_width(2).display_name("Stop Loss");
+    matplot::plot(take_profit, "--g")->line_width(2).display_name("Take Profit");
+    matplot::title("Vectorized Stop-Loss & Take-Profit");
+    matplot::legend();
+    matplot::show();
+
+    return 0;
+}
+```
+![Trading Alphas: Mining, Optimization, and System Design - Vectorized SL & TP](./assets/vectorized_sl_and_tp.png)
+
+### Trading Alphas - Use Cases
+#### 1) **Mean Reversion**
+
+##### **Use Cases:**
+- **Futures:** Mean reversion strategies are commonly used in futures markets, especially in pairs trading. Traders may exploit the temporary mispricing between two correlated assets (e.g., Brent Crude Oil vs. WTI Crude Oil futures).
+  
+- **FX (Foreign Exchange):** In FX markets, mean reversion can be used for currency pairs that tend to revert to a historical average or equilibrium level. For example, pairs like EUR/GBP that have stable economic ties often revert to their mean.
+
+- **Equities:** Mean reversion is widely used in equity markets, especially for trading index futures or ETFs that represent a basket of stocks. Traders may exploit temporary divergences from the mean due to market overreactions.
+
+- **Fixed Income:** In the bond markets, mean reversion can be used to trade yield spreads between different maturities (e.g., 2-year vs. 10-year Treasury yields).
+
+- **Crypto:** Mean reversion can be applied to highly volatile cryptocurrencies to trade against extreme price movements, assuming that the price will eventually revert to its mean.
+
+##### **Asset Classes:**
+- Futures
+- FX
+- Equities
+- Fixed Income
+- Crypto
+
+#### 2) **K-Nearest Neighbors (KNN)**
+
+##### **Use Cases:**
+- **Equities:** KNN can be used to classify stocks based on historical performance, volatility, and other factors. It can be employed to identify similar stocks that may have similar future price movements.
+
+- **Options:** KNN can be applied to options trading by classifying options contracts based on their historical behavior and identifying mispriced options.
+
+- **Crypto:** In the crypto markets, KNN can classify coins based on historical price patterns, helping traders find correlations and potential trading opportunities among lesser-known coins.
+
+- **Derivatives:** For complex derivatives, KNN can classify derivative instruments based on their underlying assets, helping traders identify similar risk profiles and trading opportunities.
+
+##### **Asset Classes:**
+- Equities
+- Options
+- Crypto
+- Derivatives
+
+#### 3) **Time Series & Cross-Sectional Alphas**
+
+##### **Use Cases:**
+- **Equities:** Time series alphas can be used to predict stock price movements based on historical data, while cross-sectional alphas can compare multiple stocks within the same sector to identify outperformers and underperformers.
+
+- **Fixed Income:** Time series models can be used to predict interest rate movements, while cross-sectional analysis can compare bonds from different issuers or sectors to identify relative value opportunities.
+
+- **FX:** Time series analysis can forecast currency movements, while cross-sectional analysis can compare different currency pairs to identify trends and arbitrage opportunities.
+
+- **Futures:** Time series and cross-sectional alphas are employed in futures trading to forecast price movements and identify mispriced contracts relative to others.
+
+- **Crypto:** Time series analysis is useful for predicting price movements in highly volatile cryptocurrencies, while cross-sectional alphas can help identify relative strength among different cryptocurrencies.
+
+##### **Asset Classes:**
+- Equities
+- Fixed Income
+- FX
+- Futures
+- Crypto
+
+#### 4) **Candlestick Patterns**
+
+##### **Use Cases:**
+- **Equities:** Candlestick patterns are widely used in equities to identify potential reversals, continuations, or breakouts in stock prices.
+
+- **FX:** In FX trading, candlestick patterns can signal potential entry and exit points based on price action in currency pairs.
+
+- **Futures:** Candlestick patterns are used to trade futures contracts, helping traders identify market sentiment and potential price movements.
+
+- **Crypto:** Candlestick patterns are useful in the highly volatile crypto markets to predict short-term price movements and potential reversals.
+
+- **Options:** Candlestick patterns can be used in options trading to time entry and exit points, particularly for directional options strategies.
+
+##### **Asset Classes:**
+- Equities
+- FX
+- Futures
+- Crypto
+- Options
+
+#### 5) **Vectorized Stop-Loss & Take-Profit (SL & TP)**
+
+##### **Use Cases:**
+- **FX:** Vectorized SL & TP strategies are popular in FX trading to automate risk management across multiple currency pairs, ensuring consistent execution of risk parameters.
+
+- **Futures:** In futures trading, vectorized SL & TP can manage positions across multiple contracts, optimizing exits based on predefined risk-reward ratios.
+
+- **Equities:** SL & TP strategies are used in equity markets to protect profits and limit losses on stock trades, often applied to portfolios or baskets of stocks.
+
+- **Crypto:** In crypto markets, vectorized SL & TP can manage the high volatility and ensure disciplined trading by executing exits automatically when certain levels are reached.
+
+- **Options:** SL & TP can be applied to options trading to manage risk, especially in multi-leg strategies where risk needs to be controlled across multiple options contracts.
+
+- **Derivatives:** In derivatives trading, vectorized SL & TP can manage complex positions by automating exits based on predefined risk levels across different instruments.
+
+##### **Asset Classes:**
+- FX
+- Futures
+- Equities
+- Crypto
+- Options
+- Derivatives
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
