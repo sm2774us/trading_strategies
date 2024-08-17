@@ -1,23 +1,25 @@
 # __Trading Strategies__
 My Private Repository of Trading Strategies
 
+## [__`Boost Python` and `Numba` and `Cython`__](./boost_python_and_numba_and_cython.md)
+
 ## Table Of Contents <a name="top"></a>
 0. [__News Sentiment Trading Strategies__](#news-sentiment-trading-strategies)
     - 0.0. [__0) Concepts and Trading:__](#0-concepts-and-trading)
         - 0.0.1. [__0.A) Retrieving News Data:__](#0a-retrieving-news-data)
-        - 1.0.2. [__0.B) Identifying Sentiment from News Headline:__](#0b-identifying-sentiment-from-news-headline)
-        - 1.0.3. [__0.C) Sentiment Score:__](#0c-sentiment-score)
-        - 1.0.4. [__0.D) LLM Models:__](#0d-llm-models)
+        - 0.0.2. [__0.B) Identifying Sentiment from News Headline:__](#0b-identifying-sentiment-from-news-headline)
+        - 0.0.3. [__0.C) Sentiment Score:__](#0c-sentiment-score)
+        - 0.0.4. [__0.D) LLM Models:__](#0d-llm-models)
     - 0.1. [__1) Buy the Rumor Sell the Event:__](#1-buy-the-rumor-sell-the-event)
     - 0.2. [__2) VADER-based Sentiment Analysis:__](#2-vader-based-sentiment-analysis)
     - 0.3. [__3) Optimize Strategy Using Technical Indicators:__](#3-optimize-strategy-using-technical-indicators)
 1. [__Mean Reversion Strategies__](#mean-reversion-strategies)
-    - 1.0. [__0) Math Concepts:__](#0-math-concepts)
-        - 1.0.1. [__0.A) Correlation and Co-Integration:__](#0a-correlation-and-co-integration)
-        - 1.0.2. [__0.B) Stationarity:__](#0b-stationarity)
-        - 1.0.3. [__0.C) Linear Regression:__](#0c-linear-regression)
-        - 1.0.4. [__0.D) ADF (Augmented Dickey-Fuller) and Johansen Test:__](#0d-adf-augmented-dickey-fuller-and-johansen-test)
-        - 1.0.4. [__0.E) Half-Life:__](#0e-half-life)
+    - 1.0. [__1) Math Concepts:__](#1-math-concepts)
+        - 1.0.1. [__1.A) Correlation and Co-Integration:__](#1a-correlation-and-co-integration)
+        - 1.0.2. [__1.B) Stationarity:__](#1b-stationarity)
+        - 1.0.3. [__1.C) Linear Regression:__](#1c-linear-regression)
+        - 1.0.4. [__1.D) ADF (Augmented Dickey-Fuller) and Johansen Test:__](#1d-adf-augmented-dickey-fuller-and-johansen-test)
+        - 1.0.4. [__1.E) Half-Life:__](#1e-half-life)
     - 1.1. [__1) Statistical Arbitrage:__](#1-statistical-arbitrage)
         - Statistical Arbitrage (StatArb) involves trading pairs of securities that historically move together. When their price relationship diverges, traders expect them to revert to the mean, thus creating profit opportunities.    
         - __Key Steps:__
@@ -106,9 +108,9 @@ These strategies can be programmed in both C++ and Python to automate trading de
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
-### 0) Math Concepts:
+### 1) Math Concepts:
 
-#### 0.A. **Correlation and Co-Integration**
+#### 1.A. **Correlation and Co-Integration**
 
 ##### **Correlation**:
 Correlation measures the linear relationship between two variables. The Pearson correlation coefficient `r` is calculated as:
@@ -253,7 +255,7 @@ int main() {
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
-#### 0.B. **Stationarity**
+#### 1.B. **Stationarity**
 Stationarity refers to a time series whose statistical properties (mean, variance) do not change over time. A time series $X_t$ is stationary if:
 
 $$
@@ -457,7 +459,7 @@ int main() {
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
-#### 0.C. **Linear Regression**
+#### 1.C. **Linear Regression**
 Linear regression estimates the relationship between a dependent variable `y` and an independent variable `x`:
 
 $$
@@ -557,7 +559,7 @@ int main() {
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
-#### 0.D. **ADF (Augmented Dickey-Fuller) and Johansen Test**
+#### 1.D. **ADF (Augmented Dickey-Fuller) and Johansen Test**
 
 #### **ADF Test**:
 The ADF test checks for the presence of a unit root in a time series. The null hypothesis $H_0$ is that the series has a unit root (non-stationary).
@@ -938,7 +940,7 @@ In summary, while the C++ code can provide a general idea of the test results, i
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
-#### 0.E. **Half-Life**
+#### 1.E. **Half-Life**
 Half-life measures the time it takes for a mean-reverting process to revert halfway back to the mean. For an Ornstein-Uhlenbeck process:
 
 $$
