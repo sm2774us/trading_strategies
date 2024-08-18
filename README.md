@@ -6655,7 +6655,7 @@ The IOC order executes as much volume as possible at or below the limit price $P
 
 Assume:
 - IOC order volume $V_{order}$ = $1000$ shares.
-- Limit price $P_{limit}$ = $\$50$.
+- Limit price $P_{limit}$ = `$50`.
 
 Order book:
 - 300 shares available at `$49.50`
