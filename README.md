@@ -39,7 +39,7 @@ My Private Repository of Trading Strategies
     - 2.1. [__2.1) Roll Returns:__](#21-roll-returns)
     - 2.2. [__2.2) Time Series Momentum:__](#22-time-series-momentum)
     - 2.3. [__2.3) Cross Sectional Momentum:__](#23-cross-sectional-momentum)
-    - 2.4. [__2.4) Crossover & Breakout:__](#24-crossover-breakout)
+    - 2.4. [__2.4) Crossover & Breakout:__](#24-crossover--breakout)
     - 2.5. [__2.5) Event Driven Momentum:__](#25-event-driven-momentum)
     - 2.6. [__Momentum Trading Strategies - Use Cases:__](#momentum-trading-strategies---use-cases)
 3. [__Trading Alphas: Mining, Optimization, and System Design__](#trading-alphas-mining-optimization-and-system-design)
