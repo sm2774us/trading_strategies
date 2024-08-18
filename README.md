@@ -6663,7 +6663,7 @@ Order book:
 - 500 shares available at $\$50.25$
 
 The order execution would be:
-- $V_{filled} = 300 + 200 = 500$ shares (at prices $\$49.50$ and $\$50.00$
+- $V_{filled} = 300 + 200 = 500$ shares at prices $\$49.50$ and $\$50.00$
 - $V_{canceled} = 1000 - 500 = 500$ shares are canceled.
 
 ##### **2. Intermarket Sweep Order (ISO)**
