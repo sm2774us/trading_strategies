@@ -344,7 +344,7 @@ $$
 y_t = c + \sum_{i=1}^p \phi_i y_{t-i} + \sum_{i=1}^q \theta_i \epsilon_{t-i} + \epsilon_t
 $$
 
-     where $y_t$ is the price, $\phi_i$ are the autoregressive coefficients, $\theta_i$ are the moving average coefficients, and $\epsilon_t$ is the error term.
+, where $y_t$ is the price, $\phi_i$ are the autoregressive coefficients, $\theta_i$ are the moving average coefficients, and $\epsilon_t$ is the error term.
 
 - **Machine Learning Models**:
    - **Neural Networks**: For predicting price movements using large datasets, incorporating factors like sentiment, volume, and technical indicators.
