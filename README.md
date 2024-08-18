@@ -5438,18 +5438,18 @@ int main() {
 
 - **Mathematical Formula**:
 1. **Time Series Alpha:**
-$$
-\alpha_t = R_t - \beta \cdot \text{Market}_t
-$$
+
+![Time Series Alpha](./assets/time_series_alpha.png)
+
    Where:
    - $R_t$ is the return of the asset at time $t$.
    - $\beta$ is the sensitivity of the asset’s return to the market return.
    - $\text{Market}_t$ is the market return at time $t$.
 
 2. **Cross-Sectional Alpha:**
-$$
-\alpha_{i,t} = R_{i,t} - \frac{1}{N} \sum_{j=1}^{N} R_{j,t}
-$$
+
+![Cross-Sectional Alpha](./assets/cross_sectional_alpha.png)
+
    Where:
    - $R_{i,t}$ is the return of asset $i$ at time $t$.
    - $N$ is the number of assets.
