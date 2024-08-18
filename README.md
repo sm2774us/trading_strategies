@@ -3629,11 +3629,11 @@ $$
 ###### **Long and Short Positions**:
    - **Long Position**: The stock with the highest average return is selected for a long position. Mathematically, this is represented as:
 $$
-\text{Long Stock} = \arg\max ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
+\text{Long Stock} = \max ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
 $$
    - **Short Position**: The stock with the lowest average return is selected for a short position. Mathematically, this is represented as:
 $$
-\text{Short Stock} = \arg\min ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
+\text{Short Stock} = \min ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
 $$
 
 ##### Key Insights from the Plot:
