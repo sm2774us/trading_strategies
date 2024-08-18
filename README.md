@@ -3598,11 +3598,9 @@ The C++ and Python code both plot the returns of three stocks (Stock A, Stock B,
    - **Formula:**
    The percentage return for a stock at time $t$ is calculated using:
 
-$$
-\text{Return}_t = \frac{\text{Close}_t - \text{Close}_{t-1}}{\text{Close}_{t-1}}
-$$
+![Percentage Return for a Stock at time `t`](./assets/y_axis_return.png)
 
-   where $\text{Close}_t$ is the closing price at time $t$ and $\text{Close}_{t-1}$ is the closing price at the previous time step.
+   where ![Closing Price at time `t`](./assets/close_t.png) is the closing price at time $t$ and ![Closing Price at time `t`](./assets/close_t-1.png) is the closing price at the previous time step at time $t-1$.
 
 ##### 4.2. **X-Axis (Date)**:
    - This axis shows the dates corresponding to the closing prices and returns.
@@ -3616,27 +3614,23 @@ $$
 
 ###### **Calculating Returns**:
    - The percentage return for each stock is calculated as follows:
-$$
-\text{Return}_{i} = \frac{\text{Close}_{i} - \text{Close}_{i-1}}{\text{Close}_{i-1}}
-$$
+![Percentage Return for a Stock](./assets/percentage_return_for_a_stock.png)
    - This calculation provides the daily return based on the change in closing prices from one day to the next.
 
 ###### **Average Returns**:
    - The average return for each stock is computed using:
-$$
-\text{Average Return} = \frac{1}{N} \sum_{i=1}^N \text{Return}_{i}
-$$
-   where $N$ is the number of returns.
+![Average Return for a Stock](./assets/average_return_for_a_stock.png)
+   
+      where `N` is the number of returns.
 
 ###### **Long and Short Positions**:
    - **Long Position**: The stock with the highest average return is selected for a long position. Mathematically, this is represented as:
-$$
-\text{Long Stock} = \max ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
-$$
+
+![Long Position](./assets/long_position.png)
+
    - **Short Position**: The stock with the lowest average return is selected for a short position. Mathematically, this is represented as:
-$$
-\text{Short Stock} = \min ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
-$$
+
+![Short Position](./assets/short_position.png)
 
 ##### Key Insights from the Plot:
 
