@@ -1889,7 +1889,7 @@ This consistency occurs because both implementations follow the same algorithm:
 1. __Lag Calculation:__ Both versions compute the lagged series of x.
 2. __Return Calculation:__ Both calculate the difference between the original series and the lagged series.
 3. __Linear Regression:__ Both perform linear regression to determine the coefficient b.
-4. __Half-Life Calculation:__ Both use the formula -log(2) / log(b) to compute the Half-Life.
+4. __Half-Life Calculation:__ Both use the formula - ```log(2) / log(b)``` to compute the Half-Life.
 
 Despite minor syntax differences, the core logic is the same, resulting in matching outputs.
 
