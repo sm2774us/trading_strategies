@@ -5298,12 +5298,15 @@ int main() {
   - __`K-NN`__ is a machine learning algorithm used for classification and regression. In trading, it can be used to predict the direction of asset prices by finding the most similar historical patterns and analyzing the outcomes.
 
 - **Mathematical Formula**:
-$$\text{Signal} = \frac{P_t - \mu}{\sigma}$$
+
+$$
+\text{Signal} = \frac{P_t - \mu}{\sigma}
+$$
 
 Where:
-- $ P_t$ is the current price
+- $P_t$ is the current price
 - $\mu$ is the historical mean
-- \sigma$ is the standard deviation
+- $\sigma$ is the standard deviation
 
 
 - **Mathematical Formula:**
@@ -5314,7 +5317,7 @@ $$
 d(x_i, x_j) = \sqrt{\sum_{k=1}^{n} (x_{ik} - x_{jk})^2}
 $$
    Where:
-   - $x_i and $x_j$ are two points in the feature space.
+   - $x_i$ and $x_j$ are two points in the feature space.
    - $n$ is the number of features.
    - $d(x_i, x_j)$ is the Euclidean distance between the points $x_i$ and $x_j$.
 
