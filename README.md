@@ -56,7 +56,7 @@ My Private Repository of Trading Strategies
     - 3.5. [__3.5) Vectorized SL & TP:__](#35-vectorized-sl--tp)
     - 3.6. [__3.6) Trading Alphas - Use Cases:__](#trading-alphas---use-cases)
 4. [__Trading in Milliseconds: HFT Strategies and Setup__](#trading-in-milliseconds-hft-strategies-and-setup)
-    - 4.0. [__4.0) Concepts and Trading:__](#40-concepts-and-trading)
+    - 4.0. [__4.0) Concepts and Trading:__](#4-concepts-and-trading)
         - 4.0.1. [__4.A) Time and Volume Bars:__](#4a-time-and-volume-bars)
         - 4.0.2. [__4.B) Spoofing, Front-running:__](#4b-spoofing-front-running)
         - 4.0.3. [__4.C) IOC and ISO orders:__](#4c-ioc-and-iso-orders)
