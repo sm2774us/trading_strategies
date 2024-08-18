@@ -6014,18 +6014,18 @@ Both SL and TP are essential tools in trading strategies to manage risk and lock
 
 - **Mathematical Formula**:
 1. **Stop-Loss (SL):**
-$$
-\text{SL}_t = \min(P_1, P_2, \ldots, P_t) - \text{Threshold}
-$$
+
+![Stop Loss Formula](./assets/stop_loss.png)
+
    Where:
    - $\text{SL}_t$ is the stop-loss level at time $t$.
    - $P_t$ is the price at time $t$.
    - $\text{Threshold}$ is a predefined loss level.
 
 2. **Take-Profit (TP):**
-$$
-\text{TP}_t = \max(P_1, P_2, \ldots, P_t) + \text{Threshold}
-$$
+
+![Take Profit Formula](./assets/take_profit.png)
+
    Where:
    - $\text{TP}_t$ is the take-profit level at time $t$.
    - $P_t$ is the price at time $t$.
