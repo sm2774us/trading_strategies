@@ -6620,6 +6620,102 @@ int main() {
 - **IOC (Immediate-Or-Cancel) Orders:** An order that must be executed immediately, and any portion of the order that cannot be immediately executed is canceled.
 - **ISO (Intermarket Sweep Orders):** A type of order used in the U.S. equity markets that allows traders to trade through the National Best Bid and Offer (NBBO) and seek better prices across multiple exchanges.
 
+In financial markets, **Immediate-Or-Cancel (IOC)** and **Immediate-Sell-Or-Buy (ISO)** orders are types of limit orders that involve specific execution conditions. Let's break down the mathematical concepts and explanations for both types.
+
+##### **1. Immediate-Or-Cancel (IOC) Orders**
+###### **Definition:**
+An **Immediate-Or-Cancel (IOC)** order is a type of limit order that attempts to execute all or part of the order immediately at the specified price or better. Any portion of the order that cannot be filled immediately is canceled.
+
+###### **Mathematical Formula:**
+
+Let:
+- $V_{order}$: Total volume of the IOC order.
+- $P_{limit}$: Limit price specified in the IOC order.
+- $V_{filled}$: Volume of the order that is filled immediately.
+- \( V_{canceled} \): Volume of the order that is canceled.
+
+The key constraint for IOC is:
+
+$V_{filled} \leq V_{order}$
+
+$V_{canceled} = V_{order} - V_{filled}$
+
+**Execution Condition:**
+The execution condition for IOC can be expressed mathematically as:
+$$
+V_{filled} = \sum_{i} \text{Min}\left(V_{ask_i}, V_{order}\right) \quad \text{for all } P_{ask_i} \leq P_{limit}
+$$
+Where:
+- $V_{ask_i}$ is the volume available at ask price \( P_{ask_i} \).
+- $P_{ask_i}$ are the ask prices in the market order book.
+
+The IOC order executes as much volume as possible at or below the limit price \( P_{limit} \). Any remaining volume \( V_{canceled} \) is canceled.
+
+###### **Example:**
+
+Assume:
+- IOC order volume $V_{order} = 1000$ shares.
+- Limit price $P_{limit} = \$50$.
+
+Order book:
+- 300 shares available at $\$49.50$
+- 200 shares available at $\$50.00$
+- 500 shares available at $\$50.25$
+
+The order execution would be:
+- $V_{filled} = 300 + 200 = 500$ shares (at prices $\$49.50$ and $\$50.00$
+- $V_{canceled} = 1000 - 500 = 500$ shares are canceled.
+
+##### **2. Intermarket Sweep Order (ISO)**
+
+###### **Definition:**
+An **Intermarket Sweep Order (ISO)** is a type of limit order that allows the trader to bypass the National Best Bid and Offer (NBBO) and execute the order across multiple market centers simultaneously. This means the order can be filled at different prices across different exchanges without waiting for the best price across the market.
+
+###### **Mathematical Formula:**
+
+Let:
+- $V_{order}$: Total volume of the ISO order.
+- $P_{limit}$: Limit price specified in the ISO order.
+- $V_{filled}$: Volume of the order that is filled across multiple exchanges.
+- $P_{i}$: Prices at different exchanges $i$.
+
+The ISO order is typically broken down into smaller orders that execute at different exchanges:
+$$
+V_{filled} = \sum_{i} \text{Min}\left(V_{ask_i}, V_{order_i}\right) \quad \text{for all } P_{ask_i} \leq P_{limit}
+$$
+Where:
+- $V_{order_i}$ is the volume sent to exchange $i$.
+- $P_{ask_i}$ are the ask prices at different exchanges.
+
+**Execution Condition:**
+ISO orders execute at multiple exchanges, potentially at different prices, without regard to the NBBO.
+
+###### **Example:**
+
+Assume:
+- ISO order volume $V_{order} = 1500$ shares.
+- Limit price $P_{limit} = \$50$.
+
+Order book across exchanges:
+- Exchange A: 300 shares available at $\$49.50$
+- Exchange B: 200 shares available at $\$49.75$
+- Exchange C: 1000 shares available at $\$50.00$
+- Exchange D: 500 shares available at $\$50.25$
+
+The order execution could be:
+- $V_{filled_A} = 300$ shares at $\$49.50$
+- $V_{filled_B} = 200$ shares at $\$49.75$
+- $V_{filled_C} = 1000$ shares at $\$50.00$
+
+Total filled:
+- $V_{filled} = 300 + 200 + 1000 = 1500$ shares
+
+Since the entire order was filled across multiple exchanges, nothing is left to cancel. The ISO order executes as quickly as possible across different exchanges without waiting for the best price across all markets.
+
+##### **Summary:**
+- **IOC Orders**: Attempt to execute immediately at a specific price or better. Any unfilled portion is canceled.
+- **ISO Orders**: Allow the trader to execute orders across multiple exchanges simultaneously, bypassing the NBBO, ensuring quicker execution without waiting for the best price across all markets.
+
 **Python Implementation:**
 
 ```python
