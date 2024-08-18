@@ -5313,18 +5313,18 @@ Where:
 __`K-NN`__ is a non-parametric classification algorithm that works as follows:
 
 1. **Distance Calculation:**
-$$
-d(x_i, x_j) = \sqrt{\sum_{k=1}^{n} (x_{ik} - x_{jk})^2}
-$$
+
+![Distance Calculation](./assets/distance_calculation.png)
+
    Where:
    - $x_i$ and $x_j$ are two points in the feature space.
    - $n$ is the number of features.
    - $d(x_i, x_j)$ is the Euclidean distance between the points $x_i$ and $x_j$.
 
 2. **Classification:**
-$$
-\hat{y} = \text{mode}(y_{k1}, y_{k2}, \ldots, y_{kk})
-$$
+
+![Classification](./assets/classification.png)
+
    Where:
    - $\hat{y}$ is the predicted class.
    - $y_{k1}, y_{k2}, \ldots, y_{kk}$ are the classes of the k-nearest neighbors.
