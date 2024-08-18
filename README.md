@@ -1868,6 +1868,8 @@ Despite minor syntax differences, the core logic is the same, resulting in match
 ### Summary
 These concepts form the foundation of Mean Reversion Trading, and understanding them through mathematical formulas and coding helps in implementing strategies in both Python and C++.
 
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 ### 1) Statistical Arbitrage:
 - __Statistical Arbitrage (StatArb)__ involves trading pairs of securities that historically move together. When their price relationship diverges, traders expect them to revert to the mean, thus creating profit opportunities.    
 - __Key Steps:__
