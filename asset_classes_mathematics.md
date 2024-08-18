@@ -241,21 +241,28 @@ The CIR model is widely used in finance, particularly in:
 #### **Key Concepts:**
 1. **The Greeks**:
    - **Delta**: Sensitivity of option price to changes in the underlying asset price.
-     $$
-     \Delta = \frac{\partial C}{\partial S}
-     $$
+
+$$
+\Delta = \frac{\partial C}{\partial S}
+$$
+
    - **Gamma**: Sensitivity of Delta to changes in the underlying asset price.
-     $$
-     \Gamma = \frac{\partial \Delta}{\partial S} = \frac{\partial^2 C}{\partial S^2}
-     $$
+
+$$
+\Gamma = \frac{\partial \Delta}{\partial S} = \frac{\partial^2 C}{\partial S^2}
+$$
+
    - **Theta**: Sensitivity of option price to the passage of time.
-     $$
-     \Theta = \frac{\partial C}{\partial t}
-     $$
+
+$$
+\Theta = \frac{\partial C}{\partial t}
+$$
+
    - **Vega**: Sensitivity of option price to changes in volatility.
-     $$
-     \nu = \frac{\partial C}{\partial \sigma}
-     $$
+
+$$
+\nu = \frac{\partial C}{\partial \sigma}
+$$
 
 2. **Volatility Surface**:
    - **Implied Volatility**: Volatility inferred from the market price of an option.
@@ -264,16 +271,20 @@ The CIR model is widely used in finance, particularly in:
 #### **Mathematical Tools:**
 - **Black-Scholes PDE**:
    - **Formula**:
-     $$
-     \frac{\partial C}{\partial t} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 C}{\partial S^2} + r S \frac{\partial C}{\partial S} - r C = 0
-     $$
+
+$$
+\frac{\partial C}{\partial t} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 C}{\partial S^2} + r S \frac{\partial C}{\partial S} - r C = 0
+$$
+
    - Derived using Itô’s Lemma and the construction of a risk-neutral portfolio.
 
 - **Binomial Tree Model**:
    - **Formula**:
-     $$
-     C = \frac{1}{(1 + r)^n} \left( \sum_{i=0}^n \binom{n}{i} p^i (1 - p)^{n-i} C(S_i) \right)
-     $$
+
+$$
+C = \frac{1}{(1 + r)^n} \left( \sum_{i=0}^n \binom{n}{i} p^i (1 - p)^{n-i} C(S_i) \right)
+$$
+
      where $p$ is the probability of an up move, $C(S_i)$ is the option value at node $i$.
 
 ### 7) **Fixed Income**
@@ -281,9 +292,11 @@ The CIR model is widely used in finance, particularly in:
 #### **Key Concepts:**
 1. **Credit Spread**:
    - **Formula**:
-     $$
-     \text{Spread} = YTM_{corporate} - YTM_{treasury}
-     $$
+
+$$
+\text{Spread} = YTM_{corporate} - YTM_{treasury}
+$$
+
      where the spread reflects the additional yield required by investors for taking on more credit risk.
 
 2. **Bond Immunization**:
@@ -307,9 +320,10 @@ The CIR model is widely used in finance, particularly in:
 - **Finite Difference Methods**:
    - **Example**: Solving the Black-Scholes PDE numerically using discretization methods.
    - **Formula**:
-     $$
-     C_{i,j} = \frac{\Delta t}{2} \left( \sigma^2 S_i^2 \frac{C_{i+1,j} - 2C_{i,j} + C_{i-1,j}}{(\Delta S)^2} + r S_i \frac{C_{i+1,j} - C_{i-1,j}}{2 \Delta S} \right) + C_{i,j+1}
-     $$
+
+$$
+C_{i,j} = \frac{\Delta t}{2} \left( \sigma^2 S_i^2 \frac{C_{i+1,j} - 2C_{i,j} + C_{i-1,j}}{(\Delta S)^2} + r S_i \frac{C_{i+1,j} - C_{i-1,j}}{2 \Delta S} \right) + C_{i,j+1}
+$$
 
 ### 9) **Cryptocurrencies (Crypto)**
 
@@ -325,9 +339,11 @@ The CIR model is widely used in finance, particularly in:
 - **Time Series Analysis**:
    - **ARIMA Models**: For forecasting crypto prices based on historical data.
    - **Formula**: 
-     $$
-     y_t = c + \sum_{i=1}^p \phi_i y_{t-i} + \sum_{i=1}^q \theta_i \epsilon_{t-i} + \epsilon_t
-     $$
+
+$$
+y_t = c + \sum_{i=1}^p \phi_i y_{t-i} + \sum_{i=1}^q \theta_i \epsilon_{t-i} + \epsilon_t
+$$
+
      where $y_t$ is the price, $\phi_i$ are the autoregressive coefficients, $\theta_i$ are the moving average coefficients, and $\epsilon_t$ is the error term.
 
 - **Machine Learning Models**:
