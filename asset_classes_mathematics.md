@@ -92,9 +92,9 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 #### **Key Concepts:**
 1. **Cost of Carry Model**:
    - **Formula**: 
-     $$
-     F = S e^{(r + c - y)t}
-     $$
+     
+     ![Cost of Carry Model Formula](./assets/cost_of_carry_model_formula.png)
+
      where $F$ is the futures price, $S$ is the spot price, $r$ is the risk-free rate, $c$ is the storage cost, $y$ is the yield on the asset, and $t$ is the time to maturity.
    
    **Proof**:
