@@ -34,7 +34,7 @@ My Private Repository of Trading Strategies
     - 2.0. [__2.0) Finance and Math Skills:__](#2-finance-and-math-skills)
         - 2.0.1. [__2.A) Contango and Backwardation:__](#2a-contango-and-backwardation)
         - 2.0.2. [__2.B) Hurst Exponent:__](#2b-hurst-exponent)
-        - 2.0.3. [__2.C) Sharpe Ratio, Maximum Drawdowns:__](#2c-sharpe-ratio-maximum-drawdowns)
+        - 2.0.3. [__2.C) Sharpe Ratio, Maximum Drawdowns:__](#2c-sharpe-ratio-and-maximum-drawdowns)
         - 2.0.4. [__2.D) Correlation Analysis:__](#2d-correlation-analysis)
     - 2.1. [__2.1) Roll Returns:__](#21-roll-returns)
     - 2.2. [__2.2) Time Series Momentum:__](#22-time-series-momentum)
