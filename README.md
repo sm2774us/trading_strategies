@@ -27,41 +27,9 @@ My Private Repository of Trading Strategies
         - 1.0.4. [__1.D) ADF (Augmented Dickey-Fuller) and Johansen Test:__](#1d-adf-augmented-dickey-fuller-and-johansen-test)
         - 1.0.4. [__1.E) Half-Life:__](#1e-half-life)
     - 1.1. [__1) Statistical Arbitrage:__](#1-statistical-arbitrage)
-        - Statistical Arbitrage (StatArb) involves trading pairs of securities that historically move together. When their price relationship diverges, traders expect them to revert to the mean, thus creating profit opportunities.    
-        - __Key Steps:__
-            - __Identify Pairs:__ Select two assets with a strong historical correlation.
-            - __Monitor Spread:__ Calculate the price difference (spread) between the two assets.
-            - __Trade Signals:__ When the spread deviates significantly from its mean, initiate trades expecting reversion.
-        - __Use Cases:__
-            - __Equities:__ Commonly used with stocks exhibiting high correlation.
-            - __FX:__ Currency pairs that move together due to economic ties.
-            - __Futures:__ Contracts on similar commodities or indices.    
     - 1.2. [__2) Triplets Trading:__](#2-triplets-trading)
-        - Triplets Trading extends pair trading to three assets. The idea is to find three securities whose combined weighted price exhibits mean-reverting behavior.
-        - __Key Steps:__
-            - __Select Triplets:__ Find three assets with a cointegrated relationship.
-            - __Determine Weights:__ Assign weights to each asset to balance the combined position.
-            - __Monitor Combined Spread:__ Track the combined weighted price for deviations.
-        - __Use Cases:__
-            - __Equities:__ Stocks from the same sector.
-            - __Commodities:__ Related commodities like oil, gas, and energy ETFs.    
     - 1.3. [__3) Index Arbitrage:__](#3-index-arbitrage)
-        - Index Arbitrage exploits price discrepancies between an index and its constituent components. When the sum of the components' prices diverges from the index's price, arbitrageurs can buy the undervalued and sell the overvalued.
-        - __Key Steps:__
-            - __Monitor Index vs. Components:__ Track the price of the index and the weighted sum of its components.
-            - __Identify Discrepancies:__ When significant deviations occur, execute trades expecting convergence.
-        - __Use Cases:__
-            - __Equities:__ Index ETFs vs. underlying stocks.
-            - __Futures:__ Index futures vs. spot indices.
     - 1.4. [__4) Long Short Strategy:__](#4-long-short-strategy)
-        - A Long-Short strategy involves taking long positions in undervalued assets and short positions in overvalued ones, based on their deviation from the mean.
-        - __Key Steps:__
-            - __Valuation Metrics:__ Use indicators like P/E ratios, moving averages, etc.
-            - __Identify Over/Undervalued Assets:__ Based on the metrics, classify assets.
-            - __Execute Trades:__ Go long on undervalued and short on overvalued assets.
-        - __Use Cases:__
-            - __Equities:__ Stocks with varying valuations.
-            - __FX:__ Currencies mispriced relative to economic indicators.
 2. [__Momentum Trading Strategies__](#momentum-trading-strategies)
     - 2.0. [__2.0) Finance and Math Skills:__](#2-finance-and-math-skills)
         - 2.0.1. [__2.A) Contango and Backwardation:__](#2a-contango-and-backwardation)
@@ -1898,6 +1866,15 @@ Despite minor syntax differences, the core logic is the same, resulting in match
 These concepts form the foundation of Mean Reversion Trading, and understanding them through mathematical formulas and coding helps in implementing strategies in both Python and C++.
 
 ### 1) Statistical Arbitrage:
+- __Statistical Arbitrage (StatArb)__ involves trading pairs of securities that historically move together. When their price relationship diverges, traders expect them to revert to the mean, thus creating profit opportunities.    
+- __Key Steps:__
+    - __Identify Pairs:__ Select two assets with a strong historical correlation.
+    - __Monitor Spread:__ Calculate the price difference (spread) between the two assets.
+    - __Trade Signals:__ When the spread deviates significantly from its mean, initiate trades expecting reversion.
+- __Use Cases:__
+    - __Equities:__ Commonly used with stocks exhibiting high correlation.
+    - __FX:__ Currency pairs that move together due to economic ties.
+    - __Futures:__ Contracts on similar commodities or indices.
 
 __Explanation:__
 In statistical arbitrage, traders identify pairs of assets whose prices are historically cointegrated, meaning they tend to move together over time. When the prices of these assets temporarily diverge, the trader takes a simultaneous long position in the undervalued asset and a short position in the overvalued asset, expecting the prices to converge back to their historical relationship.
@@ -2288,10 +2265,18 @@ plt.show()
 - __Threshold Lines:__ The red and green dashed lines represent the upper and lower thresholds (1.0 and -1.0), respectively.
 - __Mean Line:__ The black line at Z-Score 0 represents the mean.
 
-
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ### 2) Triplets Trading:
+- __Triplets Trading__ extends pair trading to three assets. The idea is to find three securities whose combined weighted price exhibits mean-reverting behavior.
+- __Key Steps:__
+    - __Select Triplets:__ Find three assets with a cointegrated relationship.
+    - __Determine Weights:__ Assign weights to each asset to balance the combined position.
+    - __Monitor Combined Spread:__ Track the combined weighted price for deviations.
+- __Use Cases:__
+    - __Equities:__ Stocks from the same sector.
+    - __Commodities:__ Related commodities like oil, gas, and energy ETFs.
+
 __Explanation:__
 Triplets trading involves identifying three assets that move together and creating a trading strategy based on their relationship. Traders look for deviations in the spread between these assets to take advantage of mean reversion opportunities.
 
@@ -2795,6 +2780,13 @@ The visual output is a critical tool for understanding the behavior of the sprea
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ### 3) Index Arbitrage:
+- __Index Arbitrage__ exploits price discrepancies between an index and its constituent components. When the sum of the components' prices diverges from the index's price, arbitrageurs can buy the undervalued and sell the overvalued.
+- __Key Steps:__
+    - __Monitor Index vs. Components:__ Track the price of the index and the weighted sum of its components.
+    - __Identify Discrepancies:__ When significant deviations occur, execute trades expecting convergence.
+- __Use Cases:__
+    - __Equities:__ Index ETFs vs. underlying stocks.
+    - __Futures:__ Index futures vs. spot indices.
 
 __Explanation:__
 Index arbitrage involves trading the price differential between a stock index and the individual stocks constituting the index. Traders exploit discrepancies between the index price and the combined prices of the individual stocks to profit from mean reversion.
@@ -3166,6 +3158,14 @@ The visualization provides a clear view of how the spread between the actual ind
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 ### 4) Long-Short Strategy:
+- A __Long-Short strategy__ involves taking long positions in undervalued assets and short positions in overvalued ones, based on their deviation from the mean.
+- __Key Steps:__
+    - __Valuation Metrics:__ Use indicators like P/E ratios, moving averages, etc.
+    - __Identify Over/Undervalued Assets:__ Based on the metrics, classify assets.
+    - __Execute Trades:__ Go long on undervalued and short on overvalued assets.
+- __Use Cases:__
+    - __Equities:__ Stocks with varying valuations.
+    - __FX:__ Currencies mispriced relative to economic indicators.
 
 __Explanation:__
 In a long-short strategy, traders simultaneously take long positions in undervalued assets and short positions in overvalued assets. By pairing these positions, traders aim to profit from the mean reversion of the assets' prices.
