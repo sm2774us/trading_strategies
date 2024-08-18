@@ -3595,7 +3595,7 @@ The C++ and Python code both plot the returns of three stocks (Stock A, Stock B,
 
 ##### 4.1. **Y-Axis (Return)**:
    - This axis represents the percentage return of each stock.
-   - **Formula**:
+   - **Formula:**
    The percentage return for a stock at time $t$ is calculated using:
 $$
 \text{Return}_t = \frac{\text{Close}_t - \text{Close}_{t-1}}{\text{Close}_{t-1}}
