@@ -1,7 +1,8 @@
 # __Trading Strategies__
 My Private Repository of Trading Strategies
 
-## [__`Boost Python` and `Numba` and `Cython`__](./boost_python_and_numba_and_cython.md)
+## Basics
+- [How to call `Python` from `C++` - `Boost Python` and `Numba` and `Cython`](./boost_python_and_numba_and_cython.md)
 
 ## Table Of Contents <a name="top"></a>
 0. [__News Sentiment Trading Strategies__](#news-sentiment-trading-strategies)
