@@ -3382,14 +3382,8 @@ Let's consider the provided main method with the given example data for asset pr
   After processing the data, the program will generate the trading signals. Let's calculate the z-scores for the assets based on the provided data:
   - For the first asset:
     - Mean: ```(100.0 + 102.0 + 105.0) / 3 = 102.33```
-    - Standard Deviation: Calculated using the formula:
-$$
-stdev = sqrt(sum(\frac{(x_i - x_{\text{mean}})^2}{n}))
-$$
-    - Z-score =
-$$
-\frac{(105.0 - 102.33)}{stdev}
-$$
+    - Standard Deviation: Calculated using the formula: $$stdev = sqrt(sum(\frac{(x_i - x_{\text{mean}})^2}{n}))$$
+    - $$Z-score = \frac{(105.0 - 102.33)}{stdev}$$
 
   By following similar calculations for the other assets and applying the z-score threshold, we will determine the trading signals (Long, Short, or Neutral) for each asset based on the calculated z-scores. The output will display these trading signals.
 
