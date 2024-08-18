@@ -114,7 +114,7 @@ __News Sentiment Trading Strategies__ leverage the analysis of news data to make
 
 ### 0) Concepts and Trading:
 
-#### 1.A. **Retrieving News Data**
+#### 0.A. **Retrieving News Data**
 
 **Concept**: Retrieving news data is the first step in any news sentiment trading strategy. It involves collecting relevant news articles, headlines, or social media posts that might impact the financial markets. The data sources can be financial news websites, APIs, RSS feeds, or even social media platforms like Twitter.
 
