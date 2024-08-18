@@ -3,8 +3,11 @@ My Private Repository of Trading Strategies
 
 ## Basics
 - [How to call `Python` from `C++` - `Boost Python` and `Numba` and `Cython`](./boost_python_and_numba_and_cython.md)
+- [How would you convert Matrices in C++ between STL containers and the popular Linear Algebra Third Party Libraires => `Eigen`, `Blaze`, `Fastor`, `Armadillo`, `XTensor`, and `DataFrame`](./cpp_converting_between_stl_and_linear_algebra_libs.md)
+  - [__`C++` Utility Header File - `MatrixConverter.hpp`__](./MatrixConverter.hpp)
 - [Asset Classes](./asset_classes.md)
 - [Mathematics Involved in Trading the Different Asset Classes](./asset_classes_mathematics.md)
+- [Download and View Yahoo Stocks in C++ using `curl`, `json`, `Eigen`, and, `Matplot++` - `DownloadAndViewYahooStocks.cpp`](./DownloadAndViewYahooStocks.cpp)
 
 ## Table Of Contents <a name="top"></a>
 0. [__News Sentiment Trading Strategies__](#news-sentiment-trading-strategies)
