@@ -727,14 +727,17 @@ int main() {
 ```
 
 3. **Explanation**:
+
 3.1. **`calculateSMA` and `calculateRSI`**:
    - These functions calculate the Simple Moving Average (SMA) and Relative Strength Index (RSI) respectively, using the TA-Lib library in C++.
    - The `TA_SMA` and `TA_RSI` functions are provided by TA-Lib for calculating the SMA and RSI.
+
 3.2. **Main Function**:
    - The `price_data` vector contains example price data.
    - The calculated SMA and RSI are stored in `moving_avg` and `rsi` vectors respectively and then printed to the console.
 
 4. **Output**:
+
 Running the above C++ code will output the calculated SMA and RSI values for the provided `price_data`, similar to what you would see in the Python code.
 
 5. **Summary**:
