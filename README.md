@@ -84,8 +84,9 @@ My Private Repository of Trading Strategies
     - 3.2. [__3.2) K-Nearest Neighbors:__](#32-k-nearest-neighbors)
     - 3.3. [__3.3) Time series & cross sectional alphas:__](#33-time-series-cross-sectional-alphas)
     - 3.4. [__3.4) Candlestick Patterns:__](#34-candlestick-patterns)
-    - 3.5. [__3.5) Vectorized SL & TP:__](#35-vectorized-sl-and-tp)
-4. [__Trading in Milliseconds: MFT Straegies and Setup__](#trading-in-milliseconds-mft-straegies-and-setup)
+    - 3.5. [__3.5) Vectorized SL & TP:__](#35-vectorized-sl--tp)
+    - 3.6. [__3.6) Trading Alphas - Use Cases:__](#trading-alphas---use-cases)
+4. [__Trading in Milliseconds: HFT Strategies and Setup__](#trading-in-milliseconds-hft-strategies-and-setup)
     - 4.0. [__4.0) Concepts and Trading:__](#40-concepts-and-trading)
         - 4.0.1. [__4.A) Time and Volume Bars:__](#4a-time-and-volume-bars)
         - 4.0.2. [__4.B) Spoofing, Front-running:__](#4b-spoofing-front-running)
@@ -95,7 +96,14 @@ My Private Repository of Trading Strategies
     - 4.1. [__4.1) Order flow trading using tick data:__](#41-order-flow-trading-using-tick-data)
     - 4.2. [__4.2) Hide and light:__](#42-hide-and-light)
     - 4.3. [__4.3) Stop hunting:__](#43-stop-hunting)
-    - 4.4. [__4.4) Ticking:__](#4-ticking)
+    - 4.4. [__4.4) Ticking:__](#44-ticking)
+    - 4.5. [__4.5) Resample and Expanding:__](#45-resample-and-expanding)
+    - 4.6. [__4.6) HFT Strategies - Use Cases:__](#hft-strategies---use-cases)
+5. [__HFT v/s MFT__](#hft-vs-mft)
+    - 5.0. [__5.0) What is HFT?:__](#50-what-is-hft)
+    - 5.1. [__5.1) What is MFT?:__](#51-what-is-mft)
+    - 5.2. [__5.2) MFT Strategies:__](#52-mft-strategies)
+    - 5.3. [__5.3) HFT v/s MFT Time Horizons:__](#53-hft-vs-mft-time-horizons)
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
@@ -6211,3 +6219,960 @@ int main() {
 - Derivatives
 
 <div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+## __Trading in Milliseconds: HFT Strategies and Setup__
+__High-Frequency Trading (HFT)__ involves executing orders within milliseconds or even microseconds. HFT strategies rely on advanced technology, algorithms, and data analysis to exploit small price inefficiencies across various financial markets. Below are the key concepts and strategies used in HFT, along with their implementation in Python and C++.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### 4) Concepts and Trading:
+
+#### 4.A. **Time and Volume Bars:**
+**Concept:**
+- **Time Bars:** These bars are created based on fixed time intervals, such as 1-minute or 5-minute bars, which aggregate all trades within that time period.
+- **Volume Bars:** Instead of using time as the basis for creating bars, volume bars are created when a certain amount of trading volume has occurred, irrespective of the time it took.
+
+**Mathematical Formula:**
+- **Time Bar Construction:** Given a time interval $T$, a time bar is created every $T$ seconds, aggregating price, volume, and other trade information.
+  
+  $$
+  \text{Time Bar} = \sum_{t=0}^{T} P_t \times V_t
+  $$
+
+- **Volume Bar Construction:** Given a volume threshold $V$, a volume bar is created whenever the cumulative traded volume reaches $V$.
+
+  $$
+  \text{Volume Bar} = \sum_{v=0}^{V} P_v
+  $$
+
+**Python Implementation:**
+
+```python
+import pandas as pd
+import numpy as np
+
+def create_time_bars(data, interval='1min'):
+    return data.resample(interval).agg({'price': 'ohlc', 'volume': 'sum'})
+
+def create_volume_bars(data, threshold):
+    cumulative_volume = data['volume'].cumsum()
+    bars = data[cumulative_volume // threshold > (cumulative_volume - data['volume']).cumsum() // threshold]
+    return bars
+
+# Example usage
+data = pd.DataFrame({'price': np.random.random(1000), 'volume': np.random.randint(1, 100, 1000)}, index=pd.date_range('2024-01-01', periods=1000, freq='S'))
+time_bars = create_time_bars(data)
+volume_bars = create_volume_bars(data, threshold=1000)
+```
+
+**C++ Implementation:**
+
+```cpp
+#include <vector>
+#include <algorithm>
+#include <numeric>
+#include <Eigen/Dense>
+
+struct Trade {
+    double price;
+    int volume;
+    int timestamp;
+};
+
+std::vector<Trade> create_time_bars(const std::vector<Trade>& trades, int interval) {
+    std::vector<Trade> bars;
+    int start_time = trades.front().timestamp;
+    Trade current_bar = trades.front();
+
+    for (const auto& trade : trades) {
+        if (trade.timestamp - start_time >= interval) {
+            bars.push_back(current_bar);
+            start_time = trade.timestamp;
+            current_bar = trade;
+        } else {
+            current_bar.price += trade.price * trade.volume;
+            current_bar.volume += trade.volume;
+        }
+    }
+
+    return bars;
+}
+
+std::vector<Trade> create_volume_bars(const std::vector<Trade>& trades, int threshold) {
+    std::vector<Trade> bars;
+    Trade current_bar = trades.front();
+    int cumulative_volume = 0;
+
+    for (const auto& trade : trades) {
+        cumulative_volume += trade.volume;
+        current_bar.price += trade.price * trade.volume;
+        current_bar.volume += trade.volume;
+
+        if (cumulative_volume >= threshold) {
+            bars.push_back(current_bar);
+            cumulative_volume = 0;
+            current_bar = trade;
+        }
+    }
+
+    return bars;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+#### 4.B. **Spoofing, Front-running:**
+**Concept:**
+- **Spoofing:** The illegal practice of placing large orders with the intent to cancel them before execution to manipulate the market price.
+- **Front-Running:** The unethical practice of placing orders in anticipation of large orders that are expected to move the market, often based on non-public information.
+
+**Mathematical Representation:**
+- **Spoofing:** If $O_s$ is the spoof order and $O_t$ is the true trade order, then spoofing strategy places $O_s$ with the intent of canceling it after moving the market to execute $O_t$.
+  
+  $$
+  O_s \rightarrow O_t \quad \text{and then} \quad \cancel{O_s}
+  $$
+
+- **Front-Running:** Given an incoming large order $O_l$, the front-running strategy places $O_f$ before $O_l$ to profit from the price movement caused by $O_l$.
+
+  $$
+  O_f \rightarrow O_l \rightarrow \text{Profit}
+  $$
+
+**Python Implementation:**
+
+```python
+import random
+
+def spoofing_strategy(order_book, spoof_order_price, true_order_price):
+    # Place a spoof order
+    order_book.append({'price': spoof_order_price, 'volume': 100, 'type': 'sell'})
+    
+    # Simulate market reaction and place the true order
+    order_book = sorted(order_book, key=lambda x: x['price'], reverse=True)
+    order_book.append({'price': true_order_price, 'volume': 10, 'type': 'buy'})
+    
+    # Cancel the spoof order
+    order_book = [order for order in order_book if order['price'] != spoof_order_price]
+    return order_book
+
+# Example usage
+order_book = [{'price': 50, 'volume': 100, 'type': 'buy'}]
+new_order_book = spoofing_strategy(order_book, 55, 52)
+```
+
+**C++ Implementation:**
+
+```cpp
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+struct Order {
+    double price;
+    int volume;
+    std::string type;
+};
+
+std::vector<Order> spoofing_strategy(std::vector<Order>& order_book, double spoof_order_price, double true_order_price) {
+    // Place a spoof order
+    order_book.push_back({spoof_order_price, 100, "sell"});
+    
+    // Simulate market reaction and place the true order
+    std::sort(order_book.begin(), order_book.end(), [](const Order& a, const Order& b) {
+        return a.price > b.price;
+    });
+    order_book.push_back({true_order_price, 10, "buy"});
+    
+    // Cancel the spoof order
+    order_book.erase(std::remove_if(order_book.begin(), order_book.end(), [spoof_order_price](const Order& o) {
+        return o.price == spoof_order_price;
+    }), order_book.end());
+
+    return order_book;
+}
+
+int main() {
+    std::vector<Order> order_book = {{50, 100, "buy"}};
+    auto new_order_book = spoofing_strategy(order_book, 55, 52);
+    for (const auto& order : new_order_book) {
+        std::cout << "Price: " << order.price << ", Volume: " << order.volume << ", Type: " << order.type << "\n";
+    }
+    return 0;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+#### 4.C. **IOC and ISO orders:**
+**Concept:**
+- **IOC (Immediate-Or-Cancel) Orders:** An order that must be executed immediately, and any portion of the order that cannot be immediately executed is canceled.
+- **ISO (Intermarket Sweep Orders):** A type of order used in the U.S. equity markets that allows traders to trade through the National Best Bid and Offer (NBBO) and seek better prices across multiple exchanges.
+
+**Python Implementation:**
+
+```python
+class OrderBook:
+    def __init__(self):
+        self.orders = []
+
+    def place_ioc_order(self, price, volume):
+        best_price = max(self.orders, key=lambda x: x['price']) if self.orders else None
+        if best_price and best_price['price'] >= price:
+            execution_volume = min(volume, best_price['volume'])
+            print(f"Executed IOC order at {best_price['price']} for {execution_volume} units")
+            best_price['volume'] -= execution_volume
+            if best_price['volume'] == 0:
+                self.orders.remove(best_price)
+        else:
+            print("IOC order canceled")
+
+    def place_order(self, price, volume):
+        self.orders.append({'price': price, 'volume': volume})
+        self.orders.sort(key=lambda x: x['price'], reverse=True)
+
+# Example usage
+order_book = OrderBook()
+order_book.place_order(100, 50)
+order_book.place_ioc_order(100, 30)
+```
+
+**C++ Implementation:**
+
+```cpp
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+struct Order {
+    double price;
+    int volume;
+};
+
+class OrderBook {
+public:
+    void place_ioc_order(double price, int volume) {
+        auto best_price = std::max_element(orders.begin(), orders.end(), [](const Order& a, const Order& b) {
+            return a.price < b.price;
+        });
+        if (best_price != orders.end() && best_price->price >= price) {
+            int execution_volume = std::min(volume, best_price->volume);
+            std::cout << "Executed IOC order at " << best_price->price << " for " << execution_volume << " units\n";
+            best_price->volume -= execution_volume;
+            if (best_price->volume == 0) {
+                orders.erase(best_price);
+            }
+        } else {
+            std::cout << "IOC order canceled\n";
+        }
+    }
+
+    void place_order(double price, int volume) {
+        orders.push_back({price, volume});
+        std::sort(orders.begin(), orders.end(), [](const Order& a,
+
+ const Order& b) {
+            return a.price > b.price;
+        });
+    }
+
+private:
+    std::vector<Order> orders;
+};
+
+int main() {
+    OrderBook order_book;
+    order_book.place_order(100, 50);
+    order_book.place_ioc_order(100, 30);
+    return 0;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+#### 4.D. **Lee-Ready Algorithm, BVC Rule:**
+**Concept:**
+- **Lee-Ready Algorithm:** A method used to classify trades as buyer- or seller-initiated based on price movements relative to the prevailing quote prices.
+- **BVC Rule (Buy Volume Comparison):** This rule determines the trade initiation by comparing the trade volume at the ask and bid prices.
+
+**Mathematical Formula:**
+- **Lee-Ready Algorithm:**
+  
+  $$
+  \text{Trade Direction} = 
+  \begin{cases} 
+  \text{Buy} & \text{if trade price > midquote} \\
+  \text{Sell} & \text{if trade price < midquote} \\
+  \text{Previous Direction} & \text{if trade price = midquote}
+  \end{cases}
+  $$
+
+- **BVC Rule:**
+  
+  $$
+  \text{Buy Volume} = \sum_{i=1}^{N} \text{Volume at Ask}
+  $$
+  
+  $$
+  \text{Sell Volume} = \sum_{i=1}^{N} \text{Volume at Bid}
+  $$
+  
+  $$
+  \text{Trade Direction} = 
+  \begin{cases} 
+  \text{Buy} & \text{if Buy Volume > Sell Volume} \\
+  \text{Sell} & \text{if Sell Volume > Buy Volume}
+  \end{cases}
+  $$
+
+**Python Implementation:**
+
+```python
+def lee_ready_algorithm(trades, quotes):
+    trade_directions = []
+    for trade in trades:
+        midquote = (quotes['ask'] + quotes['bid']) / 2
+        if trade['price'] > midquote:
+            trade_directions.append('Buy')
+        elif trade['price'] < midquote:
+            trade_directions.append('Sell')
+        else:
+            trade_directions.append(trade_directions[-1] if trade_directions else 'Unknown')
+    return trade_directions
+
+# Example usage
+trades = [{'price': 101}, {'price': 102}, {'price': 100}]
+quotes = {'ask': 103, 'bid': 99}
+directions = lee_ready_algorithm(trades, quotes)
+```
+
+**C++ Implementation:**
+
+```cpp
+#include <vector>
+#include <string>
+#include <iostream>
+
+struct Trade {
+    double price;
+};
+
+struct Quote {
+    double ask;
+    double bid;
+};
+
+std::vector<std::string> lee_ready_algorithm(const std::vector<Trade>& trades, const Quote& quotes) {
+    std::vector<std::string> trade_directions;
+    double midquote = (quotes.ask + quotes.bid) / 2;
+    
+    for (const auto& trade : trades) {
+        if (trade.price > midquote) {
+            trade_directions.push_back("Buy");
+        } else if (trade.price < midquote) {
+            trade_directions.push_back("Sell");
+        } else {
+            if (!trade_directions.empty()) {
+                trade_directions.push_back(trade_directions.back());
+            } else {
+                trade_directions.push_back("Unknown");
+            }
+        }
+    }
+
+    return trade_directions;
+}
+
+int main() {
+    std::vector<Trade> trades = {{101}, {102}, {100}};
+    Quote quotes = {103, 99};
+    auto directions = lee_ready_algorithm(trades, quotes);
+
+    for (const auto& direction : directions) {
+        std::cout << "Trade Direction: " << direction << "\n";
+    }
+
+    return 0;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+#### 4.E. **Tick Data:**
+**Concept:**
+- **Tick Data:** Tick data refers to the most granular level of market data, capturing each individual trade or quote update. This data is crucial for HFT as it allows traders to analyze market movements at the microsecond level.
+
+**Python Implementation:**
+
+```python
+import pandas as pd
+
+# Simulate tick data
+tick_data = pd.DataFrame({
+    'timestamp': pd.date_range('2024-01-01', periods=1000, freq='S'),
+    'price': np.random.random(1000) * 100,
+    'volume': np.random.randint(1, 10, 1000)
+})
+
+# Process tick data: Calculate rolling average price
+tick_data['rolling_avg_price'] = tick_data['price'].rolling(window=10).mean()
+```
+
+**C++ Implementation:**
+
+```cpp
+#include <vector>
+#include <numeric>
+#include <iostream>
+#include <algorithm>
+
+struct Tick {
+    double price;
+    int volume;
+    int timestamp;
+};
+
+std::vector<double> calculate_rolling_avg_price(const std::vector<Tick>& ticks, int window) {
+    std::vector<double> rolling_avg_prices;
+
+    for (size_t i = 0; i < ticks.size(); ++i) {
+        if (i >= window - 1) {
+            double sum = std::accumulate(ticks.begin() + i - window + 1, ticks.begin() + i + 1, 0.0, 
+                [](double acc, const Tick& t) { return acc + t.price; });
+            rolling_avg_prices.push_back(sum / window);
+        } else {
+            rolling_avg_prices.push_back(ticks[i].price);
+        }
+    }
+
+    return rolling_avg_prices;
+}
+
+int main() {
+    std::vector<Tick> ticks = {{100, 1, 1}, {101, 2, 2}, {102, 3, 3}, {103, 4, 4}, {104, 5, 5}};
+    auto rolling_avg_prices = calculate_rolling_avg_price(ticks, 3);
+
+    for (const auto& avg_price : rolling_avg_prices) {
+        std::cout << "Rolling Average Price: " << avg_price << "\n";
+    }
+
+    return 0;
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+#### 4) HFT Strategies - Concepts and Trading - Summary
+These concepts form the foundation for many HFT strategies, allowing traders to exploit small inefficiencies in the market. The provided code examples offer a basic framework for implementing these strategies in Python and C++.
+
+### __4.1) Order flow trading using tick data:__
+- **Explanation**:
+__Order flow trading__ involves analyzing the sequence of buy and sell orders (tick data) to predict future price movements. This strategy focuses on understanding the demand and supply dynamics by looking at the volume, number, and size of orders at various price levels.
+
+- **Mathematical Formula**:
+Let:
+- $B(t)$: Number of buy orders at time $t$
+- $S(t)$: Number of sell orders at time $t$
+- $V(t)$: Volume of trade at time $t$
+
+The order flow imbalance $\text{OFI}(t)$ can be calculated as:
+
+$$
+\text{OFI}(t) = B(t) - S(t)
+$$
+
+A positive OFI suggests more buy orders, indicating potential upward pressure on prices, while a negative OFI suggests downward pressure.
+
+- **Python Implementation**
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Sample tick data
+tick_data = pd.DataFrame({
+    'time': pd.date_range(start='2023-01-01', periods=100, freq='S'),
+    'price': np.random.normal(loc=100, scale=1, size=100),
+    'volume': np.random.randint(1, 10, size=100),
+    'side': np.random.choice(['buy', 'sell'], size=100)
+})
+
+# Calculate order flow imbalance
+tick_data['buy'] = np.where(tick_data['side'] == 'buy', tick_data['volume'], 0)
+tick_data['sell'] = np.where(tick_data['side'] == 'sell', tick_data['volume'], 0)
+tick_data['ofi'] = tick_data['buy'] - tick_data['sell']
+
+# Visualization
+tick_data.set_index('time', inplace=True)
+tick_data['ofi'].cumsum().plot(title="Cumulative Order Flow Imbalance")
+plt.show()
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <vector>
+#include <numeric>
+#include <algorithm>
+#include <matplot/matplot.h>
+
+struct TickData {
+    double time;
+    double price;
+    int volume;
+    std::string side;
+};
+
+std::vector<double> calculate_ofi(const std::vector<TickData>& data) {
+    std::vector<double> ofi(data.size(), 0.0);
+    
+    for (size_t i = 0; i < data.size(); ++i) {
+        if (data[i].side == "buy") {
+            ofi[i] = data[i].volume;
+        } else {
+            ofi[i] = -data[i].volume;
+        }
+    }
+    
+    std::partial_sum(ofi.begin(), ofi.end(), ofi.begin());
+    return ofi;
+}
+
+int main() {
+    std::vector<TickData> tick_data = {
+        {0.0, 100.0, 5, "buy"}, {1.0, 100.1, 3, "sell"}, {2.0, 99.9, 4, "buy"}, // ... add more data
+    };
+    
+    auto ofi = calculate_ofi(tick_data);
+    
+    matplot::plot(ofi);
+    matplot::show();
+}
+```
+![Trading in Milliseconds: HFT Strategies and Setup - Order flow trading using tick data](./assets/order_flow_trading_using_tick_data.png)
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __4.2) Hide and light:__
+- **Explanation**:
+__Hide and Light__ refers to the strategy of placing hidden orders in the market to disguise trading intentions. Traders use iceberg orders where only a portion of the order is visible to other market participants. The hidden part of the order is revealed as the visible part gets executed.
+
+- **Mathematical Formula**:
+If a trader wants to buy a large quantity $Q$ but only wants to reveal $q$ at a time, the iceberg order size $q$ is chosen such that:
+
+$$
+q = \frac{Q}{n}
+$$
+
+Where $n$ is the number of executions.
+
+- **Python Implementation**
+```python
+import matplotlib.pyplot as plt
+
+# Simulate execution of iceberg orders
+total_order = 1000
+visible_order = 100
+executions = np.arange(0, total_order, visible_order)
+
+# Visualization
+plt.step(executions, [visible_order] * len(executions), where='mid', label="Visible Order")
+plt.plot(executions, np.cumsum([visible_order] * len(executions)), label="Cumulative Execution")
+plt.title("Hide and Light Strategy")
+plt.legend()
+plt.show()
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <vector>
+#include <matplot/matplot.h>
+
+int main() {
+    int total_order = 1000;
+    int visible_order = 100;
+    int n_executions = total_order / visible_order;
+    
+    std::vector<double> executions(n_executions);
+    std::vector<double> cumulative_executions(n_executions);
+    
+    for (int i = 0; i < n_executions; ++i) {
+        executions[i] = i * visible_order;
+        cumulative_executions[i] = (i + 1) * visible_order;
+    }
+    
+    matplot::stairs(executions, visible_order);
+    matplot::plot(executions, cumulative_executions);
+    matplot::title("Hide and Light Strategy");
+    matplot::show();
+}
+```
+![Trading in Milliseconds: HFT Strategies and Setup - Hide and light](./assets/hide_and_light_strategy.png)
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __4.3) Stop hunting:__
+- **Explanation**:
+__Stop hunting__ involves pushing the price to a level where other traders have placed stop-loss orders, triggering those orders, and then capitalizing on the resulting price movement.
+
+- **Mathematical Formula**:
+If the market price $P_t$ is pushed to a stop level $P_s$, then:
+
+$$
+P_t \geq P_s \quad \text{(for long positions)}
+$$
+
+$$
+P_t \leq P_s \quad \text{(for short positions)}
+$$
+
+The idea is to trigger these stops to cause further price movement in the direction of the initial push.
+
+- **Python Implementation**
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Simulate price movement
+price = np.cumsum(np.random.randn(100)) + 100
+stop_level = 98
+
+# Visualization
+plt.plot(price, label="Price")
+plt.axhline(stop_level, color='r', linestyle='--', label="Stop Level")
+plt.fill_between(np.arange(len(price)), stop_level, price, where=(price <= stop_level), color='r', alpha=0.3)
+plt.title("Stop Hunting")
+plt.legend()
+plt.show()
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <vector>
+#include <random>
+#include <matplot/matplot.h>
+
+int main() {
+    std::vector<double> price(100);
+    double stop_level = 98;
+    
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<> d(0, 1);
+    
+    price[0] = 100;
+    for (size_t i = 1; i < price.size(); ++i) {
+        price[i] = price[i - 1] + d(gen);
+    }
+    
+    matplot::plot(price);
+    matplot::yline(stop_level, "--r", "Stop Level");
+    matplot::fill_between(price, stop_level, price, [](double p, double s) { return p <= s; });
+    matplot::title("Stop Hunting");
+    matplot::show();
+}
+```
+![Trading in Milliseconds: HFT Strategies and Setup - Stop hunting](./assets/stop_hunting.png)
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __4.4) Ticking:__
+- **Explanation**:
+__Ticking__ involves monitoring each price tick and executing trades based on specific tick patterns or conditions.
+
+- **Mathematical Formula**:
+Given tick data $P_t$ at time $t$, a simple ticking strategy might involve executing a trade when a certain number of consecutive ticks are in the same direction:
+
+$$
+\text{if } P_t > P_{t-1} \text{ for } n \text{ ticks, buy.}
+$$
+
+- **Python Implementation**
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Generate tick data
+ticks = np.cumsum(np.random.randn(100)) + 100
+consecutive_up = np.diff(ticks) > 0
+
+# Visualization
+plt.plot(ticks, label="Price")
+plt.plot(np.where(consecutive_up)[0], ticks[1:][consecutive_up], 'g^', label="Consecutive Up")
+plt.title("Ticking Strategy")
+plt.legend()
+plt.show()
+```
+- **C++ Implementation**
+```cpp
+#include <iostream>
+#include <vector>
+#include <random>
+#include <matplot/matplot.h>
+
+int main() {
+    std::vector<double> ticks(100);
+    
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<> d(0, 1);
+    
+    ticks[0] = 100;
+    for (size_t i = 1; i < ticks.size(); ++i) {
+        ticks[i] = ticks[i - 1] + d(gen);
+    }
+    
+    std::vector<double> consecutive_up;
+    for (size_t i = 1; i < ticks.size(); ++i) {
+        if (ticks[i] > ticks[i - 1]) {
+            consecutive_up.push_back(ticks[i]);
+        }
+    }
+    
+    matplot::plot(ticks);
+    matplot::plot(consecutive_up, "g^");
+    matplot::title("Ticking Strategy");
+    matplot::show();
+}
+```
+![Trading in Milliseconds: HFT Strategies and Setup - Ticking](./assets/ticking.png)
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __4.5) Resample and Expanding:__
+- **Explanation**:
+  - **Resample:** Aggregating tick data into larger intervals (e.g., seconds, minutes) to smooth out noise.
+  - **Expanding:** Accumulating data over time to track cumulative metrics.
+
+- **Python Example**
+```python
+# Resample tick data to 1-minute intervals
+resampled_data = tick_data['price'].resample('1T').ohlc()
+
+# Expanding mean of prices
+expanding_mean = tick_data['price'].expanding().mean()
+
+# Visualization
+plt.plot(expanding_mean, label="Expanding Mean")
+plt.title("Expanding Mean of Price")
+plt.legend()
+plt.show()
+```
+
+- **C++ Example**
+```cpp
+#include <vector>
+#include <numeric>
+#include <algorithm>
+#include <matplot/matplot.h>
+
+// Similar logic as Python expanding and resampling
+int main() {
+    std::vector<double> prices = { /* tick data */ };
+    std::vector<double> expanding_mean(prices.size());
+    
+    std::partial_sum(prices.begin(), prices.end(), expanding_mean.begin(), [n = 0](double sum, double price) mutable {
+        return sum + price / ++n;
+    });
+    
+    matplot::plot(expanding_mean);
+    matplot::title("Expanding Mean of Price");
+    matplot::show();
+}
+```
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### HFT Strategies - Use Cases
+High-Frequency Trading (HFT) strategies are designed to capitalize on very small price movements, typically within milliseconds to seconds. The choice of asset category for HFT strategies depends on several factors, including market structure, liquidity, volatility, and transaction costs. Below are the use cases for employing HFT strategies across different asset categories:
+
+#### 1. **Foreign Exchange (FX)**
+   - **Use Case:**
+     - **Arbitrage Opportunities:** HFT strategies can exploit price discrepancies between different FX pairs or across different trading venues. 
+     - **Market Making:** Providing liquidity by continuously quoting buy and sell prices to profit from the bid-ask spread.
+   - **Why FX?**
+     - The FX market is one of the most liquid in the world, with high trading volumes and continuous trading across global time zones, making it ideal for HFT strategies.
+
+#### 2. **Cryptocurrencies (Crypto)**
+   - **Use Case:**
+     - **Arbitrage Across Exchanges:** Cryptocurrencies are traded on multiple exchanges with varying prices, providing opportunities for arbitrage.
+     - **Momentum and Reversion Strategies:** Given the high volatility, HFT can be used to capture short-term momentum or mean reversion in price movements.
+   - **Why Crypto?**
+     - The crypto market operates 24/7, is highly volatile, and has a growing number of exchanges, which is conducive to HFT strategies.
+
+#### 3. **Equities**
+   - **Use Case:**
+     - **Statistical Arbitrage:** Identifying short-term mispricings in individual stocks or between correlated stocks.
+     - **Liquidity Provision:** Acting as a market maker to capture the bid-ask spread in highly liquid stocks.
+   - **Why Equities?**
+     - Equities have a well-established market structure with high liquidity, especially in large-cap stocks, making them suitable for HFT.
+
+#### 4. **Futures**
+   - **Use Case:**
+     - **Spread Trading:** Exploiting price differences between related futures contracts, such as calendar spreads or inter-commodity spreads.
+     - **High-Frequency Arbitrage:** Taking advantage of inefficiencies between spot and futures prices.
+   - **Why Futures?**
+     - Futures markets are highly liquid, and their standardized contracts and central clearing make them attractive for HFT.
+
+#### 5. **Options**
+   - **Use Case:**
+     - **Volatility Arbitrage:** Capturing differences between implied and realized volatility using HFT.
+     - **Delta-Hedging:** Continuously hedging a delta-neutral portfolio in response to price changes.
+   - **Why Options?**
+     - Options provide complex pricing and risk management opportunities, which can be exploited by HFT strategies, especially in highly liquid options markets.
+
+#### 6. **Fixed Income (Bonds)**
+   - **Use Case:**
+     - **Interest Rate Arbitrage:** Exploiting discrepancies in the yield curve or between different fixed-income instruments.
+     - **Market Making:** Providing liquidity in on-the-run Treasuries and other highly liquid bonds.
+   - **Why Fixed Income?**
+     - Although traditionally slower moving, certain segments of the fixed income market, such as Treasuries, have sufficient liquidity for HFT, especially with the rise of electronic trading platforms.
+
+#### 7. **Treasuries**
+   - **Use Case:**
+     - **Yield Curve Arbitrage:** Trading discrepancies between different points on the yield curve.
+     - **High-Frequency Market Making:** Capturing the bid-ask spread in highly liquid Treasury securities.
+   - **Why Treasuries?**
+     - Treasuries are among the most liquid assets globally, and their tight spreads and deep order books are suitable for HFT strategies.
+
+#### 8. **Derivatives**
+   - **Use Case:**
+     - **Delta-Neutral Strategies:** Continuously adjusting positions in derivatives to remain delta-neutral while profiting from other sensitivities like gamma or vega.
+     - **Index Arbitrage:** Arbitraging between derivatives like index futures and the underlying cash index.
+   - **Why Derivatives?**
+     - Derivatives offer leverage and complex risk exposures, which can be exploited by sophisticated HFT strategies.
+
+#### **Conclusion:**
+HFT strategies are most effective in markets that offer high liquidity, tight spreads, and significant volumes, as these conditions minimize transaction costs and slippage. Asset classes like FX, equities, futures, and Treasuries are particularly well-suited for HFT due to their liquidity and established market structures. Crypto, while less mature, offers significant opportunities due to its volatility and market fragmentation. Options and derivatives, though more complex, also provide lucrative opportunities for HFT through strategies like volatility arbitrage and delta-neutral trading.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+## __HFT v/s MFT__
+
+### __5.0) What is HFT?__
+
+**High-Frequency Trading (HFT)** is a type of algorithmic trading characterized by extremely high speeds of trade execution, large volumes of transactions, and the use of sophisticated algorithms to capitalize on very short-term market inefficiencies. HFT strategies often involve holding positions for very brief periods, ranging from milliseconds to a few seconds, and typically aim to profit from small price movements.
+
+#### Key Characteristics of HFT:
+
+- **Speed:** HFT relies on the rapid execution of trades, often measured in milliseconds or microseconds. Traders use cutting-edge technology, such as colocated servers near exchanges, to minimize latency and gain a speed advantage over competitors.
+
+- **Trade Volume:** HFT firms execute a large number of trades, often making millions of transactions in a single day. Each trade may generate a small profit, but the high volume can result in significant cumulative gains.
+
+- **Short Holding Periods:** Positions are held for extremely short periods, from a fraction of a second to a few seconds. This minimizes exposure to market risk but requires precise timing and execution.
+
+- **Market Focus:** HFT strategies are employed across various asset classes, including equities, futures, FX, options, and cryptocurrencies. HFT firms typically target liquid markets with high trading volumes.
+
+- **Strategy Examples:** Some common HFT strategies include market making, arbitrage, order flow prediction, and liquidity detection.
+
+#### Key HFT Strategies:
+
+1. **Market Making:** HFT firms continuously place buy and sell orders to profit from the bid-ask spread. They act as liquidity providers, earning small profits from the difference between buying and selling prices.
+
+2. **Arbitrage:** HFT strategies exploit price discrepancies between related financial instruments, such as stocks listed on multiple exchanges or differences between futures and spot prices.
+
+3. **Order Flow Prediction:** HFT algorithms analyze order flow data to predict the direction of short-term price movements. This allows them to position themselves advantageously before large orders are executed.
+
+4. **Latency Arbitrage:** HFT traders use speed advantages to capitalize on delays in market data transmission between different exchanges, buying low on one exchange and selling high on another almost instantaneously.
+
+#### Technological Requirements:
+
+- **Low Latency:** HFT requires ultra-low latency trading systems to ensure orders are executed as quickly as possible. Firms often colocate their servers in data centers close to exchange servers to reduce transmission time.
+
+- **Sophisticated Algorithms:** HFT firms develop complex algorithms to analyze market data, detect patterns, and execute trades automatically without human intervention.
+
+- **High-Speed Connectivity:** Fast and reliable internet connections, as well as high-speed trading networks, are essential for HFT to function effectively.
+
+#### Applications of HFT:
+
+- **Equities:** HFT is commonly used in stock markets to exploit small price differences and provide liquidity.
+
+- **Futures:** HFT strategies can be applied to futures contracts, profiting from short-term price movements.
+
+- **FX (Foreign Exchange):** HFT is widely used in the FX market due to its high liquidity and 24-hour trading.
+
+- **Options:** HFT can be applied to options trading, especially in highly liquid markets.
+
+- **Cryptocurrencies:** With the rise of digital currencies, HFT strategies are increasingly used in cryptocurrency markets, taking advantage of their high volatility and continuous trading hours.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __5.1) What is MFT?__
+**Medium-Frequency Trading (MFT)** refers to a type of trading strategy that operates at a time horizon between High-Frequency Trading (HFT) and traditional longer-term trading. MFT strategies typically involve holding positions for a period ranging from several minutes to several hours, or sometimes within the same trading day. The goal of MFT is to capture short-term price movements or market inefficiencies that may not be as fleeting as those targeted by HFT, but still require quick and efficient execution.
+
+#### Key Characteristics of MFT:
+- **Time Horizon:** MFT strategies focus on timeframes ranging from minutes to hours, sometimes even extending to intraday trading.
+- **Trade Frequency:** MFT involves fewer trades compared to HFT but more than traditional trading strategies. The frequency is higher than that of swing trading but lower than that of HFT.
+- **Execution Speed:** While execution speed is important, it is less critical than in HFT. MFT does not require the ultra-low latency systems that are essential in HFT.
+- **Market Focus:** MFT can be applied across various asset classes, including equities, futures, FX, and cryptocurrencies, depending on the strategy employed.
+- **Strategy Examples:** Intraday momentum trading, short-term mean reversion, pairs trading, and exploiting short-term market inefficiencies.
+
+#### Comparison with HFT:
+- **Execution:** HFT strategies require execution within milliseconds to seconds, while MFT trades might execute over minutes to hours.
+- **Technology:** HFT relies on advanced technology, such as colocated servers and ultra-low-latency trading platforms, to minimize execution time. MFT, while still technology-driven, does not demand the same level of speed and latency sensitivity.
+- **Risk Profile:** MFT strategies generally involve a slightly higher risk per trade compared to HFT, as the positions are held for longer periods, exposing them to more market volatility.
+
+#### Applications:
+MFT strategies are often employed in markets where short-term inefficiencies can be identified and exploited over a slightly longer period than HFT. They can be used across various asset classes, including equities, futures, FX, and even cryptocurrencies, where patterns develop over intraday timeframes.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
+### __5.2) MFT Strategies:__
+The explanation provided above for [**High Frequency Trading(HFT) Strategies**](#trading-in-milliseconds-hft-strategies-and-setup) can certainly be adapted to a **Medium Frequency Trading (MFT)** scenario, but there are some important distinctions between HFT and MFT that may affect how these concepts are applied:
+
+#### **1. Time and Volume Bars**
+- **MFT Adaptation:** 
+  - In MFT, the granularity of time and volume bars might be less intense compared to HFT. Instead of creating bars every few milliseconds or seconds, MFT might use minute-level or even hour-level bars. Volume bars may also aggregate larger volumes before forming a bar.
+  - The basic concept of aggregating trades based on time or volume thresholds remains the same, but the thresholds are typically larger in MFT.
+
+#### **2. Spoofing and Front-Running**
+- **MFT Adaptation:** 
+  - While spoofing and front-running are unethical in any trading frequency, their detection and impact may differ in MFT due to the longer time horizons. In MFT, spoofing might involve placing orders that remain on the book for a few minutes before being canceled, rather than a few milliseconds. Front-running in MFT might involve anticipating larger institutional orders based on observable patterns over a longer timeframe.
+  - The methods to prevent or detect these practices might also differ, relying more on statistical analysis of order flow over time rather than ultra-fast real-time detection.
+
+#### **3. IOC and ISO Orders**
+- **MFT Adaptation:** 
+  - In MFT, Immediate-Or-Cancel (IOC) and Intermarket Sweep Orders (ISO) might be used in a similar fashion as in HFT, but with a focus on slightly longer execution windows. The strategic use of these order types still applies, but the urgency of execution is not as extreme as in HFT. For example, an IOC order in MFT might aim for execution within seconds rather than milliseconds.
+
+#### **4. Lee-Ready Algorithm & BVC Rule**
+- **MFT Adaptation:**
+  - The Lee-Ready Algorithm and BVC Rule are still relevant in MFT, but the frequency of trade classification and volume comparison would be lower. The algorithm might analyze trade direction over minutes instead of microseconds, and the volume comparison might aggregate over several trades rather than each individual tick.
+  - The statistical methods remain the same, but they would typically be applied to a larger dataset, considering trades over a longer period.
+
+#### **5. Tick Data**
+- **MFT Adaptation:** 
+  - Tick data is less crucial in MFT compared to HFT. In MFT, traders might focus more on aggregated data, such as minute bars or OHLC (Open, High, Low, Close) data, rather than every individual tick. However, detailed tick data analysis might still be used to identify patterns or anomalies in the market.
+  - The processing of tick data in MFT might involve lower resolution, focusing on trends over minutes or hours rather than milliseconds.
+
+#### **Key Differences Between HFT and MFT:**
+- **Speed and Latency:** HFT operates on extremely short timeframes, often in milliseconds or microseconds, while MFT operates on longer timeframes, typically ranging from seconds to hours.
+- **Data Granularity:** HFT requires processing vast amounts of granular data (e.g., tick data), whereas MFT might focus more on aggregated data like minute bars or hourly price movements.
+- **Technology Requirements:** HFT requires ultra-low-latency infrastructure, including co-location with exchanges, while MFT can often operate with standard high-speed internet connections and may not require the same level of technological sophistication.
+- **Regulatory Focus:** Both HFT and MFT are subject to regulatory scrutiny, but the focus differs. HFT might be more concerned with microsecond-level manipulations like spoofing, whereas MFT might face scrutiny for practices like market timing or longer-term front-running.
+
+In summary, the concepts and strategies discussed can indeed apply to MFT, but they must be adapted to the longer timeframes and different operational considerations of MFT. The fundamental principles remain the same, but the execution and analysis would be less focused on microsecond-level precision and more on trends that develop over seconds, minutes, or even longer.
+
+### __5.3) HFT v/s MFT Time Horizons:__
+The time-horizon is a key differentiator between Medium-Frequency Trading (MFT) and High-Frequency Trading (HFT):
+
+#### **High-Frequency Trading (HFT)**
+- **Time-Horizon:**
+  - **Milliseconds to Seconds:** HFT strategies operate on extremely short timeframes, typically executing trades within milliseconds to a few seconds. The goal is to capitalize on small price discrepancies, often by making a large number of trades throughout the trading day.
+- **Strategy Focus:**
+  - **Market Microstructure:** HFT strategies often focus on exploiting very short-term inefficiencies in market pricing, such as those caused by order flow, latency, or temporary imbalances in supply and demand.
+  - **Example Strategies:** Arbitrage, market making, order flow prediction, latency arbitrage.
+
+#### **Medium-Frequency Trading (MFT)**
+- **Time-Horizon:**
+  - **Minutes to Hours:** MFT strategies typically operate on a slightly longer timeframe than HFT, with trades being executed over minutes, hours, or even within the same trading day. These strategies aim to capture larger price movements than HFT, but still within a relatively short period.
+- **Strategy Focus:**
+  - **Short-Term Trends:** MFT strategies may focus on intraday trends, short-term mean reversion, or other patterns that develop over several minutes to hours.
+  - **Example Strategies:** Intraday momentum, short-term mean reversion, pairs trading.
+
+#### **Comparison:**
+- **Execution Speed:** HFT requires faster execution and lower latency, often utilizing colocated servers and ultra-low-latency trading systems. MFT, while still requiring efficient execution, does not demand the same level of speed as HFT.
+- **Trade Frequency:** HFT strategies can execute thousands of trades per day, whereas MFT strategies typically involve fewer trades, focusing on slightly longer opportunities.
+- **Market Impact:** Due to the very high frequency and volume of trades, HFT can have a more significant impact on market microstructure, whereas MFT strategies may have a more moderate impact.
+
+#### **Use Case Context:**
+- **HFT:** Ideal for markets with very high liquidity and tight spreads, such as equities, FX, and futures. It is heavily reliant on speed and technology.
+- **MFT:** Suitable for capturing short-term price movements in a variety of markets, including equities, futures, and even certain cryptocurrencies, where the focus is on short-term patterns rather than microsecond execution.
