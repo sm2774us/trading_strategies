@@ -3595,11 +3595,12 @@ The C++ and Python code both plot the returns of three stocks (Stock A, Stock B,
 
 ##### 4.1. **Y-Axis (Return)**:
    - This axis represents the percentage return of each stock.
-   - **Formula**: The percentage return for a stock at time $t$ is calculated using:
-$$
-\text{Return}_t = \frac{\text{Close}_t - \text{Close}_{t-1}}{\text{Close}_{t-1}}
-$$
-   where $$\text{Close}_t$$ is the closing price at time `t` and $$\text{Close}_{t-1}$$ is the closing price at the previous time step.
+   - **Formula**:
+   The percentage return for a stock at time $t$ is calculated using:
+   $$
+   \text{Return}_t = \frac{\text{Close}_t - \text{Close}_{t-1}}{\text{Close}_{t-1}}
+   $$
+   where $\text{Close}_t$ is the closing price at time $t$ and $\text{Close}_{t-1}$ is the closing price at the previous time step.
 
 ##### 4.2. **X-Axis (Date)**:
    - This axis shows the dates corresponding to the closing prices and returns.
@@ -3623,7 +3624,7 @@ $$
      $$
      \text{Average Return} = \frac{1}{N} \sum_{i=1}^N \text{Return}_{i}
      $$
-   where `N` is the number of returns.
+   where $N$ is the number of returns.
 
 ###### **Long and Short Positions**:
    - **Long Position**: The stock with the highest average return is selected for a long position. Mathematically, this is represented as:
