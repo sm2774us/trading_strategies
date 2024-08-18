@@ -6320,6 +6320,8 @@ int main() {
 ```
 ![Trading Alphas: Mining, Optimization, and System Design - Vectorized SL & TP](./assets/vectorized_sl_and_tp.png)
 
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 ### Trading Alphas - Use Cases
 #### 1) **Mean Reversion**
 
@@ -6341,6 +6343,8 @@ int main() {
 - Fixed Income
 - Crypto
 
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 #### 2) **K-Nearest Neighbors (KNN)**
 
 ##### **Use Cases:**
@@ -6357,6 +6361,8 @@ int main() {
 - Options
 - Crypto
 - Derivatives
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 #### 3) **Time Series & Cross-Sectional Alphas**
 
@@ -6377,6 +6383,8 @@ int main() {
 - FX
 - Futures
 - Crypto
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
 
 #### 4) **Candlestick Patterns**
 
