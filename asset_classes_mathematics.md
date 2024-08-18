@@ -59,9 +59,7 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 2. **Dividend Discount Model (DDM)**:
    - **Formula**: 
      
-     $$
-     P_0 = \frac{D_1}{r - g}
-     $$
+     ![Dividend Discount Model Formula](./assets/dividend_discount_model_formula.png)
      
      where $P_0$ is the present stock price, $D_1$ is the dividend next period, $r$ is the required rate of return, and $g$ is the growth rate of dividends.
    
@@ -72,26 +70,21 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 - **Regression Analysis**:
    - Used to estimate the beta of a stock by regressing the stock’s returns against market returns:
      
-     $$
-     R_i = \alpha + \beta R_m + \epsilon
-     $$
+     ![Regression Analysis Formula](./assets/regression_analysis.png)
      
      where $R_i$ is the return of stock $i$, $R_m$ is the market return, and $\epsilon$ is the error term.
 
 - **Black-Scholes Model for Options**:
    - **Formula**: 
      
-     $$
-     C(S,t) = S_0 N(d_1) - X e^{-rt} N(d_2)
-     $$
+     ![Black-Scholes Model for Options Formula](./assets/black_scholes_model_for_options.png)
      
      where
-     $$
-     d_1 = \frac{\ln(\frac{S_0}{X}) + (r + \frac{\sigma^2}{2})t}{\sigma \sqrt{t}}
-     $$,
-     $$
-     d_2 = d_1 - \sigma \sqrt{t}
-     $$,
+     
+     ![Black-Scholes Model - `d1` term](./assets/black_scholes_model_formula_d1_term.png),
+     
+     ![Black-Scholes Model - `d2` term](./assets/black_scholes_model_formula_d2_term.png),
+     
      $S_0$ is the current stock price, $X$ is the strike price, $r$ is the risk-free rate, $\sigma$ is the volatility, and $N(d)$ is the cumulative distribution function of the standard normal distribution.
 
 ### 3) **Futures**
