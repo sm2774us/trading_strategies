@@ -10,7 +10,11 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 
 2. **Interest Rate Parity (IRP)**:
    - **Concept**: IRP states that the difference between the forward exchange rate $F$ and the spot exchange rate $S$ is a function of the interest rate differential between two currencies.
-   - **Formula**: $$\frac{F}{S} = \frac{1 + r_d}{1 + r_f}$$, where $r_d$ and $r_f$ are the domestic and foreign interest rates, respectively.
+   - **Formula**:
+   $$
+   \frac{F}{S} = \frac{1 + r_d}{1 + r_f}
+   $$
+   , where $r_d$ and $r_f$ are the domestic and foreign interest rates, respectively.
 
    **Proof**:
    Let’s consider two investment strategies:
@@ -22,17 +26,21 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 3. **Volatility**:
    - **GARCH Model**: The Generalized Autoregressive Conditional Heteroskedasticity (GARCH) model is used to model and forecast time-series volatility, which is crucial in FX trading.
    - **Formula**: 
-     $$
-     \sigma_t^2 = \alpha_0 + \sum_{i=1}^q \alpha_i \epsilon_{t-i}^2 + \sum_{j=1}^p \beta_j \sigma_{t-j}^2
-     $$
+     
+     ![Volatility Formula](./assets/volatility_formula.png)
+
      where $\sigma_t^2$ is the conditional variance, $\epsilon_t$ are past residuals, and $\alpha_0, \alpha_i, \beta_j$ are model parameters.
 
 #### **Additional Mathematical Tools:**
 - **Stochastic Calculus**:
-   - **Itô’s Lemma**: If $X_t$ follows a stochastic process $$dX_t = \mu_t dt + \sigma_t dW_t$$, then for a function $f(X_t, t)$:
-     $$
-     df(X_t, t) = \left( \frac{\partial f}{\partial t} + \mu_t \frac{\partial f}{\partial X_t} + \frac{1}{2} \sigma_t^2 \frac{\partial^2 f}{\partial X_t^2} \right) dt + \sigma_t \frac{\partial f}{\partial X_t} dW_t
-     $$
+   - **Itô’s Lemma**: If $X_t$ follows a stochastic process 
+   $$
+   dX_t = \mu_t dt + \sigma_t dW_t
+   $$
+   , then for a function $f(X_t, t)$:
+     
+     ![Itô’s Lemma Formula](./assets/stochastic_calculus.png)
+
    - This is particularly used in deriving option pricing formulas in FX markets.
 
 ### 2) **Equities**
@@ -40,9 +48,9 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 #### **Key Concepts:**
 1. **CAPM (Capital Asset Pricing Model)**:
    - **Formula**: 
-     $$
-     E(R_i) = R_f + \beta_i (E(R_m) - R_f)
-     $$
+     
+     ![CAPM Formula](./assets/CAPM_formula.png)
+     
      where $E(R_i)$ is the expected return of asset $i$, $R_f$ is the risk-free rate, $\beta_i$ is the asset’s beta, and $E(R_m)$ is the expected market return.
    
    **Proof**:
@@ -50,9 +58,11 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 
 2. **Dividend Discount Model (DDM)**:
    - **Formula**: 
+     
      $$
      P_0 = \frac{D_1}{r - g}
      $$
+     
      where $P_0$ is the present stock price, $D_1$ is the dividend next period, $r$ is the required rate of return, and $g$ is the growth rate of dividends.
    
    **Proof**:
@@ -61,16 +71,20 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 #### **Mathematical Tools:**
 - **Regression Analysis**:
    - Used to estimate the beta of a stock by regressing the stock’s returns against market returns:
+     
      $$
      R_i = \alpha + \beta R_m + \epsilon
      $$
+     
      where $R_i$ is the return of stock $i$, $R_m$ is the market return, and $\epsilon$ is the error term.
 
 - **Black-Scholes Model for Options**:
    - **Formula**: 
+     
      $$
      C(S,t) = S_0 N(d_1) - X e^{-rt} N(d_2)
      $$
+     
      where
      $$
      d_1 = \frac{\ln(\frac{S_0}{X}) + (r + \frac{\sigma^2}{2})t}{\sigma \sqrt{t}}
