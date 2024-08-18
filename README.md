@@ -3284,8 +3284,14 @@ Let's consider the provided main method with the given example data for asset pr
   After processing the data, the program will generate the trading signals. Let's calculate the z-scores for the assets based on the provided data:
   - For the first asset:
     - Mean: ```(100.0 + 102.0 + 105.0) / 3 = 102.33```
-    - Standard Deviation: Calculated using the formula:  $$stdev = sqrt(sum(\frac{(x_i - x_{\text{mean}})^2}{n}))$$
-    - Z-score =  $$\frac{(105.0 - 102.33)}{stdev}$$
+    - Standard Deviation: Calculated using the formula:
+$$
+stdev = sqrt(sum(\frac{(x_i - x_{\text{mean}})^2}{n}))
+$$
+    - Z-score =
+$$
+\frac{(105.0 - 102.33)}{stdev}
+$$
 
   By following similar calculations for the other assets and applying the z-score threshold, we will determine the trading signals (Long, Short, or Neutral) for each asset based on the calculated z-scores. The output will display these trading signals.
 
@@ -3376,8 +3382,14 @@ Let's consider the provided main method with the given example data for asset pr
   After processing the data, the program will generate the trading signals. Let's calculate the z-scores for the assets based on the provided data:
   - For the first asset:
     - Mean: ```(100.0 + 102.0 + 105.0) / 3 = 102.33```
-    - Standard Deviation: Calculated using the formula:  $$stdev = sqrt(sum(\frac{(x_i - x_{\text{mean}})^2}{n}))$$
-    - Z-score =  $$\frac{(105.0 - 102.33)}{stdev}$$
+    - Standard Deviation: Calculated using the formula:
+$$
+stdev = sqrt(sum(\frac{(x_i - x_{\text{mean}})^2}{n}))
+$$
+    - Z-score =
+$$
+\frac{(105.0 - 102.33)}{stdev}
+$$
 
   By following similar calculations for the other assets and applying the z-score threshold, we will determine the trading signals (Long, Short, or Neutral) for each asset based on the calculated z-scores. The output will display these trading signals.
 
@@ -3597,9 +3609,9 @@ The C++ and Python code both plot the returns of three stocks (Stock A, Stock B,
    - This axis represents the percentage return of each stock.
    - **Formula**:
    The percentage return for a stock at time $t$ is calculated using:
-   $$
-   \text{Return}_t = \frac{\text{Close}_t - \text{Close}_{t-1}}{\text{Close}_{t-1}}
-   $$
+$$
+\text{Return}_t = \frac{\text{Close}_t - \text{Close}_{t-1}}{\text{Close}_{t-1}}
+$$
    where $\text{Close}_t$ is the closing price at time $t$ and $\text{Close}_{t-1}$ is the closing price at the previous time step.
 
 ##### 4.2. **X-Axis (Date)**:
@@ -3614,27 +3626,27 @@ The C++ and Python code both plot the returns of three stocks (Stock A, Stock B,
 
 ###### **Calculating Returns**:
    - The percentage return for each stock is calculated as follows:
-     $$
-     \text{Return}_{i} = \frac{\text{Close}_{i} - \text{Close}_{i-1}}{\text{Close}_{i-1}}
-     $$
+$$
+\text{Return}_{i} = \frac{\text{Close}_{i} - \text{Close}_{i-1}}{\text{Close}_{i-1}}
+$$
    - This calculation provides the daily return based on the change in closing prices from one day to the next.
 
 ###### **Average Returns**:
    - The average return for each stock is computed using:
-     $$
-     \text{Average Return} = \frac{1}{N} \sum_{i=1}^N \text{Return}_{i}
-     $$
+$$
+\text{Average Return} = \frac{1}{N} \sum_{i=1}^N \text{Return}_{i}
+$$
    where $N$ is the number of returns.
 
 ###### **Long and Short Positions**:
    - **Long Position**: The stock with the highest average return is selected for a long position. Mathematically, this is represented as:
-     $$
-     \text{Long Stock} = \arg\max ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
-     $$
+$$
+\text{Long Stock} = \arg\max ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
+$$
    - **Short Position**: The stock with the lowest average return is selected for a short position. Mathematically, this is represented as:
-     $$
-     \text{Short Stock} = \arg\min ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
-     $$
+$$
+\text{Short Stock} = \arg\min ( \text{Average Return}_\text{Stock A}, \text{Average Return}_\text{Stock B}, \text{Average Return}_\text{Stock C} )
+$$
 
 ##### Key Insights from the Plot:
 
@@ -5314,18 +5326,18 @@ Where:
 __`K-NN`__ is a non-parametric classification algorithm that works as follows:
 
 1. **Distance Calculation:**
-   $$
-   d(x_i, x_j) = \sqrt{\sum_{k=1}^{n} (x_{ik} - x_{jk})^2}
-   $$
+$$
+d(x_i, x_j) = \sqrt{\sum_{k=1}^{n} (x_{ik} - x_{jk})^2}
+$$
    Where:
    - $x_i and $x_j$ are two points in the feature space.
    - $n$ is the number of features.
    - $d(x_i, x_j)$ is the Euclidean distance between the points $x_i$ and $x_j$.
 
 2. **Classification:**
-   $$
-   \hat{y} = \text{mode}(y_{k1}, y_{k2}, \ldots, y_{kk})
-   $$
+$$
+\hat{y} = \text{mode}(y_{k1}, y_{k2}, \ldots, y_{kk})
+$$
    Where:
    - $\hat{y}$ is the predicted class.
    - $y_{k1}, y_{k2}, \ldots, y_{kk}$ are the classes of the k-nearest neighbors.
@@ -5439,18 +5451,18 @@ int main() {
 
 - **Mathematical Formula**:
 1. **Time Series Alpha:**
-   $$
-   \alpha_t = R_t - \beta \cdot \text{Market}_t
-   $$
+$$
+\alpha_t = R_t - \beta \cdot \text{Market}_t
+$$
    Where:
    - $R_t$ is the return of the asset at time $t$.
    - $\beta$ is the sensitivity of the asset’s return to the market return.
    - $\text{Market}_t$ is the market return at time $t$.
 
 2. **Cross-Sectional Alpha:**
-   $$
-   \alpha_{i,t} = R_{i,t} - \frac{1}{N} \sum_{j=1}^{N} R_{j,t}
-   $$
+$$
+\alpha_{i,t} = R_{i,t} - \frac{1}{N} \sum_{j=1}^{N} R_{j,t}
+$$
    Where:
    - $R_{i,t}$ is the return of asset $i$ at time $t$.
    - $N$ is the number of assets.
@@ -6015,18 +6027,18 @@ Both SL and TP are essential tools in trading strategies to manage risk and lock
 
 - **Mathematical Formula**:
 1. **Stop-Loss (SL):**
-   $$
-   \text{SL}_t = \min(P_1, P_2, \ldots, P_t) - \text{Threshold}
-   $$
+$$
+\text{SL}_t = \min(P_1, P_2, \ldots, P_t) - \text{Threshold}
+$$
    Where:
    - $\text{SL}_t$ is the stop-loss level at time $t$.
    - $P_t$ is the price at time $t$.
    - $\text{Threshold}$ is a predefined loss level.
 
 2. **Take-Profit (TP):**
-   $$
-   \text{TP}_t = \max(P_1, P_2, \ldots, P_t) + \text{Threshold}
-   $$
+$$
+\text{TP}_t = \max(P_1, P_2, \ldots, P_t) + \text{Threshold}
+$$
    Where:
    - $\text{TP}_t$ is the take-profit level at time $t$.
    - $P_t$ is the price at time $t$.
@@ -6236,15 +6248,15 @@ __High-Frequency Trading (HFT)__ involves executing orders within milliseconds o
 **Mathematical Formula:**
 - **Time Bar Construction:** Given a time interval $T$, a time bar is created every $T$ seconds, aggregating price, volume, and other trade information.
   
-  $$
-  \text{Time Bar} = \sum_{t=0}^{T} P_t \times V_t
-  $$
+$$
+\text{Time Bar} = \sum_{t=0}^{T} P_t \times V_t
+$$
 
 - **Volume Bar Construction:** Given a volume threshold $V$, a volume bar is created whenever the cumulative traded volume reaches $V$.
 
-  $$
-  \text{Volume Bar} = \sum_{v=0}^{V} P_v
-  $$
+$$
+\text{Volume Bar} = \sum_{v=0}^{V} P_v
+$$
 
 **Python Implementation:**
 
@@ -6330,15 +6342,15 @@ std::vector<Trade> create_volume_bars(const std::vector<Trade>& trades, int thre
 **Mathematical Representation:**
 - **Spoofing:** If $O_s$ is the spoof order and $O_t$ is the true trade order, then spoofing strategy places $O_s$ with the intent of canceling it after moving the market to execute $O_t$.
   
-  $$
-  O_s \rightarrow O_t \quad \text{and then} \quad \cancel{O_s}
-  $$
+$$
+O_s \rightarrow O_t \quad \text{and then} \quad \cancel{O_s}
+$$
 
 - **Front-Running:** Given an incoming large order $O_l$, the front-running strategy places $O_f$ before $O_l$ to profit from the price movement caused by $O_l$.
 
-  $$
-  O_f \rightarrow O_l \rightarrow \text{Profit}
-  $$
+$$
+O_f \rightarrow O_l \rightarrow \text{Profit}
+$$
 
 **Python Implementation:**
 
@@ -6499,32 +6511,32 @@ int main() {
 **Mathematical Formula:**
 - **Lee-Ready Algorithm:**
   
-  $$
-  \text{Trade Direction} = 
-  \begin{cases} 
-  \text{Buy} & \text{if trade price > midquote} \\
-  \text{Sell} & \text{if trade price < midquote} \\
-  \text{Previous Direction} & \text{if trade price = midquote}
-  \end{cases}
-  $$
+$$
+\text{Trade Direction} = 
+\begin{cases} 
+\text{Buy} & \text{if trade price > midquote} \\
+\text{Sell} & \text{if trade price < midquote} \\
+\text{Previous Direction} & \text{if trade price = midquote}
+\end{cases}
+$$
 
 - **BVC Rule:**
   
-  $$
-  \text{Buy Volume} = \sum_{i=1}^{N} \text{Volume at Ask}
-  $$
+$$
+\text{Buy Volume} = \sum_{i=1}^{N} \text{Volume at Ask}
+$$
   
-  $$
-  \text{Sell Volume} = \sum_{i=1}^{N} \text{Volume at Bid}
-  $$
+$$
+\text{Sell Volume} = \sum_{i=1}^{N} \text{Volume at Bid}
+$$
   
-  $$
-  \text{Trade Direction} = 
-  \begin{cases} 
-  \text{Buy} & \text{if Buy Volume > Sell Volume} \\
-  \text{Sell} & \text{if Sell Volume > Buy Volume}
-  \end{cases}
-  $$
+$$
+\text{Trade Direction} = 
+\begin{cases} 
+\text{Buy} & \text{if Buy Volume > Sell Volume} \\
+\text{Sell} & \text{if Sell Volume > Buy Volume}
+\end{cases}
+$$
 
 **Python Implementation:**
 
