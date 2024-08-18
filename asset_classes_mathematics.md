@@ -102,24 +102,24 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 
 2. **Basis and Hedging**:
    - **Basis**: 
-     $$
-     \text{Basis} = S - F
-     $$
+     
+     ![Basis Formula](./assets/basis_formula.png)
+
    - The basis represents the difference between the spot price and the futures price, and it’s critical in hedging strategies to assess the effectiveness of a hedge.
 
 #### **Mathematical Tools:**
 - **Value at Risk (VaR)**:
    - **Formula**: 
-     $$
-     \text{VaR}_{\alpha} = \mu - z_{\alpha} \sigma
-     $$
+     
+     ![VaR Formula](./assets/VaR_formula.png)
+     
      where $\mu$ is the mean of the portfolio returns, $\sigma$ is the standard deviation, and $z_{\alpha}$ is the z-score corresponding to the confidence level $\alpha$.
 
 - **Spread Analysis**:
    - **Formula**:
-     $$
-     \text{Spread} = F_1 - F_2
-     $$
+     
+     ![Spread Analysis Formula](./assets/spread_analysis_formula.png)
+
      where $F_1$ and $F_2$ are futures prices of contracts with different maturities.
 
 ### 4) **Treasuries**
@@ -127,9 +127,9 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 #### **Key Concepts:**
 1. **Yield to Maturity (YTM)**:
    - **Formula**: 
-     $$
-     P = \sum_{t=1}^n \frac{C}{(1 + \text{YTM})^t} + \frac{F}{(1 + \text{YTM})^n}
-     $$
+     
+     ![Yield to Maturity (YTM) Formula](./assets/yield_to_maturity_YTM_formula.png)
+     
      where $P$ is the bond price, $C$ is the coupon payment, $F$ is the face value, and $n$ is the number of periods.
    
    **Proof**:
@@ -137,21 +137,21 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 
 2. **Duration and Convexity**:
    - **Duration Formula**:
-     $$
-     D = \sum_{t=1}^n \frac{t \times C_t}{(1 + r)^t} \times \frac{1}{P}
-     $$
+     
+     ![Duration Formula](./assets/duration_formula.png)
+
      where $C_t$ is the cash flow at time $t$, $r$ is the yield, and $P$ is the bond price.
    - **Convexity Formula**:
-     $$
-     C = \frac{1}{P} \sum_{t=1}^n \frac{C_t \times t \times (t + 1)}{(1 + r)^{t+2}}
-     $$
+     
+     ![Convexity Formula](./assets/convexity_formula.png)
 
 #### **Mathematical Tools:**
 - **Nelson-Siegel Model**:
    - **Formula**:
-     $$
-     y(\tau) = \beta_0 + \beta_1 \frac{1 - e^{-\lambda \tau}}{\lambda \tau} + \beta_2 \left( \frac{1 - e^{-\lambda \tau}}{\lambda \tau} - e^{-\lambda \tau} \right)
-     $$
+     
+     ![Nelson-Siegel Model Formula](./assets/nelson_siegel_model_formula.png)
+
+
      where $y(\tau)$ is the yield for maturity $\tau$, and $\beta_0, \beta_1, \beta_2, \lambda$ are model parameters.
 
 ### 5) **Interest Rates**
@@ -159,25 +159,82 @@ Let’s dive into the detailed mathematics and statistics involved in trading ea
 #### **Key Concepts:**
 1. **Libor and Swap Rates**:
    - **Forward Rate Formula**:
-     $$
-     F(t_1, t_2) = \frac{(1 + r(t_2) \times (t_2 - t_0))}{(1 + r(t_1) \times (t_1 - t_0))} - 1
-     $$
+     
+     ![Forward Rate Formula](./assets/interest_rates_forward_rate_formula.png)
+
      where $r(t)$ is the spot rate at time $t$.
 
 2. **Affine Term Structure Models (ATSM)**:
    - **Basic Formula**:
-     $$
-     P(t,T) = e^{A(t,T) + B(t,T) r(t)}
-     $$
+
+     ![Affine Term Structure Models (ATSM) Formula](./assets/affine_term_structure_model_ATSM_formula.png)
+
+
      where $P(t,T)$ is the price of a zero-coupon bond, $r(t)$ is the short rate, and $A(t,T)$ and $B(t,T)$ are functions determined by the specific model (e.g., __Vasicek, Cox-Ingersoll-Ross__).
 
 #### **Mathematical Tools:**
 - **Vasicek Model**:
-   - **SDE**: 
-     $$
-     dr_t = \alpha (\mu - r_t) dt + \sigma dW_t
-     $$
-     where $\alpha$ is the speed of mean reversion, $\mu$ is the long-term mean, and $\sigma$ is the volatility.
+
+In the Vasicek model for interest rates, the **SDE** (__Stochastic Differential Equation__) describes the evolution of interest rates over time. The Vasicek model is a type of one-factor short-rate model used to model the future evolution of interest rates. The SDE in the Vasicek model is given by:
+
+$$
+dr_t = \kappa (\theta - r_t) dt + \sigma dW_t
+$$
+
+##### Where:
+- $r_t$ is the short-term interest rate at time $t$.
+- $\kappa$ (speed of mean reversion) is a positive constant that determines how quickly the interest rate reverts to the long-term mean $\theta$.
+- $\theta$ (long-term mean rate) is the mean level to which the interest rate tends to revert over time.
+- $\sigma$ (volatility) is the standard deviation of the interest rate changes, representing the volatility of the interest rate.
+- $W_t$ is a Wiener process (also known as Brownian motion), which introduces the stochastic (random) component to the model.
+
+##### Explanation:
+- **Mean Reversion:** The term $\kappa (\theta - r_t)$ represents the mean-reverting behavior of the interest rate. If the current rate $r_t$ is above the long-term mean $\theta$, the mean-reverting term is negative, pushing the rate down towards $\theta$. If $r_t$ is below $\theta$, the term is positive, pulling the rate up.
+- **Stochastic Component:** The term $\sigma dW_t$ adds randomness to the interest rate changes. The parameter $\sigma$ controls the magnitude of this randomness, and $dW_t$ represents the small random fluctuations introduced by Brownian motion.
+
+##### Significance:
+The Vasicek model is significant in finance because it provides a simple yet effective way to model the dynamics of interest rates. The mean-reverting property ensures that interest rates do not drift too far away from the long-term mean, which is a realistic feature observed in real-world interest rates. The model is often used in the pricing of interest rate derivatives, bond pricing, and risk management.
+
+- **Cox-Ingersoll-Ross Model**:
+The **Cox-Ingersoll-Ross (CIR) model** is another popular one-factor model used to describe the evolution of interest rates over time. Like the Vasicek model, it is a mean-reverting model, but it has a key difference in how it models the volatility of interest rates, particularly ensuring that interest rates remain non-negative.
+
+##### CIR Model Stochastic Differential Equation (SDE):
+The SDE for the CIR model is given by:
+
+$$
+dr_t = \kappa (\theta - r_t) dt + \sigma \sqrt{r_t} dW_t
+$$
+
+##### Where:
+- $r_t$ is the short-term interest rate at time $t$.
+- $\kappa$ (speed of mean reversion) is a positive constant that determines how quickly the interest rate reverts to the long-term mean $\theta$.
+- $\theta$ (long-term mean rate) is the mean level to which the interest rate tends to revert over time.
+- $\sigma$ (volatility) is the standard deviation coefficient in the model, which scales the random fluctuations.
+- $W_t$ is a Wiener process (Brownian motion) representing the random component.
+
+##### Key Features:
+1. **Mean Reversion:**
+   - The term $\kappa (\theta - r_t) dt$ ensures that the interest rate $r_t$ tends to revert towards the mean level $\theta$. If $r_t$ is above $\theta$, the term becomes negative, pulling $r_t$ down; if $r_t$ is below $\theta$, it becomes positive, pushing $r_t$ up.
+
+2. **Volatility and Non-Negativity:**
+   - The term $\sigma \sqrt{r_t} dW_t$ introduces stochasticity into the model. Unlike the Vasicek model, where volatility is constant, the CIR model has volatility proportional to the square root of the interest rate $r_t$. This ensures that as $r_t$ approaches zero, the volatility also approaches zero, reducing the probability that the interest rate becomes negative. This is a significant advantage over the Vasicek model, which can theoretically produce negative interest rates.
+
+##### Explanation:
+- **Square Root Diffusion:** The volatility term $\sigma \sqrt{r_t}$ implies that the volatility of interest rate changes is lower when interest rates are low and higher when rates are high. This feature makes the CIR model particularly useful in scenarios where negative interest rates are not realistic.
+  
+- **Mean Reversion:** Similar to the Vasicek model, the CIR model incorporates mean reversion. However, the presence of the square root in the volatility term makes the dynamics more complex and realistic for modeling interest rates.
+
+- **Non-Negativity:** One of the key advantages of the CIR model is its ability to prevent negative interest rates. Because the volatility is zero when the interest rate is zero, the process is reflected at zero, making negative rates impossible.
+
+##### Applications:
+The CIR model is widely used in finance, particularly in:
+- **Bond Pricing:** The CIR model is often used to model the short-term interest rate in the pricing of bonds and other fixed-income securities.
+- **Interest Rate Derivatives:** It is used in the valuation of interest rate derivatives, such as options on interest rates, caps, floors, and swaptions.
+- **Risk Management:** Financial institutions use the CIR model to manage interest rate risk, particularly in environments where the risk of negative interest rates must be minimized.
+
+##### Comparison with Vasicek Model:
+- The CIR model's main advantage over the Vasicek model is its ability to ensure non-negative interest rates.
+- The CIR model’s volatility is dependent on the level of interest rates, unlike the Vasicek model, where volatility is constant. This makes the CIR model more realistic in certain financial applications, especially when modeling low interest rate environments.
 
 ### 6) **Options**
 
