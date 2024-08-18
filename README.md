@@ -6642,28 +6642,28 @@ $V_{canceled} = V_{order} - V_{filled}$
 
 **Execution Condition:**
 The execution condition for IOC can be expressed mathematically as:
-$$
-V_{filled} = \sum_{i} \text{Min}\left(V_{ask_i}, V_{order}\right) \quad \text{for all } P_{ask_i} \leq P_{limit}
-$$
+
+![Execution Condition Formula](./assets/execution_condition.png)
+
 Where:
-- $V_{ask_i}$ is the volume available at ask price \( P_{ask_i} \).
+- $V_{ask_i}$ is the volume available at ask price $P_{ask_i}$.
 - $P_{ask_i}$ are the ask prices in the market order book.
 
-The IOC order executes as much volume as possible at or below the limit price \( P_{limit} \). Any remaining volume \( V_{canceled} \) is canceled.
+The IOC order executes as much volume as possible at or below the limit price $P_{limit}$. Any remaining volume $V_{canceled}$ is canceled.
 
 ###### **Example:**
 
 Assume:
-- IOC order volume $V_{order} = 1000$ shares.
-- Limit price $P_{limit} = \$50$.
+- IOC order volume $V_{order}$ = $1000$ shares.
+- Limit price $P_{limit}$ = $\$50$.
 
 Order book:
-- 300 shares available at $\$49.50$
-- 200 shares available at $\$50.00$
-- 500 shares available at $\$50.25$
+- 300 shares available at `$49.50`
+- 200 shares available at `$50.00`
+- 500 shares available at `$50.25`
 
 The order execution would be:
-- $V_{filled} = 300 + 200 = 500$ shares at prices $\$49.50$ and $\$50.00$
+- $V_{filled} = 300 + 200 = 500$ shares at prices `$49.50` and `$50.00`
 - $V_{canceled} = 1000 - 500 = 500$ shares are canceled.
 
 ##### **2. Intermarket Sweep Order (ISO)**
@@ -6680,9 +6680,9 @@ Let:
 - $P_{i}$: Prices at different exchanges $i$.
 
 The ISO order is typically broken down into smaller orders that execute at different exchanges:
-$$
-V_{filled} = \sum_{i} \text{Min}\left(V_{ask_i}, V_{order_i}\right) \quad \text{for all } P_{ask_i} \leq P_{limit}
-$$
+
+![ISP Mathematical Formula](./assets/iso_mathematical_formula.png)
+
 Where:
 - $V_{order_i}$ is the volume sent to exchange $i$.
 - $P_{ask_i}$ are the ask prices at different exchanges.
@@ -6693,19 +6693,19 @@ ISO orders execute at multiple exchanges, potentially at different prices, witho
 ###### **Example:**
 
 Assume:
-- ISO order volume $V_{order} = 1500$ shares.
-- Limit price $P_{limit} = \$50$.
+- ISO order volume $V_{order}$ = $1500$ shares.
+- Limit price $P_{limit}$ = `$50`.
 
 Order book across exchanges:
-- Exchange A: 300 shares available at $\$49.50$
-- Exchange B: 200 shares available at $\$49.75$
-- Exchange C: 1000 shares available at $\$50.00$
-- Exchange D: 500 shares available at $\$50.25$
+- Exchange A: 300 shares available at `$49.50`
+- Exchange B: 200 shares available at `$49.75`
+- Exchange C: 1000 shares available at `$50.00`
+- Exchange D: 500 shares available at `$50.25`
 
 The order execution could be:
-- $V_{filled_A} = 300$ shares at $\$49.50$
-- $V_{filled_B} = 200$ shares at $\$49.75$
-- $V_{filled_C} = 1000$ shares at $\$50.00$
+- $V_{filled_A} = 300$ shares at `$49.50`
+- $V_{filled_B} = 200$ shares at `$49.75`
+- $V_{filled_C} = 1000$ shares at `$50.00`
 
 Total filled:
 - $V_{filled} = 300 + 200 + 1000 = 1500$ shares
