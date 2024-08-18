@@ -7458,6 +7458,8 @@ The explanation provided above for [**High Frequency Trading(HFT) Strategies**](
 
 In summary, the concepts and strategies discussed can indeed apply to MFT, but they must be adapted to the longer timeframes and different operational considerations of MFT. The fundamental principles remain the same, but the execution and analysis would be less focused on microsecond-level precision and more on trends that develop over seconds, minutes, or even longer.
 
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
+
 ### __5.3) HFT v/s MFT Time Horizons:__
 The time-horizon is a key differentiator between Medium-Frequency Trading (MFT) and High-Frequency Trading (HFT):
 
@@ -7483,3 +7485,5 @@ The time-horizon is a key differentiator between Medium-Frequency Trading (MFT) 
 #### **Use Case Context:**
 - **HFT:** Ideal for markets with very high liquidity and tight spreads, such as equities, FX, and futures. It is heavily reliant on speed and technology.
 - **MFT:** Suitable for capturing short-term price movements in a variety of markets, including equities, futures, and even certain cryptocurrencies, where the focus is on short-term patterns rather than microsecond execution.
+
+<div align="right"><a href="#top" target="_blacnk"><img src="https://img.shields.io/badge/Back To Top-orange?style=for-the-badge&logo=expo&logoColor=white" /></a></div>
