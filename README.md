@@ -3,6 +3,8 @@ My Private Repository of Trading Strategies
 
 ## Basics
 - [How to call `Python` from `C++` - `Boost Python` and `Numba` and `Cython`](./boost_python_and_numba_and_cython.md)
+- [Asset Classes](./asset_classes.md)
+- [Mathematics Involved in Trading the Different Asset Classes](./asset_classes_mathematics.md)
 
 ## Table Of Contents <a name="top"></a>
 0. [__News Sentiment Trading Strategies__](#news-sentiment-trading-strategies)
