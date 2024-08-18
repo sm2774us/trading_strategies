@@ -297,7 +297,7 @@ $$
 \text{Spread} = YTM_{corporate} - YTM_{treasury}
 $$
 
-     where the spread reflects the additional yield required by investors for taking on more credit risk.
+, where the spread reflects the additional yield required by investors for taking on more credit risk.
 
 2. **Bond Immunization**:
    - **Concept**: Strategy to make a bond portfolio immune to changes in interest rates by matching the portfolio's duration to the investment horizon.
