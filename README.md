@@ -82,7 +82,7 @@ My Private Repository of Trading Strategies
         - 3.0.5. [__3.E) System Parameter Permutation:__](#3e-system-parameter-permutation)
     - 3.1. [__3.1) Mean Reversion:__](#31-mean-reversion)
     - 3.2. [__3.2) K-Nearest Neighbors:__](#32-k-nearest-neighbors)
-    - 3.3. [__3.3) Time series & cross sectional alphas:__](#33-time-series-cross-sectional-alphas)
+    - 3.3. [__3.3) Time series & cross sectional alphas:__](#33-time-series--cross-sectional-alphas)
     - 3.4. [__3.4) Candlestick Patterns:__](#34-candlestick-patterns)
     - 3.5. [__3.5) Vectorized SL & TP:__](#35-vectorized-sl--tp)
     - 3.6. [__3.6) Trading Alphas - Use Cases:__](#trading-alphas---use-cases)
